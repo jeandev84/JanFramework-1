@@ -30,12 +30,19 @@ $params = Route::router()->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_U
 */
 
 
-Route::map('GET', '/', 'HomeController@index', 'home');
-Route::map('GET|POST', '/contact', 'HomeController@contact');
+Route::map('GET', '/', 'HomeController@index', 'home')
+->middleware([
+    'App\Middleware\Authenticated',
+    'App\Middleware\Guarded'
+]);
+
+Route::map('GET|POST', '/contact', 'HomeController@contact')
+->name('site.contact');
 
 
 $options = [
-    'prefix' => 'admin'
+    'prefix' => '/admin',
+    'namespace' => 'Admin\\'
 ];
 
 Route::group($options, function () {
@@ -49,8 +56,8 @@ Route::get('/foo', function () {
 });
 
 
-dump(Route::collections());
-
 $route = Route::router()->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
-dd($route);
+dump($route);
+
+dd(Route::router()->routeCollection());

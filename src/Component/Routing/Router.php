@@ -109,10 +109,16 @@ class Router
                   throw new MethodNotAllowedException();
              }
 
-             if($params = $this->isMatch($path, $requestUri))
+             $pattern = $this->generatePattern($path);
+
+             if(preg_match($pattern, $this->getPathFromUrl($requestUri), $matches))
              {
-                  $route['middleware'] = $this->getMiddleware($path);
-                  return array_merge($route, $params);
+                 return array_merge($route, [
+                     'name' => $this->getPathName($path),
+                     'matches' => $matches,
+                     'pattern' => $pattern,
+                     'middleware' => $this->getMiddleware($path)
+                 ]);
              }
          }
 
@@ -121,20 +127,12 @@ class Router
 
 
      /**
-      * @param $path
-      * @param $requestUri
-      * @return array|bool
+      * @param string $path
+      * @return string
      */
-     public function isMatch($path, $requestUri)
+     private function generatePattern(string $path)
      {
-         $pattern = '#^'. trim($path, '/') . '$#i';
-
-         if(preg_match($pattern, $this->getPathFromUrl($requestUri), $matches))
-         {
-             return compact('pattern', 'matches');
-         }
-
-         return false;
+         return '#^'. trim($path, '/') . '$#i';
      }
 
 
@@ -235,13 +233,29 @@ class Router
      }
 
 
-    /**
-     * @param string $url
-     * @return string
-     */
+     private function compile(array $matches)
+     {
+         //
+     }
+
+
+     /**
+      * @param string $url
+      * @return string
+    */
     private function getPathFromUrl(string $url)
     {
         return trim(parse_url($url, PHP_URL_PATH), '/');
+    }
+
+
+    /**
+     * @param string $path
+     * @return false|int|string
+    */
+    private function getPathName(string $path)
+    {
+        return array_search($path, $this->namedRoutes) ?: '';
     }
 
 
