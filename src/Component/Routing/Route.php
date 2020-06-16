@@ -48,12 +48,17 @@ class Route
      */
      public static function map($methods, $path, $target, $name = null)
      {
-         return self::router()->map(
-             explode('|', $methods), 
-             self::resolvedPath($path), 
-             self::resolvedTarget($target), 
-             $name
-         );
+         if($prefix = self::option('prefix'))
+         {
+             $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
+         }
+
+         if($namespace = self::option('namespace'))
+         {
+             $target = rtrim($namespace, '\\') .'\\' . $target;
+         }
+
+         return self::router()->map(explode('|', $methods), $path, $target, $name);
      }
 
 
@@ -138,52 +143,6 @@ class Route
     public static function namespace($namespace, Closure $callback)
     {
         self::group(compact('namespace'), $callback);
-    }
-
-
-
-    /**
-     * @return array
-    */
-    public static function collections()
-    {
-        return static::router()->routeCollection();
-    }
-
-
-    /**
-     * @param string $path
-     * @return string
-    */
-    private static function resolvedPath(string $path)
-    {
-        if($prefix = self::option('prefix'))
-        {
-            $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
-        }
-
-        return $path;
-    }
-
-
-    /**
-     * @param string|\Closure $target
-     * @return mixed
-    */
-    private static function resolvedTarget($target)
-    {
-        if(is_string($target) && strpos($target, '@') !== false)
-        {
-            if($namespace = self::option('namespace'))
-            {
-                $target = $namespace .'\\' . $target;
-            }
-
-            list($controller, $action) = explode('@', $target);
-            $target = compact('controller', 'action');
-        }
-
-        return $target;
     }
 
 
