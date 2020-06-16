@@ -1,0 +1,22 @@
+{
+    "name": "jeandev/janframework",
+    "description": "Advanced framework for building web project",
+    "authors": [
+      {
+        "name": "Yao Jean-Claude",
+        "email": "jeandev84@yahoo.com"
+      }
+    ],
+    "autoload": {
+      "psr-4": {
+        "Jan\\": "src/",
+        "App\\": "app/"
+      }
+    },
+    "require": {
+      "symfony/var-dumper": "^5.0",
+      "ext-pdo": "*",
+      "ext-json": "*",
+      "ext-curl": "*"
+    }
+}
