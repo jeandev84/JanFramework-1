@@ -56,8 +56,19 @@ Route::get('/foo', function () {
 });
 
 
+Route::get('/bar/{id}', function () {
+    return 'Foo';
+})->name('bar')->where('id', '[0-9]+');
+
+/*
+Route::get('/bar/{id}', function () {
+    return 'Foo';
+})->where('id', '[0-9]+');
+*/
+
+
 $route = Route::router()->match($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
 dump($route);
 
-dd(Route::router()->routeCollection());
+dd(Route::router()->routes());

@@ -48,19 +48,12 @@ class Route
      */
      public static function map($methods, $path, $target, $name = null)
      {
-         $methods = explode('|', $methods);
-
-         if($prefix = self::option('prefix'))
-         {
-             $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
-         }
-
-         if($namespace = self::option('namespace'))
-         {
-             $target = rtrim($namespace, '\\') .'\\' . $target;
-         }
-
-         return self::router()->map($methods, $path, $target, $name);
+         return self::router()->map(
+             explode('|', $methods),
+             self::resolvePath($path),
+             self::resolveTarget($target),
+             $name
+         );
      }
 
 
@@ -148,9 +141,47 @@ class Route
     }
 
 
+
     /**
-     * Get option by given key
-     *
+     * @return array
+    */
+    public static function collections()
+    {
+        return static::router()->routeCollection();
+    }
+
+
+    /**
+     * @param string $path
+     * @return string
+    */
+    private static function resolvePath(string $path)
+    {
+        if($prefix = self::option('prefix'))
+        {
+            $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
+        }
+
+        return $path;
+    }
+
+
+    /**
+     * @param string|\Closure $target
+     * @return mixed
+    */
+    private static function resolveTarget($target)
+    {
+        if($namespace = self::option('namespace'))
+        {
+            $target = rtrim($namespace, '\\') .'\\' . $target;
+        }
+
+        return $target;
+    }
+
+
+    /**
      * @param string $key
      * @return mixed
     */
