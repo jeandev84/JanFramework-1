@@ -68,22 +68,9 @@ class Router
 
 
       /**
-       * Set format param
-       *
-       * @param array $formatParams
-       * @return Router
-      */
-      public function setFormatParam(array $formatParams)
-      {
-          $this->formatParams = array_merge($this->formatParams, $formatParams);
-          return $this;
-      }
-
-
-      /**
        * @return array
       */
-      public function getFormatParams()
+      private function getFormatParams()
       {
            $formats = [];
            foreach ($this->formatParams as $format)
@@ -105,15 +92,35 @@ class Router
       }
 
 
-     /**
-      * Get current route
-      *
-      * @return array
-     */
-     public function route()
-     {
+      /**
+       * @return array
+      */
+      public function namedRoutes()
+      {
+          return $this->namedRoutes;
+      }
+
+
+      /**
+       * Get all patterns
+       *
+       * @return array|string[]
+      */
+      public function patterns()
+      {
+          return $this->patterns;
+      }
+
+
+      /**
+       * Get current route
+       *
+       * @return array
+      */
+      public function route()
+      {
          return $this->route;
-     }
+      }
 
 
      /**
@@ -165,8 +172,8 @@ class Router
              if(preg_match($pattern, $this->getUrlPath($requestUri), $matches))
              {
                  return array_merge($route, [
-                     'matches' => $this->filteredMatchParams($matches),
                      'pattern' => $pattern,
+                     'matches' => $this->filteredMatchParams($matches),
                      'name' => $this->getPathName($path),
                      'middleware' => $this->getMiddleware($path)
                  ]);
@@ -188,14 +195,16 @@ class Router
         }, ARRAY_FILTER_USE_KEY);
     }
 
-     /**
+
+
+    /**
       * @param string $path
       * @return string
-     */
-     private function generatePattern(string $path)
-     {
+    */
+    private function generatePattern(string $path)
+    {
          return '#^'. $this->compile(trim($path, '/')) . '$#i';
-     }
+    }
 
 
      /**
@@ -204,26 +213,18 @@ class Router
      */
      private function compile(string $path)
      {
-         return preg_replace_callback($this->getFormatParams(), [$this, 'convertParams'], $path);
+         return preg_replace_callback($this->getFormatParams(), [$this, 'mapPatternParams'], $path);
      }
 
 
-    /**
-     * @param $key
-     * @return string|string[]
-    */
-    private function resolvePattern($key)
-    {
-        return str_replace( '(', '(?:', $this->patterns[$key]);
-    }
 
-
-    /**
-     * @param array $matches
-     * @return string
+     /**
+      * @param array $matches
+      * @return string
      */
-     private function convertParams(array $matches)
+     private function mapPatternParams(array $matches)
      {
+         //TODO More advanced (?(?P<id>([0-9]+))
          if($this->hasPattern($matches[1]))
          {
              return '(?P<'. $matches[1] .'>'. $this->resolvePattern($matches[1]) . ')';
@@ -243,6 +244,15 @@ class Router
         return isset($this->patterns[$key]);
      }
 
+
+     /**
+      * @param $key
+      * @return string|string[]
+     */
+     private function resolvePattern($key)
+     {
+        return str_replace( '(', '(?:', $this->patterns[$key]);
+     }
 
      /**
       * @param array $middleware
@@ -280,65 +290,56 @@ class Router
 
 
     /**
-     * Set regular expression requirement on the route
-     * @param $name
-     * @param null $expression
+     * Generate route path
      *
-     * @return Router
-     * @throws RouterException
-    */
-    public function where($name, $expression = null)
-    {
-        foreach ($this->parseWhere($name, $expression) as $name => $expression)
-        {
-            if(isset($this->patterns[$name]))
-            {
-                throw new RouterException(sprintf(
-                        'This name (%s) already setted for expression (%s)',
-                        $name, $this->patterns[$name]
-                    )
-                );
-            }
-
-            $this->patterns[$name] = $expression;
-        }
-
-        return $this;
-    }
-
-
-
-    /**
      * @param $name
      * @param array $params
      * @return mixed
      */
-     public function generate($name, array $params = [])
-     {
+    public function generate($name, array $params = [])
+    {
         $path = $this->namedRoutes[$name] ?? false;
 
         if($params)
         {
             foreach($params as $k => $v)
             {
-                /* $path = preg_replace(["#{".$k."}#", "#:". $k ."#"], $v, $path); */
+                $formats = ["#{". $k ."}#", "#:". $k ."#"];
+                $path = preg_replace($formats, $v, $path);
             }
         }
 
-        return $path;
-     }
+        return '/'. trim($path, '/');
+    }
+
+    /**
+     * Set regular expression requirement on the route
+     * @param $name
+     * @param null $expression
+     *
+     * @return Router
+    */
+    public function where($name, $expression = null)
+    {
+        foreach ($this->parseWhere($name, $expression) as $name => $expression)
+        {
+             $this->patterns[$name] = $expression;
+        }
+
+        return $this;
+    }
 
 
-     /**
-      * Determine parses
-      * @param $name
-      * @param $expression
-      * @return array
+    /**
+     * Determine parses
+     * @param $name
+     * @param $expression
+     * @return array
      */
-     private function parseWhere($name, $expression)
-     {
+    private function parseWhere($name, $expression)
+    {
         return \is_array($name) ? $name : [$name => $expression];
-     }
+    }
 
 
      /**
@@ -377,7 +378,7 @@ class Router
                  throw new RouterException('This name (%s) already taken!');
              }
 
-             $this->namedRoutes[$name] = '/'. trim($path, '/');
+             $this->namedRoutes[$name] = $path;
          }
      }
 

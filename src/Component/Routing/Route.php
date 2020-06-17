@@ -149,6 +149,32 @@ class Route
 
 
     /**
+     * Add new package or resources of routes
+     * Using for system CRUD or api
+     *
+     *
+     * @param string $path
+     * @param string $controller
+     * @return void
+     * Example (path => 'api/', 'controller' => 'PostController')
+     * @throws Exception\RouterException
+    */
+    public static function resource(string $path, string $controller)
+    {
+        $name = str_replace('/', '.', trim($path, '/'));
+
+        self::get($path.'/', $controller.'@index', $name .'.list');
+        self::get($path.'/new', $controller.'@new', $name. '.new');
+        self::post($path.'/store', $controller.'@store', $name.'.store');
+        self::get($path.'/{id}', $controller.'@show', $name.'.show');
+        self::map('GET|POST', $path.'/{id}/edit', $controller.'@edit', $name.'.edit');
+        self::delete($path.'/{id}/delete', $controller.'@delete', $name.'.delete');
+        self::get($path.'/{id}/restore', $controller.'@restore', $name.'.restore');
+
+    }
+
+    
+    /**
      * Get option by given key
      *
      * @param string $key
