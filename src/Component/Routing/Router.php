@@ -213,7 +213,7 @@ class Router
      */
      private function compile(string $path)
      {
-         return preg_replace_callback($this->getFormatParams(), [$this, 'mapPatternParams'], $path);
+         return preg_replace_callback($this->getFormatParams(), [$this, 'generateMatchPattern'], $path);
      }
 
 
@@ -222,7 +222,7 @@ class Router
       * @param array $matches
       * @return string
      */
-     private function mapPatternParams(array $matches)
+     private function generateMatchPattern(array $matches)
      {
          //TODO More advanced (?(?P<id>([0-9]+))
          if($this->hasPattern($matches[1]))
@@ -254,6 +254,7 @@ class Router
         return str_replace( '(', '(?:', $this->patterns[$key]);
      }
 
+
      /**
       * @param array $middleware
       * @return Router
@@ -273,7 +274,7 @@ class Router
      */
      public function getMiddleware(string $path)
      {
-        return $this->middleware[$path] ?? [];
+         return $this->middleware[$path] ?? [];
      }
 
 
@@ -304,8 +305,7 @@ class Router
         {
             foreach($params as $k => $v)
             {
-                $formats = ["#{". $k ."}#", "#:". $k ."#"];
-                $path = preg_replace($formats, $v, $path);
+                $path = preg_replace(["#{{$k}}#", "#:{$k}#"], $v, $path);
             }
         }
 
