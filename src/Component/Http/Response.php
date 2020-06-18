@@ -11,10 +11,19 @@ use Jan\Component\Http\Contract\ResponseInterface;
 class Response implements ResponseInterface
 {
 
+    use StatusCode;
+
+
     /**
      * @var string
     */
-    private $content;
+    private $protocolVersion;
+
+
+    /**
+     * @var string
+    */
+    private $body;
 
 
 
@@ -22,13 +31,6 @@ class Response implements ResponseInterface
      * @var int
     */
     private $status;
-
-
-
-    /**
-     * @var string
-    */
-    private $versionProtocol;
 
 
     /**
@@ -48,33 +50,73 @@ class Response implements ResponseInterface
     {
          $this->withBody($content);
          $this->withStatus($status);
-         $this->withHeaders($headers);
-    }
-
-
-
-    public function withProtocolVersion(string $protocolVersion)
-    {
-        $this->versionProtocol = $protocolVersion;
+         $this->withHeader($headers);
     }
 
 
     /**
-     * @param string $content
-     * @return Response
-     */
-    public function withBody(string $content)
+     * Set protocol version
+     *
+     * @param string $protocolVersion
+     * @return $this
+    */
+    public function withProtocolVersion(string $protocolVersion)
     {
-        $this->content = $content;
+        $this->protocolVersion = $protocolVersion;
 
         return $this;
     }
 
 
     /**
+     * @return string
+    */
+    public function getProtocolVersion()
+    {
+        return $this->protocolVersion;
+    }
+
+
+    /**
+     * Set body
+     *
+     * @param string $body
+     * @return Response
+    */
+    public function withBody(string $body)
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+    */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+
+    /**
+     * @param $body
+     * @return $this
+    */
+    public function withJson(string $body)
+    {
+        $this->withHeader('Content-Type', 'application/json');
+        return $this->withBody(json_encode($body));
+    }
+
+
+    /**
+     * Set status code
+     *
      * @param int $status
      * @return Response
-     */
+    */
     public function withStatus(int $status)
     {
         $this->status = $status;
@@ -84,23 +126,52 @@ class Response implements ResponseInterface
 
 
     /**
-     * @param array $headers
+     * @return int
+    */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+
+    /**
+     * @param $key
+     * @param null $value
      * @return Response
     */
-    public function withHeaders(array $headers)
+    public function withHeader($key, $value = null)
     {
-        $this->headers = $headers;
+        foreach ($this->parseHeaders($key, $value) as $key => $value)
+        {
+            $this->headers[$key] = $value;
+        }
 
         return $this;
     }
 
 
     /**
-     *
+     * @return array
     */
-    public function sendVersionProtocol()
+    public function getHeaders()
     {
+        return $this->headers;
+    }
 
+
+    /**
+     * Get message from server
+     *
+     * @return string
+    */
+    public function getMessage()
+    {
+         if(! isset($this->messages[$this->status]))
+         {
+             http_response_code($this->status);
+         }
+
+         $this->withHeader($this->protocolVersion .' '. $this->status .' ' . $this->messages[$this->status]);
     }
 
 
@@ -109,23 +180,45 @@ class Response implements ResponseInterface
     */
     public function sendHeaders()
     {
-        // TODO: Implement sendHeaders() method.
+        foreach ($this->headers as $key => $value)
+        {
+             header(is_null($value) ? $key : $key .': '. $value);
+        }
     }
 
 
     /**
      * @return mixed
-     */
+    */
     public function sendBody()
     {
-        // TODO: Implement sendBody() method.
+        echo $this->body;
     }
+
 
     /**
      * @return mixed
-     */
+    */
     public function send()
     {
-        // TODO: Implement send() method.
+        if(headers_sent())
+        {
+            return $this;
+        }
+
+        $this->sendMessage();
+        $this->sendHeaders();
+        $this->sendBody();
+    }
+
+
+    /**
+     * @param $key
+     * @param $value
+     * @return array
+    */
+    protected function parseHeaders($key, $value)
+    {
+        return \is_array($key) ? $key : [$key => $value];
     }
 }

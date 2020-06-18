@@ -57,8 +57,7 @@ class RouteDispatcher
 
          if(! $route)
          {
-             exit('404 Page not found');
-             // throw new \Exception('Route not found', 404);
+             throw new \Exception('Route not found', 404);
          }
 
          $this->route = $route;
@@ -100,12 +99,12 @@ class RouteDispatcher
 
 
      /**
-      * @param array $middlewares
+      * @param array $middleware
       * @return RouteDispatcher
      */
-     public function setMiddleware(array $middlewares)
+     public function setMiddleware(array $middleware)
      {
-         $this->middleware = array_merge($this->route['middleware'], $middlewares);
+         $this->middleware = array_merge($this->route['middleware'], $middleware);
 
          return $this;
      }
