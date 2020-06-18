@@ -185,6 +185,84 @@ class Router
 
 
     /**
+     * @param array $middleware
+     * @return Router
+     */
+    public function middleware(array $middleware = [])
+    {
+        $this->middleware[$this->route['path']] = $middleware;
+
+        return $this;
+    }
+
+
+
+    /**
+     * @param string $path
+     * @return array|mixed
+     */
+    public function getMiddleware(string $path)
+    {
+        return $this->middleware[$path] ?? [];
+    }
+
+
+    /**
+     * @param string $name
+     * @return $this
+     * @throws RouterException
+    */
+    public function name(string $name)
+    {
+        $this->setPathName($name, $this->route['path']);
+        return $this;
+    }
+
+
+    /**
+     * Generate route path
+     *
+     * @param $name
+     * @param array $params
+     * @return mixed
+     */
+    public function generate($name, array $params = [])
+    {
+        $path = $this->namedRoutes[$name] ?? false;
+
+        if($params)
+        {
+            foreach($params as $k => $v)
+            {
+                $path = preg_replace(["#{{$k}}#", "#:{$k}#"], $v, $path);
+            }
+        }
+
+        return '/'. trim($path, '/');
+    }
+
+
+
+    /**
+     * Set regular expression requirement on the route
+     * @param $name
+     * @param null $expression
+     *
+     * @return Router
+    */
+    public function where($name, $expression = null)
+    {
+        foreach ($this->parseWhere($name, $expression) as $name => $expression)
+        {
+            $this->patterns[$name] = $expression;
+        }
+
+        return $this;
+    }
+
+
+
+    /**
      * @param $matches
      * @return array
     */
@@ -224,7 +302,7 @@ class Router
      */
      private function generateMatchPattern(array $matches)
      {
-         //TODO More advanced (?(?P<id>([0-9]+))
+         //TODO More advanced ?(?P<id>[0-9]+)
          if($this->hasPattern($matches[1]))
          {
              return '(?P<'. $matches[1] .'>'. $this->resolvePattern($matches[1]) . ')';
@@ -255,101 +333,29 @@ class Router
      }
 
 
-     /**
-      * @param array $middleware
-      * @return Router
-     */
-     public function middleware(array $middleware = [])
-     {
-        $this->middleware[$this->route['path']] = $middleware;
-
-        return $this;
-     }
-
-
-
-     /**
-      * @param string $path
-      * @return array|mixed
-     */
-     public function getMiddleware(string $path)
-     {
-         return $this->middleware[$path] ?? [];
-     }
-
-
-     /**
-      * @param string $name
-      * @return $this
-      * @throws RouterException
-     */
-     public function name(string $name)
-     {
-        $this->setPathName($name, $this->route['path']);
-        return $this;
-     }
-
-
-    /**
-     * Generate route path
-     *
-     * @param $name
-     * @param array $params
-     * @return mixed
-     */
-    public function generate($name, array $params = [])
-    {
-        $path = $this->namedRoutes[$name] ?? false;
-
-        if($params)
-        {
-            foreach($params as $k => $v)
-            {
-                $path = preg_replace(["#{{$k}}#", "#:{$k}#"], $v, $path);
-            }
-        }
-
-        return '/'. trim($path, '/');
-    }
-
-    /**
-     * Set regular expression requirement on the route
-     * @param $name
-     * @param null $expression
-     *
-     * @return Router
-    */
-    public function where($name, $expression = null)
-    {
-        foreach ($this->parseWhere($name, $expression) as $name => $expression)
-        {
-             $this->patterns[$name] = $expression;
-        }
-
-        return $this;
-    }
-
 
     /**
      * Determine parses
+     *
      * @param $name
      * @param $expression
      * @return array
-     */
+    */
     private function parseWhere($name, $expression)
     {
         return \is_array($name) ? $name : [$name => $expression];
     }
 
 
-     /**
-      * @param string $url
-      * @return string
+    /**
+     * @param string $url
+     * @return string
     */
     private function getUrlPath(string $url)
     {
         return trim(parse_url($url, PHP_URL_PATH), '/');
     }
+
 
 
     /**
@@ -362,15 +368,16 @@ class Router
     }
 
 
+
     /**
       * Set path name
       *
       * @param $name
       * @param $path
       * @throws RouterException
-     */
-     private function setPathName($name, $path)
-     {
+    */
+    private function setPathName($name, $path)
+    {
          if($name)
          {
              if(isset($this->namedRoutes[$name]))
@@ -380,6 +387,6 @@ class Router
 
              $this->namedRoutes[$name] = $path;
          }
-     }
+    }
 
 }
