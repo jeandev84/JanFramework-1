@@ -5,6 +5,7 @@ require_once __DIR__.'/../routes/web.php';
 
 
 $dispatcher = new \Jan\Foundation\RouteDispatcher($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+$dispatcher->setControllerNamespace('App\\Controllers');
 $response = $dispatcher->callAction();
 
 

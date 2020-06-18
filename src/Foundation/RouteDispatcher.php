@@ -13,6 +13,22 @@ class RouteDispatcher
 {
 
      /**
+      * @var // ContainerInterface
+     */
+     private $container;
+
+
+     /**
+      * Target namespace
+      *
+      * @var string
+     */
+     private $namespace;
+
+
+     /**
+      * Route parameters
+      *
       * @var array
      */
      private $route;
@@ -35,6 +51,27 @@ class RouteDispatcher
          }
 
          $this->route = $route;
+     }
+
+
+     /**
+      * @param $container
+     */
+     public function setContainer($container)
+     {
+          $this->container = $container;
+     }
+
+
+     /**
+      * @param string $namespace
+      * @return RouteDispatcher
+     */
+     public function setControllerNamespace(string $namespace)
+     {
+          $this->namespace = $namespace;
+
+          return $this;
      }
 
 
