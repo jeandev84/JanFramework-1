@@ -25,6 +25,7 @@ echo $router->generate('post.show', $queryParams);
 echo '<br>';
 echo $router->generate('admin/articles', $queryParams);
 
+
 /*
 if(! $route['target'] instanceof Closure)
 {
@@ -47,3 +48,9 @@ dump($route);
 echo '<h2>Routes</h2>';
 dump(Route::router()->routes());
 */
+
+?>
+
+<div>
+    <a href="/blog/posts/index.php?page=1&sort=asc">Posts</a>
+</div>
