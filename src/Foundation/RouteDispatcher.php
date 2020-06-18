@@ -6,7 +6,7 @@ use Closure;
 use Jan\Component\Http\Contract\RequestInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
-
+use Jan\Component\Templating\Asset;
 
 
 /**
@@ -46,6 +46,7 @@ class RouteDispatcher
      private $middleware = [];
 
 
+
      /**
       * RouteDispatcher constructor.
       *
@@ -70,8 +71,19 @@ class RouteDispatcher
      */
      public function getRoute()
      {
-        return $this->route;
+         return $this->route;
      }
+
+
+     /**
+      * @param string $baseUrl
+     */
+     public function setBaseUrl(string $baseUrl)
+     {
+         Route::router()->setBaseUrl($baseUrl);
+         Asset::instance()->setBaseUrl($baseUrl);
+     }
+
 
 
      /**
