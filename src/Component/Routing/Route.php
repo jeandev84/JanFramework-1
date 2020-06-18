@@ -25,6 +25,8 @@ class Route
 
 
      /**
+      * Get instance of router
+      *
       * @return Router
      */
      public static function router()

@@ -8,6 +8,7 @@ use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
 
 
+
 /**
  * Class RouteDispatcher
  * @package Jan\Foundation
@@ -53,7 +54,7 @@ class RouteDispatcher
      */
      public function __construct(RequestInterface $request)
      {
-         $route = Route::router()->match($request->getMethod(), $request->getPath());
+         $route = $this->match($request);
 
          if(! $route)
          {
@@ -131,5 +132,21 @@ class RouteDispatcher
 
          dump($this->route);
          return true;
+     }
+
+
+     /**
+      * Return route params if current request matched
+      *
+      * @param RequestInterface $request
+      * @return array|bool
+      * @throws MethodNotAllowedException
+     */
+     public function match(RequestInterface $request)
+     {
+         return Route::router()->match(
+             $request->getMethod(),
+             $request->getPath()
+         );
      }
 }

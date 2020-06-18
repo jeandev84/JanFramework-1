@@ -9,6 +9,8 @@ use Jan\Component\Routing\Exception\RouterException;
 /**
  * Class Router
  * @package Jan\Component\Routing
+ *
+ * http://localhost:8080/post/5/article-4?page=3&sort=asc
 */
 class Router
 {
@@ -55,9 +57,46 @@ class Router
       private $middleware = [];
 
 
+      /**
+       * @var string
+      */
+      private $baseUrl;
+
 
       /**
-       * Add routes
+       * Router constructor.
+       * @param string $baseUrl
+      */
+      public function __construct(string $baseUrl = '')
+      {
+           $this->setBaseUrl($baseUrl);
+      }
+
+
+
+      /**
+       * @param string $baseUrl
+       * @return $this
+      */
+      public function setBaseUrl(string $baseUrl)
+      {
+          $this->baseUrl = $baseUrl;
+
+          return $this;
+      }
+
+
+      /**
+       * @return string
+      */
+      public function getBaseUrl()
+      {
+          return $this->baseUrl;
+      }
+
+
+      /**
+       * Set routes
        *
        * @param array $routes
       */
@@ -106,7 +145,7 @@ class Router
       */
       public function route()
       {
-         return $this->route;
+          return $this->route;
       }
 
 
@@ -215,7 +254,13 @@ class Router
      */
     public function generate($name, array $params = [])
     {
-        $path = $this->namedRoutes[$name] ?? false;
+        if(! isset($this->namedRoutes[$name]))
+        {
+             $queryString = $params ? http_build_query($params) : '';
+             return $this->generateUrl($name, $queryString);
+        }
+
+        $path = $this->namedRoutes[$name];
 
         if($params)
         {
@@ -225,9 +270,20 @@ class Router
             }
         }
 
-        return '/'. trim($path, '/');
+        return  $this->generateUrl($path);
     }
 
+
+    /**
+     * @param string $path
+     * @param string $queryString
+     * @return string
+   */
+    public function generateUrl(string $path, string $queryString = '')
+    {
+        $qs = $queryString ? '?'. $queryString : '';
+        return rtrim($this->baseUrl, '/') . '/' . trim($path, '/') . $qs;
+    }
 
 
     /**
@@ -245,21 +301,6 @@ class Router
         }
 
         return $this;
-    }
-
-
-
-    /**
-     * @return array
-    */
-    private function getFormatParams()
-    {
-        $formats = [];
-        foreach ($this->formatParams as $format)
-        {
-            $formats[] = '#'. $format . '#';
-        }
-        return $formats;
     }
 
 
@@ -287,7 +328,23 @@ class Router
     }
 
 
-     /**
+
+    /**
+     * @return array
+    */
+    private function getFormatParams()
+    {
+        $formats = [];
+        foreach ($this->formatParams as $format)
+        {
+            $formats[] = '#'. $format . '#';
+        }
+        return $formats;
+    }
+
+
+
+    /**
       * @param string $path
       * @return string
      */

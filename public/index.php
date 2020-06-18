@@ -18,6 +18,13 @@ try {
 }
 
 
+$queryParams = ['id' => 1, 'slug' => 'post-1'];
+$router = \Jan\Component\Routing\Route::router();
+$router->setBaseUrl('http://localhost:8080/');
+echo $router->generate('post.show', $queryParams);
+echo '<br>';
+echo $router->generate('admin/articles', $queryParams);
+
 /*
 if(! $route['target'] instanceof Closure)
 {

@@ -18,6 +18,9 @@ class ServerBag extends Bag
      }
 
 
+     /**
+      * @return mixed|null
+     */
      public function getProtocolVersion()
      {
          return $this->get('SERVER_PROTOCOL');
