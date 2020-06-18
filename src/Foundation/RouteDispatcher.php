@@ -3,6 +3,8 @@ namespace Jan\Foundation;
 
 
 use Closure;
+use Jan\Component\Http\Contract\RequestInterface;
+use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
 
 
@@ -43,18 +45,15 @@ class RouteDispatcher
      private $middleware = [];
 
 
-
      /**
       * RouteDispatcher constructor.
       *
-      * TODO Implement, parse constructor argument like : __construct(RequestInterface $request)
-      * @param string $requestMethod
-      * @param string $requestUri
-      * @throws \Exception
+      * @param RequestInterface $request
+      * @throws MethodNotAllowedException
      */
-     public function __construct(string $requestMethod, string $requestUri)
+     public function __construct(RequestInterface $request)
      {
-         $route = Route::router()->match($requestMethod, $requestUri);
+         $route = Route::router()->match($request->getMethod(), $request->getPath());
 
          if(! $route)
          {
