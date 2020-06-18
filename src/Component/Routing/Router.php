@@ -67,19 +67,6 @@ class Router
       }
 
 
-      /**
-       * @return array
-      */
-      private function getFormatParams()
-      {
-           $formats = [];
-           foreach ($this->formatParams as $format)
-           {
-               $formats[] = '#'. $format . '#';
-           }
-           return $formats;
-      }
-
 
       /**
        * Get all routes
@@ -263,6 +250,21 @@ class Router
 
 
     /**
+     * @return array
+    */
+    private function getFormatParams()
+    {
+        $formats = [];
+        foreach ($this->formatParams as $format)
+        {
+            $formats[] = '#'. $format . '#';
+        }
+        return $formats;
+    }
+
+
+
+    /**
      * @param $matches
      * @return array
     */
@@ -321,6 +323,7 @@ class Router
      {
         return isset($this->patterns[$key]);
      }
+
 
 
      /**
