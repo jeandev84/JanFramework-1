@@ -9,6 +9,7 @@ try {
 
     $request = \Jan\Component\Http\Request::fromGlobals();
     $dispatcher = new \Jan\Foundation\RouteDispatcher($request);
+    $dispatcher->setBaseUrl('http://localhost:8080');
     $dispatcher->setControllerNamespace('App\\Controllers');
     $response = $dispatcher->callAction();
 
@@ -20,7 +21,7 @@ try {
 
 $queryParams = ['id' => 1, 'slug' => 'post-1'];
 $router = \Jan\Component\Routing\Route::router();
-$router->setBaseUrl('http://localhost:8080/');
+//$router->setBaseUrl('http://localhost:8080/');
 echo $router->generate('post.show', $queryParams);
 echo '<br>';
 echo $router->generate('admin/articles', $queryParams);
@@ -54,3 +55,4 @@ dump(Route::router()->routes());
 <div>
     <a href="/blog/posts/index.php?page=1&sort=asc">Posts</a>
 </div>
+
