@@ -2,6 +2,7 @@
 namespace Jan\Foundation;
 
 
+use Closure;
 use Jan\Component\Routing\Route;
 
 
@@ -31,14 +32,25 @@ class RouteDispatcher
       *
       * @var array
      */
-     private $route;
+     private $route = [];
 
 
-    /**
-     * RouteDispatcher constructor.
-     * @param string $requestMethod
-     * @param string $requestUri
-     * @throws \Exception
+     /**
+      * Middleware stack
+      *
+      * @var array
+     */
+     private $middleware = [];
+
+
+
+     /**
+      * RouteDispatcher constructor.
+      *
+      * TODO Implement, parse constructor argument like : __construct(RequestInterface $request)
+      * @param string $requestMethod
+      * @param string $requestUri
+      * @throws \Exception
      */
      public function __construct(string $requestMethod, string $requestUri)
      {
@@ -55,12 +67,25 @@ class RouteDispatcher
 
 
      /**
+      * @return array|bool
+     */
+     public function getRoute()
+     {
+        return $this->route;
+     }
+
+
+     /**
       * @param $container
+      * @return RouteDispatcher
      */
      public function setContainer($container)
      {
           $this->container = $container;
+
+          return $this;
      }
+
 
 
      /**
@@ -69,18 +94,21 @@ class RouteDispatcher
      */
      public function setControllerNamespace(string $namespace)
      {
-          $this->namespace = $namespace;
+          $this->namespace = rtrim($namespace, '\\') .'\\';
 
           return $this;
      }
 
 
      /**
-      * @return array|bool
+      * @param array $middlewares
+      * @return RouteDispatcher
      */
-     public function getRoute()
+     public function setMiddleware(array $middlewares)
      {
-         return $this->route;
+         $this->middleware = array_merge($this->route['middleware'], $middlewares);
+
+         return $this;
      }
 
 
@@ -89,6 +117,20 @@ class RouteDispatcher
      */
      public function callAction()
      {
+         $callback = $this->route['target'];
+
+         if(is_string($callback))
+         {
+             $callback = str_replace('@', '::', $this->namespace . $callback);
+         }
+
+         if(! is_callable($callback))
+         {
+             return $callback;
+         }
+
+         call_user_func_array($callback, $this->route['matches']);
+
          dump($this->route);
          return true;
      }
