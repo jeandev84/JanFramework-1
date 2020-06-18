@@ -5,6 +5,7 @@ namespace Jan\Component\Http;
 use Jan\Component\Http\Bag\ServerBag;
 use Jan\Component\Http\Contract\RequestInterface;
 
+
 /**
  * Class Request
  * @package Jan\Component\Http
@@ -44,15 +45,26 @@ class Request implements RequestInterface
     private $queryParams = [];
 
 
+    /**
+     * Files
+     *
+     * @var array
+    */
+    private $files = [];
+
 
     /**
      * Request constructor.
+     * @param array $queryParams
+     * @param array $servers
+     * @param array $files
     */
-    public function __construct($queryParams = [], $servers = [])
+    public function __construct($queryParams = [], $servers = [], $files = [])
     {
         $this->queryParams = $queryParams;
+        $this->files = $files;
         $this->server = new ServerBag($servers);
-        $this->uri = new Uri($this->server->get('REQUEST_URI'));
+        $this->uri = new Uri($this->getUrl());
     }
 
 
@@ -61,7 +73,7 @@ class Request implements RequestInterface
     */
     public static function fromGlobals()
     {
-        $request = new static($_GET, $_SERVER);
+        $request = new static($_GET, $_SERVER, $_FILES);
 
         return $request;
     }
@@ -69,32 +81,75 @@ class Request implements RequestInterface
 
 
     /**
+     * Get base URL
      *
-     * scheme(http/https) + host(myblog.ru/localhost:8000) + uri(/post/1/edit?page=1&sort=asc)
      * @return string
     */
     public function getBaseUrl()
     {
-        // scheme(http/https) + host(mysite/localhost:8000) + uri(/post/1/edit?page=1&sort=asc)
+        return $this->getScheme() .'://'. $this->getHost();
+    }
 
-        $protocol = 'http';
-        if($scheme = $this->server->has('SCHEME'))
+
+
+    /**
+     * Get URL
+     *
+     * @return string
+    */
+    public function getUrl()
+    {
+        $uri = $this->getServer()->get('REQUEST_URI');
+        return $this->getBaseUrl() . $uri;
+    }
+
+
+    /**
+     * Get uploaded files
+    */
+    public function getUploadedFiles()
+    {
+        $uploadedFiles = [];
+        foreach ($this->files as $file)
         {
-            // $protocol = $scheme;
+            $uploadedFiles[] = new UploadedFile($file);
         }
+        return $uploadedFiles;
+    }
 
-        // getQueryString
-        return $this->getScheme() .'://'. $this->getHost() . $this->getPath() . $this->getQueryParams();
+
+    /**
+     * @param string $key
+     * @return Upload
+    */
+    public function upload(string $key)
+    {
+        $upload = new Upload($this);
+        $upload->setUploadKey($key);
+        return $upload->move();
+    }
+
+
+    /**
+     * @return bool
+    */
+    public function isSecure()
+    {
+        $port = $this->getServer()->get('SERVER_PORT');
+
+
+        return false;
     }
 
 
     /**
      * Get Scheme
      *
+     * @return string
     */
     public function getScheme()
     {
-        $isSecure = false;
+        $isSecure = $this->isSecure();
         return $isSecure ? 'https' : 'http';
     }
 
@@ -128,6 +183,14 @@ class Request implements RequestInterface
         return $this->queryParams;
     }
 
+
+    /**
+     * @return array
+    */
+    public function getQueryString()
+    {
+        return $this->getServer()->get('QUERY_STRING');
+    }
 
 
     /**

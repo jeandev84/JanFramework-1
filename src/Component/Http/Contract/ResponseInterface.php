@@ -35,12 +35,57 @@ interface ResponseInterface
       * @param array $headers
       * @return mixed
      */
-     public function withHeaders(array $headers);
+     public function withHeader(array $headers);
+
 
 
 
      /**
-      * Send headers
+      * Get protocol version
+      *
+      * @return mixed
+     */
+     public function getProtocolVersion();
+
+
+
+     /**
+      * Get Headers
+      *
+      * @return array
+     */
+     public function getHeaders();
+
+
+
+     /**
+      * Get status
+      *
+      * @return int
+     */
+     public function getStatus();
+
+
+
+     /**
+      * Get body
+      *
+      * @return string
+     */
+     public function getBody();
+
+
+
+     /**
+      * Get message from server
+      *
+      * @return mixed
+     */
+     public function getMessage();
+
+
+     /**
+      * Send headers to server
       *
       * @return mixed
      */
@@ -48,19 +93,19 @@ interface ResponseInterface
 
 
 
-    /**
-     * Send body
-     *
-     * @return mixed
-    */
-    public function sendBody();
+     /**
+      * Send body
+      *
+      * @return mixed
+     */
+     public function sendBody();
 
 
 
-    /**
+     /**
       * Send all response
       *
       * @return mixed
-    */
-    public function send();
+     */
+     public function send();
 }

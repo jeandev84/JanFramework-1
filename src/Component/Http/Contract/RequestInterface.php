@@ -16,14 +16,20 @@ interface RequestInterface
 
 
     /**
-     * @return string
-     */
+     * @return mixed
+    */
     public function getUri();
 
 
 
     /**
-     * @return string
+     * @return mixed
     */
     public function getMethod();
+
+
+    /**
+     * @return mixed
+    */
+    public function getUploadedFiles();
 }
