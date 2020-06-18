@@ -4,7 +4,9 @@ require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/../routes/web.php';
 
 
-$dispatcher = new \Jan\Foundation\RouteDispatcher($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+$request = \Jan\Component\Http\Request::fromGlobals();
+
+$dispatcher = new \Jan\Foundation\RouteDispatcher($request);
 $dispatcher->setControllerNamespace('App\\Controllers');
 $response = $dispatcher->callAction();
 
