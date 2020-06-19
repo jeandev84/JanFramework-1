@@ -19,7 +19,9 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
+dd($app->get(Jan\Contracts\Http\Kernel::class));
 
+dd($app);
 
 /*
 |-------------------------------------------------------
@@ -31,6 +33,7 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 
 $kernel = new \Jan\Kernel(__DIR__ . '/../');
 $kernel->handle();
+
 
 /*
 |-------------------------------------------------------

@@ -9,7 +9,7 @@ use Jan\Component\DI\Contracts\ServiceProviderInterface;
  * Class AbstractServiceProvider
  * @package Jan\Component\DI\ServiceProvider
 */
-abstract class AbstractServiceProvider implements ServiceProviderInterface
+abstract class ServiceProvider implements ServiceProviderInterface
 {
 
     use ServiceProviderTrait;

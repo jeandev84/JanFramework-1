@@ -46,9 +46,9 @@ final class Application extends Container
             $this->setBasePath($basePath);
         }
 
-        // $this->registerBaseBindings();
-        // $this->registerBaseServiceProviders();
-        // $this->registerCoreContainerAliases();
+        $this->registerBaseBindings();
+        $this->registerBaseServiceProviders();
+        $this->registerCoreContainerAliases();
     }
 
 
@@ -89,17 +89,6 @@ final class Application extends Container
     {
         $this->bind('base.path', $this->basePath);
     }
-
-
-
-    /**
-     * @return void
-    */
-    protected function loadHelpers()
-    {
-        //
-    }
-
 
 
     /**

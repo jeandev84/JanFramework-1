@@ -1,10 +1,11 @@
 <?php
-namespace App\Controllers;
+namespace App\Http\Controllers;
+
 
 
 /**
  * Class PostController
- * @package App\Controllers
+ * @package App\Http\Controllers
 */
 class PostController
 {

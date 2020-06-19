@@ -1,10 +1,10 @@
 <?php
-namespace App\Controllers;
+namespace App\Http\Controllers;
 
 
 /**
  * Class HomeController
- * @package App\Controllers
+ * @package App\Http\Controllers
 */
 class HomeController
 {

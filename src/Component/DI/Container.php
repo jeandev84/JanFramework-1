@@ -7,7 +7,7 @@ use Jan\Component\DI\Contracts\BootableServiceProvider;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\DI\Exceptions\InstanceException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
-use Jan\Component\DI\ServiceProvider\AbstractServiceProvider;
+use Jan\Component\DI\ServiceProvider\ServiceProvider;
 use ReflectionClass;
 use ReflectionException;
 
@@ -129,7 +129,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
     /**
      * Add Service Provider
-     * @param string|AbstractServiceProvider $provider
+     * @param string|ServiceProvider $provider
      * @return Container
      * @throws ReflectionException
      *
@@ -145,7 +145,7 @@ class Container implements \ArrayAccess, ContainerInterface
             $provider = $this->factory($provider);
         }
 
-        if($provider instanceof AbstractServiceProvider)
+        if($provider instanceof ServiceProvider)
         {
             if($provides = $provider->getProvides())
             {
@@ -176,9 +176,9 @@ class Container implements \ArrayAccess, ContainerInterface
 
 
     /**
-     * @param AbstractServiceProvider $provider
+     * @param ServiceProvider $provider
     */
-    public function runServiceProvider(AbstractServiceProvider $provider)
+    public function runServiceProvider(ServiceProvider $provider)
     {
           $provider->setContainer($this);
 

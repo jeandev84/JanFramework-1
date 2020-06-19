@@ -39,7 +39,7 @@ class Kernel
 
             $dispatcher = new \Jan\Foundation\RouteDispatcher($request);
             $dispatcher->setBaseUrl('http://localhost:8080');
-            $dispatcher->setControllerNamespace('App\\Controllers');
+            $dispatcher->setControllerNamespace('App\\Http\\Controllers');
             $response = $dispatcher->callAction();
 
         } catch (\Exception $e) {
