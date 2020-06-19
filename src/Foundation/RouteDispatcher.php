@@ -3,7 +3,7 @@ namespace Jan\Foundation;
 
 
 use Closure;
-use Jan\Component\Http\Contract\RequestInterface;
+use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
 use Jan\Component\Templating\Asset;

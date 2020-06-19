@@ -3,10 +3,10 @@ namespace Jan\Component\Http\Bag;
 
 
 /**
- * Class Bag
+ * Class ParameterBag
  * @package Jan\Component\Http\Bag
 */
-abstract class Bag
+class ParameterBag
 {
 
     /**
