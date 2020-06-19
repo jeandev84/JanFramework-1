@@ -6,7 +6,7 @@ namespace Jan\Component\Http\Bag;
  * Class ServerBag
  * @package Jan\Component\Http\Bag
 */
-class ServerBag extends Bag
+class ServerBag extends ParameterBag
 {
      /**
       * ServerBag constructor.

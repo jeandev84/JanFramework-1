@@ -2,8 +2,9 @@
 namespace Jan\Component\Http;
 
 
+use Jan\Component\Http\Bag\ParameterBag;
 use Jan\Component\Http\Bag\ServerBag;
-use Jan\Component\Http\Contract\RequestInterface;
+use Jan\Component\Http\Contracts\RequestInterface;
 
 
 /**
@@ -22,7 +23,7 @@ class Request implements RequestInterface
 
 
     /**
-     * Get Uri object
+     * Get Uri
      *
      * @var Uri
     */
@@ -30,19 +31,19 @@ class Request implements RequestInterface
 
 
     /**
-     * Get server Bag
+     * Get server
      *
      * @var ServerBag
     */
-    private $server;
+    public $server;
 
 
     /**
      * Get query params
      *
-     * @var array
+     * @var ParameterBag
     */
-    private $queryParams = [];
+    public $queryParams;
 
 
     /**
@@ -61,7 +62,7 @@ class Request implements RequestInterface
     */
     public function __construct($queryParams = [], $servers = [], $files = [])
     {
-        $this->queryParams = $queryParams;
+        $this->queryParams = new ParameterBag($queryParams);
         $this->files = $files;
         $this->server = new ServerBag($servers);
         $this->uri = new Uri($this->getUrl());
@@ -99,34 +100,39 @@ class Request implements RequestInterface
     */
     public function getUrl()
     {
-        $uri = $this->getServer()->get('REQUEST_URI');
-        return $this->getBaseUrl() . $uri;
+        return $this->getBaseUrl() . $this->getServer()->get('REQUEST_URI');
     }
 
 
     /**
      * Get uploaded files
-    */
-    public function getUploadedFiles()
+     *
+     * @param string|null $uploadKey
+     * @return array
+     */
+    public function getUploadedFiles(string $uploadKey = null)
     {
         $uploadedFiles = [];
         foreach ($this->files as $file)
         {
-            $uploadedFiles[] = new UploadedFile($file);
+            $uploadedFile = new UploadedFile($file);
+            $uploadedFile->setUploadKey($uploadKey);
+            $uploadedFiles[] = $uploadedFile;
         }
         return $uploadedFiles;
     }
 
 
     /**
-     * @param string $key
-     * @return Upload
+     * @param string|null $key
+     * @return
     */
-    public function upload(string $key)
+    public function upload(string $key = null)
     {
-        $upload = new Upload($this);
-        $upload->setUploadKey($key);
-        return $upload->move();
+        foreach ($this->getUploadedFiles($key) as $uploadedFile)
+        {
+            $uploadedFile->move();
+        }
     }
 
 
