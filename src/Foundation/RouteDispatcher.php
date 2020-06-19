@@ -3,6 +3,7 @@ namespace Jan\Foundation;
 
 
 use Closure;
+use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
@@ -17,13 +18,13 @@ class RouteDispatcher
 {
 
      /**
-      * @var // ContainerInterface
+      * @var ContainerInterface
      */
      private $container;
 
 
      /**
-      * Target namespace
+      * target namespace
       *
       * @var string
      */
@@ -87,10 +88,10 @@ class RouteDispatcher
 
 
      /**
-      * @param $container
+      * @param ContainerInterface $container
       * @return RouteDispatcher
      */
-     public function setContainer($container)
+     public function setContainer(ContainerInterface $container)
      {
           $this->container = $container;
 

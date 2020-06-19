@@ -2,6 +2,7 @@
 namespace Jan\Component\Routing;
 
 
+use Jan\Component\Routing\Contracts\RouterInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
 
@@ -12,7 +13,7 @@ use Jan\Component\Routing\Exception\RouterException;
  *
  * http://localhost:8080/post/5/article-4?page=3&sort=asc
 */
-class Router
+class Router implements RouterInterface
 {
 
       /**
@@ -112,7 +113,7 @@ class Router
        *
        * @return array
       */
-      public function routes()
+      public function getRoutes()
       {
          return $this->routes;
       }
@@ -143,7 +144,7 @@ class Router
        *
        * @return array
       */
-      public function route()
+      public function getRoute()
       {
           return $this->route;
       }
@@ -176,13 +177,16 @@ class Router
      }
 
 
-     /**
-      * @param $requestMethod
-      * @param $requestUri
-      * @return array|bool
-      * @throws MethodNotAllowedException
+    /**
+     * Determine if current route path match URI
+     *
+     * @param string|null $requestMethod
+     * @param string|null $requestUri
+     * @return array|bool
+     * @throws MethodNotAllowedException
+     * @throws RouterException
      */
-     public function match(string $requestMethod, string $requestUri)
+     public function match(string $requestMethod = null, string $requestUri = null)
      {
          foreach ($this->routes as $route)
          {
@@ -224,16 +228,6 @@ class Router
 
 
     /**
-     * @param string $path
-     * @return array|mixed
-     */
-    public function getMiddleware(string $path)
-    {
-        return $this->middleware[$path] ?? [];
-    }
-
-
-    /**
      * @param string $name
      * @return $this
      * @throws RouterException
@@ -248,11 +242,11 @@ class Router
     /**
      * Generate route path
      *
-     * @param $name
+     * @param string $name
      * @param array $params
      * @return mixed
      */
-    public function generate($name, array $params = [])
+    public function generate(string $name, array $params = [])
     {
         if(! isset($this->namedRoutes[$name]))
         {
@@ -306,6 +300,16 @@ class Router
 
 
     /**
+     * @param string $path
+     * @return array|mixed
+     */
+    private function getMiddleware(string $path)
+    {
+        return $this->middleware[$path] ?? [];
+    }
+
+
+    /**
      * @param $matches
      * @return array
     */
@@ -350,7 +354,7 @@ class Router
      */
      private function compile(string $path)
      {
-         return preg_replace_callback($this->getFormatParams(), [$this, 'generateMatchPattern'], $path);
+         return preg_replace_callback($this->getFormatParams(), [$this, 'generateRegex'], $path);
      }
 
 
@@ -359,9 +363,8 @@ class Router
       * @param array $matches
       * @return string
      */
-     private function generateMatchPattern(array $matches)
+     private function generateRegex(array $matches)
      {
-         //TODO More advanced ?(?P<id>[0-9]+)
          if($this->hasPattern($matches[1]))
          {
              return '(?P<'. $matches[1] .'>'. $this->resolvePattern($matches[1]) . ')';
@@ -408,8 +411,11 @@ class Router
 
 
     /**
+     * Get URL path
+     *
      * @param string $url
      * @return string
+     * @throws RouterException
     */
     private function getUrlPath(string $url)
     {
