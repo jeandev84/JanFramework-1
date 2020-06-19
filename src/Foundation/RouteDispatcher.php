@@ -80,7 +80,7 @@ class RouteDispatcher
      */
      public function setBaseUrl(string $baseUrl)
      {
-         Route::router()->setBaseUrl($baseUrl);
+         Route::instance()->setBaseUrl($baseUrl);
          Asset::instance()->setBaseUrl($baseUrl);
      }
 
@@ -156,7 +156,7 @@ class RouteDispatcher
      */
      public function match(RequestInterface $request)
      {
-         return Route::router()->match(
+         return Route::instance()->match(
              $request->getMethod(),
              $request->getPath()
          );

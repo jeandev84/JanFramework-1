@@ -123,7 +123,7 @@ class Asset
           $html = '';
           foreach (self::$css as $link)
           {
-              $html .= sprintf(self::CSS_BLANK, self::$baseUrl . "/$link");
+              $html .= sprintf(self::CSS_BLANK, self::generatePath($link, 'css'));
               $html .= "\n";
           }
           return $html;
@@ -138,9 +138,20 @@ class Asset
         $html = '';
         foreach (self::$js as $script)
         {
-            $html .= sprintf(self::JS_BLANK, self::$baseUrl . "/$script");
+            $html .= sprintf(self::JS_BLANK, self::generatePath($script, 'js'));
             $html .= "\n";
         }
         return $html;
+    }
+
+
+    /**
+     * @param $path
+     * @param $ext
+     * @return string
+    */
+    private static function generatePath($path, $ext)
+    {
+        return self::$baseUrl . '/' . trim(str_replace('.'. $ext, '', $path), '/') . '.'. $ext;
     }
 }

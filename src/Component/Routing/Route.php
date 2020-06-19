@@ -29,7 +29,7 @@ class Route
       *
       * @return Router
      */
-     public static function router()
+     public static function instance()
      {
         if(! self::$router)
         {
@@ -62,7 +62,7 @@ class Route
              $target = rtrim($namespace, '\\') .'\\' . $target;
          }
 
-         return self::router()->map($methods, $path, $target, $name);
+         return self::instance()->map($methods, $path, $target, $name);
      }
 
 

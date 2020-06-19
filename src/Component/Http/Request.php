@@ -219,4 +219,14 @@ class Request implements RequestInterface
     {
         return $this->getServer()->get('REQUEST_METHOD');
     }
+
+
+    /**
+     * @param string $type
+     * @return bool
+    */
+    public function isMethod(string $type)
+    {
+        return $this->getMethod() === strtoupper($type);
+    }
 }
