@@ -3,17 +3,11 @@ namespace Jan\Foundation\Http;
 
 
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\Http\Contracts\MiddlewareInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
-use Jan\Component\Http\Response;
-use Jan\Component\Routing\Route;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
 use Jan\Foundation\Middleware;
 use Jan\Foundation\RouteDispatcher;
-
-//use Jan\Foundation\RouteDispatcher;
-
 
 
 /**
@@ -75,7 +69,7 @@ class Kernel implements HttpKernelContract
 
             $dispatcher = $this->container->get(RouteDispatcher::class);
             $middlewares = array_merge($dispatcher->getRouteMiddleware(), $this->middlewares);
-            $middlewareManager = $this->container->get(MiddlewareInterface::class);
+            $middlewareManager = $this->container->get(Middleware::class);
             $middlewareManager->addStack($middlewares);
             $response = $middlewareManager->handle($request, $response);
             $body = $dispatcher->callAction();

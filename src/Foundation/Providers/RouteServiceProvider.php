@@ -3,7 +3,6 @@ namespace Jan\Foundation\Providers;
 
 
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
-use Jan\Component\Http\Contracts\MiddlewareInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Foundation\Middleware;
 use Jan\Foundation\RouteDispatcher;
@@ -28,7 +27,7 @@ class RouteServiceProvider extends ServiceProvider
              return $dispatcher;
          });
 
-         $this->container->singleton(MiddlewareInterface::class, function () {
+         $this->container->singleton(Middleware::class, function () {
              return new Middleware();
          });
     }
