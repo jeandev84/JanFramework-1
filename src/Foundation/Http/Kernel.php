@@ -77,7 +77,7 @@ class Kernel implements HttpKernelContract
             $middlewares = array_merge($dispatcher->getRouteMiddleware(), $this->middlewares);
             $middlewareManager = $this->container->get(MiddlewareInterface::class);
             $middlewareManager->addStack($middlewares);
-            $response = $middlewareManager->handle($request, $response);
+            $middlewareManager->handle($request, $response);
             $body = $dispatcher->callAction();
 
             if($body instanceof ResponseInterface)
@@ -94,8 +94,11 @@ class Kernel implements HttpKernelContract
 
         } catch (\Exception $e) {
 
-            echo $e->getMessage() . '<br>';
-            exit('404 Page not found');
+            if($e->getCode() == 404)
+            {
+                exit('404 Page not found');
+            }
+            exit($e->getMessage());
         }
     }
 
