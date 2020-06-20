@@ -2,14 +2,11 @@
 namespace Jan\Foundation;
 
 
-use Closure;
 use Exception;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
-use Jan\Component\Http\Response;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
-use Jan\Component\Templating\Asset;
 
 
 /**
@@ -132,12 +129,4 @@ class RouteDispatcher
         ];
     }
 
-
-    /**
-     * @return bool
-    */
-    public function isClosureCallback()
-    {
-        return $this->route['target'] instanceof Closure;
-    }
 }
