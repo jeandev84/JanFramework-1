@@ -15,7 +15,7 @@ use Jan\Foundation\Exceptions\NotFoundHttpException;
  * Application  :  JFramework
  * Author       :  Jean-Claude <jeanyao@mail.com>
 */
-final class Application extends Container
+class Application extends Container
 {
 
     /**
@@ -84,7 +84,7 @@ final class Application extends Container
      * Bind all of the application paths in the container
      *
      * @return void
-     */
+    */
     protected function bindPathsInContainer()
     {
         $this->bind('base.path', $this->basePath);
@@ -98,7 +98,8 @@ final class Application extends Container
      */
     protected function registerBaseBindings()
     {
-         //
+         $this->instance('app', $this);
+         $this->instance(Container::class, $this);
     }
 
 
@@ -106,10 +107,17 @@ final class Application extends Container
      * Register all of the base service providers
      *
      * @return void
+     * @throws \ReflectionException
     */
     protected function registerBaseServiceProviders()
     {
-         //
+         // add only providers without runServiceProvider
+         // get all providers and run them
+
+         $this->addServiceProviders([
+             \Jan\Foundation\Providers\AppServiceProvider::class,
+             \Jan\Foundation\Providers\RouteServiceProvider::class
+         ]);
     }
 
 

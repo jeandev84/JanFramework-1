@@ -12,10 +12,10 @@ interface ResponseInterface
      /**
       * Set body
       *
-      * @param string $content
+      * @param $content
       * @return mixed
      */
-     public function withBody(string $content);
+     public function withBody($content);
 
 
 
@@ -25,17 +25,17 @@ interface ResponseInterface
       * @param int $status
       * @return mixed
      */
-     public function withStatus(int $status);
+     public function withStatus($status);
 
 
 
      /**
       * Set headers
       *
-      * @param array $headers
+      * @param $headers
       * @return mixed
      */
-     public function withHeader(array $headers);
+     public function withHeaders($headers);
 
 
 
@@ -73,15 +73,6 @@ interface ResponseInterface
       * @return string
      */
      public function getBody();
-
-
-
-     /**
-      * Get message from server
-      *
-      * @return mixed
-     */
-     public function getMessage();
 
 
      /**

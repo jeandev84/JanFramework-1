@@ -147,13 +147,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
         if($provider instanceof ServiceProvider)
         {
-            if($provides = $provider->getProvides())
-            {
-                $this->provides[get_class($provider)] = $provides;
-            }
-
             $this->runServiceProvider($provider);
-            $this->providers[] = $provider;
         }
 
         return $this;
@@ -180,25 +174,35 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function runServiceProvider(ServiceProvider $provider)
     {
-          $provider->setContainer($this);
+        if(! in_array($provider, $this->providers))
+        {
+            $provider->setContainer($this);
 
-          $implements = class_implements($provider);
-          $providerClass = get_class($provider);
+            $implements = class_implements($provider);
+            $providerClass = get_class($provider);
 
-          if(! \in_array($providerClass, $this->boots))
-          {
-              if(isset($implements[BootableServiceProvider::class]))
-              {
-                   $provider->boot();
-                   $this->boots[] = $providerClass;
-              }
-          }
+            if(! \in_array($providerClass, $this->boots))
+            {
+                if(isset($implements[BootableServiceProvider::class]))
+                {
+                    $provider->boot();
+                    $this->boots[] = $providerClass;
+                }
+            }
 
-          if(! \in_array($providerClass, $this->registers))
-          {
-               $provider->register();
-               $this->registers[] = $providerClass;
-          }
+            if(! \in_array($providerClass, $this->registers))
+            {
+                $provider->register();
+                $this->registers[] = $providerClass;
+            }
+
+            if($provides = $provider->getProvides())
+            {
+                $this->provides[get_class($provider)] = $provides;
+            }
+
+            $this->providers[] = $provider;
+        }
     }
 
 

@@ -50,7 +50,7 @@ class Response implements ResponseInterface
     {
          $this->withBody($content);
          $this->withStatus($status);
-         $this->withHeader($headers);
+         $this->withHeaders($headers);
     }
 
 
@@ -83,7 +83,7 @@ class Response implements ResponseInterface
      * @param string $body
      * @return Response
     */
-    public function withBody(string $body)
+    public function withBody($body)
     {
         $this->body = $body;
 
@@ -101,12 +101,12 @@ class Response implements ResponseInterface
 
 
     /**
-     * @param $body
+     * @param string $body
      * @return $this
     */
-    public function withJson(string $body)
+    public function withJson($body)
     {
-        $this->withHeader('Content-Type', 'application/json');
+        $this->withHeaders('Content-Type', 'application/json');
         return $this->withBody(json_encode($body));
     }
 
@@ -117,7 +117,7 @@ class Response implements ResponseInterface
      * @param int $status
      * @return Response
     */
-    public function withStatus(int $status)
+    public function withStatus($status)
     {
         $this->status = $status;
 
@@ -135,11 +135,13 @@ class Response implements ResponseInterface
 
 
     /**
+     * Set Headers
+     *
      * @param $key
      * @param null $value
      * @return Response
     */
-    public function withHeader($key, $value = null)
+    public function withHeaders($key, $value = null)
     {
         foreach ($this->parseHeaders($key, $value) as $key => $value)
         {
@@ -158,21 +160,6 @@ class Response implements ResponseInterface
         return $this->headers;
     }
 
-
-    /**
-     * Get message from server
-     *
-     * @return string
-    */
-    public function getMessage()
-    {
-         if(! isset($this->messages[$this->status]))
-         {
-             http_response_code($this->status);
-         }
-
-         $this->withHeader($this->protocolVersion .' '. $this->status .' ' . $this->messages[$this->status]);
-    }
 
 
     /**
@@ -206,9 +193,25 @@ class Response implements ResponseInterface
             return $this;
         }
 
-        $this->sendMessage();
+        $this->responseMessage();
         $this->sendHeaders();
         $this->sendBody();
+    }
+
+
+    /**
+     * Get message from server
+     *
+     * @return string
+    */
+    protected function responseMessage()
+    {
+        if(! isset($this->messages[$this->status]))
+        {
+            http_response_code($this->status);
+        }
+
+        $this->withHeaders($this->protocolVersion .' '. $this->status .' ' . $this->messages[$this->status]);
     }
 
 

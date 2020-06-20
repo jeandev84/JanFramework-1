@@ -171,8 +171,9 @@ class Router implements RouterInterface
      */
      public function map(array $methods, string $path, $target, string $name = null)
      {
-          $this->routes[] = $this->route = compact('methods', 'path', 'target');
-          $this->setPathName($name, $path);
+          $route = compact('methods', 'path', 'target');
+          $this->routes[] = $this->route = $route;
+          $this->routeName($name, $path);
           return $this;
      }
 
@@ -234,7 +235,7 @@ class Router implements RouterInterface
     */
     public function name(string $name)
     {
-        $this->setPathName($name, $this->route['path']);
+        $this->routeName($name, $this->route['path']);
         return $this;
     }
 
@@ -442,7 +443,7 @@ class Router implements RouterInterface
       * @param $path
       * @throws RouterException
     */
-    private function setPathName($name, $path)
+    private function routeName($name, $path)
     {
          if($name)
          {

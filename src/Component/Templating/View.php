@@ -61,7 +61,7 @@ class View
        * @param array $data
        * @return View
       */
-      public function setData(array $data)
+      public function setGlobals(array $data)
       {
            $this->data = array_merge($this->data, $data);
 
@@ -110,13 +110,13 @@ class View
        * Factory render method
        *
        * @param string $template
-       * @param array $variables
+       * @param array $data
        * @return false|string
        * @throws ViewException
       */
-      public function render(string $template, array $variables = [])
+      public function render(string $template, array $data = [])
       {
-           return $this->setData($variables)->renderTemplate($template);
+           return $this->setGlobals($data)->renderTemplate($template);
       }
 
 
@@ -128,7 +128,7 @@ class View
       */
       public function resource(string $path)
       {
-          $template = $this->generateTemplateFile($path);
+          $template = $this->templateFile($path);
 
           if(! file_exists($template))
           {
@@ -146,8 +146,8 @@ class View
        * @param string $path
        * @return string
       */
-      public function generateTemplateFile(string $path)
+      public function templateFile(string $path = '')
       {
-          return $this->basePath . DIRECTORY_SEPARATOR . ltrim($path, '\/');
+          return $this->basePath . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '\/') : $path);
       }
 }

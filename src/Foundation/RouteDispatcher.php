@@ -5,6 +5,7 @@ namespace Jan\Foundation;
 use Closure;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
+use Jan\Component\Http\Response;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Route;
 use Jan\Component\Templating\Asset;
@@ -144,7 +145,26 @@ class RouteDispatcher
          call_user_func_array($callback, $this->route['matches']);
 
          dump($this->route);
-         return true;
+
+         return new Response();
+     }
+
+
+    /**
+      * @param $object
+      * @param null $method
+      * @param array $params
+      * @return mixed
+     */
+     public function call($object, $method = null, array $params = [])
+     {
+          $callback = $object;
+          if(is_callable($object, $method))
+          {
+              $callback = [$object, $method];
+          }
+
+          return call_user_func_array($callback, $params);
      }
 
 

@@ -19,9 +19,6 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-dd($app->get(Jan\Contracts\Http\Kernel::class));
-
-dd($app);
 
 /*
 |-------------------------------------------------------
@@ -29,10 +26,8 @@ dd($app);
 |-------------------------------------------------------
 */
 
-// $kernel = $app->get(Jan\Contracts\Http\Kernel::class);
+$kernel = $app->get(Jan\Contracts\Http\Kernel::class);
 
-$kernel = new \Jan\Kernel(__DIR__ . '/../');
-$kernel->handle();
 
 
 /*
@@ -42,10 +37,9 @@ $kernel->handle();
 */
 
 
-//$response = $kernel->handle(
-//    $request = \Jan\Component\Http\Request::fromGlobals()
-//);
-
+$response = $kernel->handle(
+    $request = \Jan\Component\Http\Request::fromGlobals()
+);
 
 
 /*
@@ -54,7 +48,7 @@ $kernel->handle();
 |-------------------------------------------------------
 */
 
-//$response->send();
+$response->send();
 
 
 /*
@@ -63,5 +57,7 @@ $kernel->handle();
 |-------------------------------------------------------
 */
 
-// $kernel->terminate($request, $response);
+$kernel->terminate($request, $response);
 
+
+dd($app);
