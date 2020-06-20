@@ -1,7 +1,11 @@
 <?php
 
 Route::get('/foo', function () {
-    echo 'Foo!';
+    return [
+      'id' => 1,
+      'name' => 'Jean-Claude',
+      'age' => 36
+    ];
 });
 
 Route::get('/', 'HomeController@index', 'home');

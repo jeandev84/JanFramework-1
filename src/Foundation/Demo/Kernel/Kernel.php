@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Foundation\Http;
+namespace Jan\Foundation\Http\Kernel;
 
 
 use Jan\Component\DI\Contracts\ContainerInterface;
@@ -10,7 +10,6 @@ use Jan\Component\Http\Response;
 use Jan\Component\Routing\Route;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
 use Jan\Foundation\Middleware;
-use Jan\Foundation\RouteDispatcher;
 
 //use Jan\Foundation\RouteDispatcher;
 
@@ -69,34 +68,30 @@ class Kernel implements HttpKernelContract
     public function handle(RequestInterface $request): ResponseInterface
     {
         # Route Dispatcher
-        $response = $this->container->get(ResponseInterface::class);
 
         try {
 
-            $dispatcher = $this->container->get(RouteDispatcher::class);
+            // TODO Refactoring create a service provider for Dispatching route
+            $response = $this->container->get(ResponseInterface::class);
+            $dispatcher = new \Jan\Foundation\RouteDispatcher($request);
+            $dispatcher->setControllerNamespace('App\\Http\\Controllers');
+            $dispatcher->setContainer($this->container);
+
             $middlewares = array_merge($dispatcher->getRouteMiddleware(), $this->middlewares);
             $middlewareManager = $this->container->get(MiddlewareInterface::class);
             $middlewareManager->addStack($middlewares);
             $response = $middlewareManager->handle($request, $response);
             $body = $dispatcher->callAction();
-
-            if($body instanceof ResponseInterface)
-            {
-                return $body;
-            }
-
-            if(is_array($body))
-            {
-                return $response->withJson($body);
-            }
-
-            return $response->withBody($body);
+            $response->withBody($body);
 
         } catch (\Exception $e) {
 
             echo $e->getMessage() . '<br>';
             exit('404 Page not found');
         }
+
+        // return $response;
+        return new Response();
     }
 
 

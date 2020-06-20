@@ -190,28 +190,13 @@ class Response implements ResponseInterface
     {
         if(headers_sent())
         {
+            # look for may be return $this / $this->sendBody()
             return $this;
         }
 
-        $this->responseMessage();
+        $this->statusMessage();
         $this->sendHeaders();
         $this->sendBody();
-    }
-
-
-    /**
-     * Get message from server
-     *
-     * @return string
-    */
-    protected function responseMessage()
-    {
-        if(! isset($this->messages[$this->status]))
-        {
-            http_response_code($this->status);
-        }
-
-        $this->withHeaders($this->protocolVersion .' '. $this->status .' ' . $this->messages[$this->status]);
     }
 
 
@@ -223,5 +208,21 @@ class Response implements ResponseInterface
     protected function parseHeaders($key, $value)
     {
         return \is_array($key) ? $key : [$key => $value];
+    }
+
+
+    /**
+     * @return string
+    */
+    protected function statusMessage()
+    {
+        $message = $this->messages[$this->status] ?? '';
+
+        if(! $message)
+        {
+            http_response_code($this->status);
+        }
+
+        $this->withHeaders($this->protocolVersion .' '. $this->status .' ' . $message);
     }
 }

@@ -27,8 +27,7 @@ class Middleware
       public function __construct()
       {
           $this->start = function (RequestInterface $request, ResponseInterface $response) {
-
-              return '';
+              return $response;
           };
 
       }
@@ -48,6 +47,18 @@ class Middleware
           };
 
           return $this;
+      }
+
+
+      /**
+        * @param array $middlewares
+      */
+      public function addStack(array $middlewares)
+      {
+           foreach ($middlewares as $middleware)
+           {
+               $this->add($middleware);
+           }
       }
 
 

@@ -50,6 +50,12 @@ class RouteDispatcher
 
 
      /**
+      * @var RequestInterface
+     */
+     private $request;
+
+
+     /**
       * RouteDispatcher constructor.
       *
       * @param RequestInterface $request
@@ -66,6 +72,7 @@ class RouteDispatcher
          }
 
          $this->route = $route;
+         $this->request = $request;
      }
 
 
@@ -107,16 +114,11 @@ class RouteDispatcher
 
 
      /**
-      * @param Middleware $middlewareManager
+      * @return mixed
      */
-     public function runMiddleware(Middleware $middlewareManager)
+     public function getRouteMiddleware()
      {
-          foreach ($this->middleware as $middleware)
-          {
-              $middlewareManager->add($middleware);
-          }
-
-         // return $middlewareManager->handle($request, $response);
+         return $this->route['middleware'];
      }
 
 
@@ -129,7 +131,6 @@ class RouteDispatcher
      {
         if(is_callable($this->getCallback()))
         {
-             dump($this->route);
              return call_user_func_array($this->getCallback(), $this->route['matches']);
         }
     }
