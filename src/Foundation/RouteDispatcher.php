@@ -41,19 +41,6 @@ class RouteDispatcher
      private $route = [];
 
 
-     /**
-      * Middleware stack
-      *
-      * @var array
-     */
-     private $middleware = [];
-
-
-     /**
-      * @var RequestInterface
-     */
-     private $request;
-
 
      /**
       * RouteDispatcher constructor.
@@ -72,7 +59,6 @@ class RouteDispatcher
          }
 
          $this->route = $route;
-         $this->request = $request;
      }
 
 
@@ -101,17 +87,6 @@ class RouteDispatcher
      }
 
 
-     /**
-      * @param array $middleware
-      * @return RouteDispatcher
-     */
-     public function setMiddleware(array $middleware)
-     {
-         $this->middleware = array_merge($this->route['middleware'], $middleware);
-
-         return $this;
-     }
-
 
      /**
       * @return mixed
@@ -129,10 +104,12 @@ class RouteDispatcher
      */
      public function callAction()
      {
-        if(is_callable($this->getCallback()))
+        if(! is_callable($this->getCallback()))
         {
-             return call_user_func_array($this->getCallback(), $this->route['matches']);
+             throw new Exception('No callable action!');
         }
+
+        return call_user_func_array($this->getCallback(), $this->route['matches']);
     }
 
 
