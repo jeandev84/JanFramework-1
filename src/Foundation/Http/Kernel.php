@@ -68,12 +68,12 @@ class Kernel implements HttpKernelContract
 
         try {
 
-            $route = Route::instance()->match($request->getMethod(), $request->getPath());
-            $dispatcher = new \Jan\Foundation\RouteDispatcher($route);
+            // TODO Refactoring create a service provider for Dispatching route
+            $response = $this->container->get(ResponseInterface::class);
+            $dispatcher = new \Jan\Foundation\RouteDispatcher($request);
             $dispatcher->setControllerNamespace('App\\Http\\Controllers');
             $dispatcher->setContainer($this->container);
             $body = $dispatcher->callAction();
-            $response = $this->container->get(ResponseInterface::class);
             $response->withBody($body);
 
         } catch (\Exception $e) {
@@ -82,7 +82,8 @@ class Kernel implements HttpKernelContract
             exit('404 Page not found');
         }
 
-        return $response;
+        // return $response;
+        return new Response();
     }
 
 

@@ -49,14 +49,17 @@ class RouteDispatcher
      private $middleware = [];
 
 
-    /**
+     /**
       * RouteDispatcher constructor.
       *
-      * @param array $route
-      * @throws Exception
+      * @param RequestInterface $request
+      * @throws MethodNotAllowedException
+      * @throws \Jan\Component\Routing\Exception\RouterException
      */
-     public function __construct(array $route)
+     public function __construct(RequestInterface $request)
      {
+         $route = Route::instance()->match($request->getMethod(), $request->getPath());
+
          if(! $route)
          {
              throw new Exception('Route not found', 404);
@@ -104,11 +107,16 @@ class RouteDispatcher
 
 
      /**
-      * @param array $middlewares
+      * @param Middleware $middlewareManager
      */
-     public function runMiddleware(array $middlewares = [])
+     public function runMiddleware(Middleware $middlewareManager)
      {
-           $middlewares = array_merge($this->route['middleware'], $middlewares);
+          foreach ($this->middleware as $middleware)
+          {
+              $middlewareManager->add($middleware);
+          }
+
+         // return $middlewareManager->handle($request, $response);
      }
 
 
