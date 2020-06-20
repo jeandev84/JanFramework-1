@@ -1,5 +1,10 @@
 <?php
 
+Route::get('/hello', function () {
+    return 'Привет!';
+});
+
+
 Route::get('/foo', function () {
     return [
       'id' => 1,
@@ -7,6 +12,8 @@ Route::get('/foo', function () {
       'age' => 36
     ];
 });
+
+
 
 Route::get('/', 'HomeController@index', 'home');
 Route::get('/contact', 'HomeController@contact', 'contact');

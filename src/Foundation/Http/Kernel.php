@@ -77,7 +77,7 @@ class Kernel implements HttpKernelContract
             $middlewares = array_merge($dispatcher->getRouteMiddleware(), $this->middlewares);
             $middlewareManager = $this->container->get(MiddlewareInterface::class);
             $middlewareManager->addStack($middlewares);
-            $middlewareManager->handle($request, $response);
+            $response = $middlewareManager->handle($request, $response);
             $body = $dispatcher->callAction();
 
             if($body instanceof ResponseInterface)

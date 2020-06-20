@@ -60,8 +60,3 @@ $response->send();
 $kernel->terminate($request, $response);
 
 
-//dump($app);
-/*
-$link = Route::instance()->generate('user.edit', ['token' => md5('yao.app.jc')]);
-echo '<a href="'. $link .'">User Edit</a>';
-*/
