@@ -119,7 +119,7 @@ class RouteDispatcher
     */
     public function getCallback()
     {
-        if($this->isClosure() || ! $this->container)
+        if(is_callable($this->route['target']) || ! $this->container)
         {
             return $this->route['target'];
         }
@@ -136,7 +136,7 @@ class RouteDispatcher
     /**
      * @return bool
     */
-    private function isClosure()
+    public function isClosureCallback()
     {
         return $this->route['target'] instanceof Closure;
     }
