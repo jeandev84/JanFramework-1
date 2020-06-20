@@ -483,7 +483,7 @@ class Container implements \ArrayAccess, ContainerInterface
                 return $this->instances[$abstract] = $reflectedClass->newInstance();
           }
 
-          $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
+          $dependencies = $this->getDependencies($constructor, $arguments);
           return $this->instances[$abstract] = $reflectedClass->newInstanceArgs($dependencies);
     }
 
@@ -496,7 +496,7 @@ class Container implements \ArrayAccess, ContainerInterface
      * @return array
      * @throws ReflectionException|InstanceException|ResolverDependencyException
     */
-    public function resolveMethodDependencies(\ReflectionMethod $reflectionMethod, $arguments = [])
+    public function getDependencies(\ReflectionMethod $reflectionMethod, $arguments = [])
     {
         $dependencies = [];
 

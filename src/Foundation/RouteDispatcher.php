@@ -6,6 +6,7 @@ use Exception;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
+use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
 
 
@@ -44,7 +45,7 @@ class RouteDispatcher
       *
       * @param RequestInterface $request
       * @throws MethodNotAllowedException
-      * @throws \Jan\Component\Routing\Exception\RouterException
+      * @throws RouterException
      */
      public function __construct(RequestInterface $request)
      {
@@ -94,39 +95,47 @@ class RouteDispatcher
      }
 
 
+    /**
+     * @return mixed
+     * @throws Exception
+    */
+    public function callAction()
+    {
+        $callback = $this->route['target'];
+        $parameters = $this->route['matches'];
 
-     /**
-      * @return mixed
-      * @throws Exception
-     */
-     public function callAction()
-     {
-        if(! is_callable($this->getCallback()))
+        if(! $this->container)
         {
-             throw new Exception('No callable action!');
+            return $callback;
         }
 
-        return call_user_func_array($this->getCallback(), $this->route['matches']);
+        if(is_string($callback))
+        {
+            list($controller, $action) = explode('@', $callback);
+            $controller = $this->namespace.$controller;
+            $reflectedMethod = new \ReflectionMethod($controller, $action);
+            $parameters = $this->resolveActionParams($reflectedMethod);
+            $callback = [$this->container->get($controller), $action];
+        }
+
+        if(! is_callable($callback))
+        {
+            throw new Exception('No callable action!');
+        }
+
+        return call_user_func_array($callback, $parameters);
     }
 
 
     /**
-     * @return array|mixed
-     * @throws Exception
+     * @param \ReflectionMethod $reflectedMethod
+     * @return
     */
-    public function getCallback()
+    private function resolveActionParams(\ReflectionMethod $reflectedMethod)
     {
-        if(is_callable($this->route['target']) || ! $this->container)
-        {
-            return $this->route['target'];
-        }
-
-        list($controller, $action) = explode('@', $this->route['target']);
-
-        return [
-            $this->container->get($this->namespace.$controller),
-            $action
-        ];
+        return $this->container->getDependencies(
+            $reflectedMethod,
+            $this->route['matches']
+        );
     }
-
 }
