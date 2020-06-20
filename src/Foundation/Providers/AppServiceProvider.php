@@ -2,6 +2,8 @@
 namespace Jan\Foundation\Providers;
 
 
+use Jan\Component\DI\Container;
+use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
@@ -21,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
     */
     public function register()
     {
+        $this->container->singleton(ContainerInterface::class, function () {
+            return $this->container;
+        });
+
         $this->container->singleton(RequestInterface::class, function () {
             return Request::fromGlobals();
         });
