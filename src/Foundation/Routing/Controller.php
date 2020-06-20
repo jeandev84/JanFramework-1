@@ -4,6 +4,8 @@ namespace Jan\Foundation\Routing;
 
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
+use Jan\Component\Http\Response;
+use Jan\Component\Templating\Exceptions\ViewException;
 use Jan\Component\Templating\View;
 
 /**
@@ -46,10 +48,10 @@ abstract class Controller
     /**
      * @param string $template
      * @param array $data
-     * @return mixed
-     * @throws \Jan\Component\Templating\Exceptions\ViewException
+     * @return Response
+     * @throws ViewException
     */
-    public function render(string $template, array $data = [])
+    public function render(string $template, array $data = []): Response
     {
          $response = $this->container->get(ResponseInterface::class);
          $content = $this->renderTemplate($template, $data);
@@ -70,9 +72,9 @@ abstract class Controller
     /**
      * @param string $template
      * @param array $data
-     * @return
-     * @throws \Jan\Component\Templating\Exceptions\ViewException
-    */
+     * @return false|string
+     * @throws ViewException
+     */
     public function renderTemplate(string $template, array $data)
     {
           return $this->view->render($template, $data);
@@ -81,9 +83,21 @@ abstract class Controller
 
     /**
      * @param array $data
-    */
-    public function renderJson(array $data)
+     * @param int $status
+     * @return
+     */
+    public function renderJson(array $data, int $status = 200)
     {
+        $response = $this->container->get(ResponseInterface::class);
+        return $response->withStatus($status)->withJson($data);
+    }
 
+
+
+    public function core()
+    {
+        return [
+
+        ];
     }
 }
