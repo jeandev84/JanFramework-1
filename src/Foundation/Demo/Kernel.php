@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Foundation\Http;
+namespace Jan\Foundation\Http\Demo;
 
 
 use Jan\Component\DI\Contracts\ContainerInterface;
@@ -18,14 +18,6 @@ use Jan\Contracts\Http\Kernel as HttpKernelContract;
  */
 class Kernel implements HttpKernelContract
 {
-
-    /**
-     * @var string[]
-    */
-    protected $classAliases = [
-        'Route' => 'Jan\\Component\\Routing\\Route'
-    ];
-
 
     /**
      * @var array
@@ -52,7 +44,6 @@ class Kernel implements HttpKernelContract
     public function __construct(ContainerInterface $container)
     {
           $this->container = $container;
-          $this->loadClassAliases();
           $this->loadRoutes();
     }
 
@@ -72,9 +63,15 @@ class Kernel implements HttpKernelContract
             $dispatcher = new \Jan\Foundation\RouteDispatcher($route);
             $dispatcher->setControllerNamespace('App\\Http\\Controllers');
             $dispatcher->setContainer($this->container);
-            $body = $dispatcher->callAction();
-            $response = $this->container->get(ResponseInterface::class);
-            $response->withBody($body);
+            $response = $dispatcher->callAction();
+
+            /*
+            $dispatcher = new \Jan\Foundation\RouteDispatcher($request);
+            $dispatcher->setContainer($this->container);
+            $dispatcher->setBaseUrl('http://localhost:8080');
+            $dispatcher->setControllerNamespace('App\\Http\\Controllers');
+            $response = $dispatcher->callAction();
+            */
 
         } catch (\Exception $e) {
 
@@ -122,17 +119,5 @@ class Kernel implements HttpKernelContract
         require_once $this->container->get('base.path') .'/routes/web.php';
 
         /* require_once $this->container->get('base.path') .'/routes/*.php'; */
-    }
-
-
-    /**
-     * Load classe aliases
-    */
-    public function loadClassAliases()
-    {
-        foreach ($this->classAliases as $alias => $original)
-        {
-            class_alias($original, $alias);
-        }
     }
 }

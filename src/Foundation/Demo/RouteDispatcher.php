@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Foundation;
+namespace Jan\Foundation\Demo;
 
 
 use Closure;
@@ -49,14 +49,17 @@ class RouteDispatcher
      private $middleware = [];
 
 
-    /**
+
+     /**
       * RouteDispatcher constructor.
       *
-      * @param array $route
-      * @throws Exception
+      * @param RequestInterface $request
+      * @throws MethodNotAllowedException
      */
-     public function __construct(array $route)
+     public function __construct(RequestInterface $request)
      {
+         $route = $this->match($request);
+
          if(! $route)
          {
              throw new Exception('Route not found', 404);
@@ -64,6 +67,26 @@ class RouteDispatcher
 
          $this->route = $route;
      }
+
+
+    /**
+     * @return array|bool
+     */
+     public function getDispatchedRoute()
+     {
+         return $this->route;
+     }
+
+
+     /**
+      * @param string $baseUrl
+     */
+     public function setBaseUrl(string $baseUrl)
+     {
+         Route::instance()->setBaseUrl($baseUrl);
+         Asset::instance()->setBaseUrl($baseUrl);
+     }
+
 
 
      /**
@@ -77,6 +100,14 @@ class RouteDispatcher
           return $this;
      }
 
+
+     /**
+      * @return ContainerInterface
+     */
+     public function getContainer(): ContainerInterface
+     {
+         return $this->container;
+     }
 
 
      /**
@@ -103,37 +134,21 @@ class RouteDispatcher
      }
 
 
-     /**
-      * @param array $middlewares
+    /**
+     * @return bool
      */
-     public function runMiddleware(array $middlewares = [])
-     {
-           $middlewares = array_merge($this->route['middleware'], $middlewares);
-     }
-
-
-
-     /**
-      * @return mixed
-      * @throws Exception
-     */
-     public function callAction()
-     {
-        if(is_callable($this->getCallback()))
-        {
-             dump($this->route);
-             return call_user_func_array($this->getCallback(), $this->route['matches']);
-        }
+    public function isClosure()
+    {
+        return $this->route['target'] instanceof Closure;
     }
 
 
     /**
      * @return array|mixed
-     * @throws Exception
     */
-    public function getCallback()
+    private function getCallback()
     {
-        if($this->isClosure() || ! $this->container)
+        if($this->isClosure())
         {
             return $this->route['target'];
         }
@@ -141,17 +156,40 @@ class RouteDispatcher
         list($controller, $action) = explode('@', $this->route['target']);
 
         return [
-            $this->container->get($this->namespace.$controller),
+            $this->getContainer()->get($this->namespace.$controller),
             $action
         ];
     }
 
 
     /**
-     * @return bool
+     * @return mixed
     */
-    private function isClosure()
+    public function callAction()
     {
-        return $this->route['target'] instanceof Closure;
+        if(is_callable($this->getCallback()))
+        {
+            //TODO Implement return called
+            $body = call_user_func_array($this->getCallback(), $this->route['matches']);
+            dump($this->route);
+            return new Response($body);
+        }
     }
+
+
+
+     /**
+      * Return route params if current request matched
+      *
+      * @param RequestInterface $request
+      * @return array|bool
+      * @throws MethodNotAllowedException
+     */
+     public function match(RequestInterface $request)
+     {
+         return Route::instance()->match(
+             $request->getMethod(),
+             $request->getPath()
+         );
+     }
 }
