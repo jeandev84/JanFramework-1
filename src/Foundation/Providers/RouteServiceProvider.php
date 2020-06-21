@@ -21,9 +21,9 @@ class RouteServiceProvider extends ServiceProvider
     public function register()
     {
          $this->container->singleton(RouteDispatcher::class, function () {
-             $dispatcher = new RouteDispatcher($this->container->get(RequestInterface::class));
+             $request = $this->container->get(RequestInterface::class);
+             $dispatcher = new RouteDispatcher($request, $this->container);
              $dispatcher->setControllerNamespace('App\\Http\\Controllers');
-             $dispatcher->setContainer($this->container);
              return $dispatcher;
          });
 

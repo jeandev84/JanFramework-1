@@ -5,7 +5,6 @@ namespace Jan\Foundation;
 use Exception;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
-use Jan\Component\Routing\Contracts\RouterInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
@@ -40,22 +39,17 @@ class RouteDispatcher
      private $route = [];
 
 
-
-     /**
-      * RouteDispatcher constructor.
-      *
-      * @param RequestInterface $request
-      * @throws MethodNotAllowedException
-      * @throws RouterException
+    /**
+     * RouteDispatcher constructor.
+     *
+     * @param RequestInterface $request
+     * @param ContainerInterface $container
+     * @throws MethodNotAllowedException
+     * @throws RouterException
      */
-     public function __construct(RequestInterface $request, RouterInterface $router = null)
+     public function __construct(RequestInterface $request, ContainerInterface $container)
      {
-         if(! $router)
-         {
-             $router = Route::instance();
-         }
-
-         $route = $router->match($request->getMethod(), $request->getPath());
+         $route = Route::instance()->match($request->getMethod(), $request->getPath());
 
          if(! $route)
          {
@@ -63,20 +57,8 @@ class RouteDispatcher
          }
 
          $this->route = $route;
+         $this->container = $container;
      }
-
-
-     /**
-      * @param ContainerInterface $container
-      * @return RouteDispatcher
-     */
-     public function setContainer(ContainerInterface $container)
-     {
-          $this->container = $container;
-
-          return $this;
-     }
-
 
 
      /**
@@ -109,11 +91,6 @@ class RouteDispatcher
     {
         $target = $this->route['target'];
         $parameters = $this->route['matches'];
-
-        if(! $this->container)
-        {
-            return $target;
-        }
 
         if(is_string($target))
         {
