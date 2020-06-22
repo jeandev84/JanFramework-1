@@ -194,7 +194,7 @@ class Router implements RouterInterface
          {
              list($methods, $path) = array_values($route);
              $pattern = $this->generatePattern(trim($path, '/'));
-             $uri = trim($this->getUrlPath($requestUri), '/');
+             $uri = trim($this->getPathUrl($requestUri), '/');
 
              if(\in_array($requestMethod, $methods) && preg_match($pattern, $uri, $matches))
              {
@@ -390,7 +390,7 @@ class Router implements RouterInterface
      * @param string $url
      * @return string
     */
-    public function getUrlPath(string $url)
+    public function getPathUrl(string $url)
     {
         return parse_url($url, PHP_URL_PATH);
     }
