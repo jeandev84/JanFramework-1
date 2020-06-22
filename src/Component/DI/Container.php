@@ -43,14 +43,6 @@ class Container implements \ArrayAccess, ContainerInterface
 
 
     /** @var array  */
-    protected $boots = [];
-
-
-    /** @var array  */
-    protected $registers = [];
-
-
-    /** @var array  */
     protected $providers = [];
 
 
@@ -131,18 +123,19 @@ class Container implements \ArrayAccess, ContainerInterface
      * Add Service Provider
      * @param string|ServiceProvider $provider
      * @return Container
-     * @throws ReflectionException
      *
      *  Example:
      *  $this->addServiceProvider(new \App\Providers\AppServiceProvider());
      *  $this->addServiceProvider(App\Providers\AppServiceProvider::class);
-     *
+     * @throws InstanceException
+     * @throws ReflectionException
+     * @throws ResolverDependencyException
     */
     public function addServiceProvider($provider)
     {
-        if(is_string($provider))
+        if(class_exists($provider))
         {
-            $provider = $this->factory($provider);
+            $provider = $this->resolve($provider);
         }
 
         if($provider instanceof ServiceProvider)
@@ -156,7 +149,9 @@ class Container implements \ArrayAccess, ContainerInterface
 
     /**
      * @param array $providers
+     * @throws InstanceException
      * @throws ReflectionException
+     * @throws ResolverDependencyException
     */
     public function addServiceProviders(array $providers)
     {
@@ -177,29 +172,19 @@ class Container implements \ArrayAccess, ContainerInterface
         if(! in_array($provider, $this->providers))
         {
             $provider->setContainer($this);
-
             $implements = class_implements($provider);
-            $providerClass = get_class($provider);
 
-            if(! \in_array($providerClass, $this->boots))
+            if(isset($implements[BootableServiceProvider::class]))
             {
-                if(isset($implements[BootableServiceProvider::class]))
-                {
-                    $provider->boot();
-                    $this->boots[] = $providerClass;
-                }
-            }
-
-            if(! \in_array($providerClass, $this->registers))
-            {
-                $provider->register();
-                $this->registers[] = $providerClass;
+                $provider->boot();
             }
 
             if($provides = $provider->getProvides())
             {
                 $this->provides[get_class($provider)] = $provides;
             }
+
+            $provider->register();
 
             $this->providers[] = $provider;
         }
@@ -217,21 +202,14 @@ class Container implements \ArrayAccess, ContainerInterface
 
 
     /**
+     * @param string $providerClass
      * @return array
-    */
-    public function getProvides()
+     */
+    public function getProvides($providerClass = '')
     {
-        return $this->provides;
+        return $this->provides[$providerClass] ?? $this->provides;
     }
 
-
-    /**
-     * @return array
-    */
-    public function getRegisters()
-    {
-        return $this->registers;
-    }
 
     /**
      * Set instance
@@ -242,18 +220,6 @@ class Container implements \ArrayAccess, ContainerInterface
     public function instance($abstract, $instance)
     {
         $this->instances[$abstract] = $instance;
-    }
-
-
-    /**
-     * Determine if has instantiated abstract
-     *
-     * @param $abstract
-     * @return bool
-    */
-    public function instantiated($abstract)
-    {
-        return isset($this->instances[$abstract]);
     }
 
 
@@ -290,18 +256,6 @@ class Container implements \ArrayAccess, ContainerInterface
         }
 
         return $this->aliases[$alias];
-    }
-
-    /**
-     * @param $abstract
-     * @param $alias
-    */
-    public function alias($abstract, $alias)
-    {
-         if(! isset($this->aliases[$alias]))
-         {
-              $this->aliases[$alias] = $abstract;
-         }
     }
 
 
@@ -424,15 +378,10 @@ class Container implements \ArrayAccess, ContainerInterface
            {
                if(! $this->autowire)
                {
-                    throw new ResolverDependencyException('Autowire is unabled for resolution');
+                    throw new ResolverDependencyException('Cannot do autowiring dependendies');
                }
 
                return $this->resolve($abstract, $arguments);
-           }
-
-           if(isset($this->instances[$abstract]))
-           {
-               return $this->instances[$abstract];
            }
 
            $concrete = $this->getConcrete($abstract);

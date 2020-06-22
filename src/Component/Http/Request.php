@@ -39,6 +39,14 @@ class Request implements RequestInterface
 
 
     /**
+     * Parsed body
+     *
+     * @var mixed
+    */
+    public $parsedBody;
+
+
+    /**
      * Get query params
      *
      * @var ParameterBag
@@ -55,29 +63,43 @@ class Request implements RequestInterface
 
 
     /**
+     * @var array
+    */
+    private $headers = [];
+
+
+    /**
      * Request constructor.
      * @param array $queryParams
      * @param array $servers
      * @param array $files
+     * @param array $headers
     */
-    public function __construct($queryParams = [], $servers = [], $files = [])
+    public function __construct($queryParams = [], $servers = [], $files = [], $headers = [])
     {
-        $this->queryParams = new ParameterBag($queryParams);
-        $this->files = $files;
-        $this->server = new ServerBag($servers);
-        $this->uri = new Uri($this->getUrl());
+        $this->setQueryParams(new ParameterBag($queryParams));
+        $this->setFiles($files);
+        $this->setServer(new ServerBag($servers));
+        $this->setUri(new Uri($this->getUrl()));
+        $this->setHeaders($headers);
+        $this->baseUrl = $this->baseUrl();
     }
-
 
 
     /**
      * @param array $queryParams
      * @param array $servers
      * @param array $files
+     * @param array $headers
+     * @param string $content
+     * @return Request
     */
-    public static function create($queryParams = [], $servers = [], $files = [])
+    public static function create($queryParams = [], $servers = [], $files = [], $headers = [], $content = '')
     {
-         //
+         $request = new static($queryParams, $servers, $files);
+
+         // do something
+         return $request;
     }
 
 
@@ -86,9 +108,7 @@ class Request implements RequestInterface
     */
     public static function fromGlobals()
     {
-        $request = new static($_GET, $_SERVER, $_FILES);
-
-        return $request;
+        return self::create($_GET, $_SERVER, $_FILES);
     }
 
 
@@ -98,9 +118,64 @@ class Request implements RequestInterface
      *
      * @return string
     */
-    public function getBaseUrl()
+    public function baseUrl()
     {
         return $this->getScheme() .'://'. $this->getHost();
+    }
+
+
+    /**
+     * @param $uri
+     */
+    public function setUri($uri): void
+    {
+        $this->uri = $uri;
+    }
+
+
+    /**
+     * @param $server
+     */
+    public function setServer($server): void
+    {
+        $this->server = $server;
+    }
+
+
+    /**
+     * @param mixed $parsedBody
+     */
+    public function setParsedBody($parsedBody): void
+    {
+        $this->parsedBody = $parsedBody;
+    }
+
+
+    /**
+     * @param $queryParams
+     */
+    public function setQueryParams($queryParams): void
+    {
+        $this->queryParams = $queryParams;
+    }
+
+
+    /**
+     * @param array $files
+     */
+    public function setFiles(array $files): void
+    {
+        $this->files = $files;
+    }
+
+
+
+    /**
+     * @param array $headers
+     */
+    public function setHeaders(array $headers): void
+    {
+        $this->headers = $headers;
     }
 
 
@@ -112,39 +187,25 @@ class Request implements RequestInterface
     */
     public function getUrl()
     {
-        return $this->getBaseUrl() . $this->getServer()->get('REQUEST_URI');
+        return $this->baseUrl() . $this->getServer()->get('REQUEST_URI');
     }
 
 
     /**
      * Get uploaded files
      *
-     * @param string|null $uploadKey
+     * @param string|null $key
      * @return array
-     */
-    public function getUploadedFiles(string $uploadKey = null)
+    */
+    public function getFiles(string $key = null)
     {
         $uploadedFiles = [];
-        foreach ($this->files as $file) // as $key => $files
+        $files = $this->files[$key] ?? $this->files;
+        foreach ($files as $file)
         {
-            $uploadedFile = new UploadedFile($file);
-            $uploadedFile->setUploadKey($uploadKey);
-            $uploadedFiles[] = $uploadedFile;
+            $uploadedFiles[] = new UploadedFile($file);
         }
         return $uploadedFiles;
-    }
-
-
-    /**
-     * @param string|null $key
-     * @return
-    */
-    public function upload(string $key = null)
-    {
-        foreach ($this->getUploadedFiles($key) as $uploadedFile)
-        {
-            $uploadedFile->move();
-        }
     }
 
 
@@ -154,7 +215,6 @@ class Request implements RequestInterface
     public function isSecure()
     {
         $port = $this->getServer()->get('SERVER_PORT');
-
 
         return false;
     }
@@ -194,7 +254,7 @@ class Request implements RequestInterface
 
 
     /**
-     * @return array
+     * @return ParameterBag
     */
     public function getQueryParams()
     {
@@ -240,10 +300,12 @@ class Request implements RequestInterface
 
 
     /**
+     * Determine type of request method
+     *
      * @param string $type
      * @return bool
     */
-    public function isMethod(string $type)
+    public function method(string $type)
     {
         return $this->getMethod() === strtoupper($type);
     }

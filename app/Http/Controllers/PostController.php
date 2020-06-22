@@ -22,24 +22,20 @@ class PostController
      */
     public function __construct(RequestInterface $request, ContainerInterface $container)
     {
-        // dump($request);
-        // dump($container);
-        echo __METHOD__.'<br>';
+        // dump($request->getFiles());
     }
 
 
     /**
-     * action index
-     * @param Request $request
-     * @param Response $response
-     * @param int|null $id
-     * @param string $slug
+      * action index
+      * @param Request $request
+      * @param Response $response
+      * @param int|null $id
+      * @param string $slug
+      * @return Response
      */
      public function show(Request $request, Response $response, $id, $slug)
      {
-          echo 'ID : '. $id . ' , SLUG : '. $slug .'<br>';
-          echo __METHOD__;
-          // dump($response);
-          // dump($request);
+          return new Response('Show post with id : ' . $id . ' and slud : '. $slug, 200);
      }
 }

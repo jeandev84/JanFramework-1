@@ -174,7 +174,7 @@ class Router implements RouterInterface
      {
           $route = compact('methods', 'path', 'target');
           $this->routes[] = $this->route = $route;
-          $this->routeName($name, $path);
+          $this->setRouteName($name, $path);
           return $this;
      }
 
@@ -182,13 +182,13 @@ class Router implements RouterInterface
     /**
      * Determine if current route path match URI
      *
-     * @param string|null $requestMethod
-     * @param string|null $requestUri
+     * @param string $requestMethod
+     * @param string $requestUri
      * @return array|bool
      * @throws MethodNotAllowedException
      * @throws RouterException
      */
-     public function match(string $requestMethod = null, string $requestUri = null)
+     public function match(string $requestMethod, string $requestUri)
      {
          foreach ($this->routes as $route)
          {
@@ -205,7 +205,7 @@ class Router implements RouterInterface
              {
                  return array_merge($route, [
                      'pattern' => $pattern,
-                     'matches' => $this->filteredMatchParams($matches),
+                     'matches' => $this->getFilteredMatchParams($matches),
                      'name' => $this->getPathName($path),
                      'middleware' => $this->getMiddleware($path)
                  ]);
@@ -237,7 +237,7 @@ class Router implements RouterInterface
     */
     public function name(string $name)
     {
-        $this->routeName($name, $this->route['path']);
+        $this->setRouteName($name, $this->route['path']);
         return $this;
     }
 
@@ -316,7 +316,7 @@ class Router implements RouterInterface
      * @param $matches
      * @return array
     */
-    private function filteredMatchParams($matches)
+    private function getFilteredMatchParams($matches)
     {
         return array_filter($matches, function ($key) {
             return ! is_numeric($key);
@@ -418,7 +418,6 @@ class Router implements RouterInterface
      *
      * @param string $url
      * @return string
-     * @throws RouterException
     */
     private function getUrlPath(string $url)
     {
@@ -445,7 +444,7 @@ class Router implements RouterInterface
       * @param $path
       * @throws RouterException
     */
-    private function routeName($name, $path)
+    private function setRouteName($name, $path)
     {
          if($name)
          {

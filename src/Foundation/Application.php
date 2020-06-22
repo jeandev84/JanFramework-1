@@ -113,10 +113,10 @@ class Application extends Container
     {
          // add only providers without runServiceProvider
          // get all providers and run them
-
          $this->addServiceProviders([
              \Jan\Foundation\Providers\AppServiceProvider::class,
-             \Jan\Foundation\Providers\RouteServiceProvider::class
+             \Jan\Foundation\Providers\RouteServiceProvider::class,
+             \Jan\Foundation\Providers\ViewServiceProvider::class
          ]);
     }
 

@@ -31,11 +31,11 @@ interface RouterInterface
      /**
       * Determine if current route path match URI
       *
-      * @param string|null $requestMethod
-      * @param string|null $requestUri
+      * @param string $requestMethod
+      * @param string $requestUri
       * @return mixed
      */
-     public function match(string $requestMethod = null, string $requestUri = null);
+     public function match(string $requestMethod, string $requestUri);
 
 
 

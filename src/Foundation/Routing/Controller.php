@@ -38,12 +38,10 @@ abstract class Controller
      * Controller constructor.
      *
      * @param Container $container
-     * @param View|null $view
     */
-    public function __construct(Container $container, View $view = null)
+    public function __construct(Container $container)
     {
          $this->container = $container;
-         $this->view = $view;
     }
 
 
@@ -65,12 +63,13 @@ abstract class Controller
     */
     public function render(string $template, array $data = [], Response $response = null): Response
     {
+         $view = $this->container->get('view');
          $content = $this->renderTemplate($template, $data);
 
          ob_start();
          if($this->layout !== false)
          {
-              require $this->view->resource('layouts/'. $this->layout .'.php');
+              require $view->resource('layouts/'. $this->layout .'.php');
               $content = ob_get_clean();
          }
 
@@ -89,11 +88,13 @@ abstract class Controller
      * @param string $template
      * @param array $data
      * @return false|string
-     * @throws ViewException
-     */
+     * @throws \Jan\Component\DI\Exceptions\InstanceException
+     * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+     * @throws \ReflectionException
+    */
     public function renderTemplate(string $template, array $data)
     {
-          return $this->view->render($template, $data);
+          return $this->container->get('view')->render($template, $data);
     }
 
 

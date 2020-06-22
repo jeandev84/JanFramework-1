@@ -245,7 +245,7 @@ class Response implements ResponseInterface
     */
     protected function parseHeaders($key, $value)
     {
-        return \is_array($key) ? array_merge($key, $this->headers) : [$key => $value];
+        return \is_array($key) ? $key : [$key => $value];
     }
 
 

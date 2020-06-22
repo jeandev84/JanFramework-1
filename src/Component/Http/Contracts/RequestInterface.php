@@ -12,7 +12,7 @@ interface RequestInterface
     /**
      * @return string
     */
-    public function getBaseUrl();
+    public function getUrl();
 
 
     /**
@@ -31,5 +31,5 @@ interface RequestInterface
     /**
      * @return mixed
     */
-    public function getUploadedFiles();
+    public function getFiles();
 }
