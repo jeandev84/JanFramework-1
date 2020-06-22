@@ -21,7 +21,8 @@ Route::get('/foo', function () {
 
 
 Route::get('/', 'HomeController@index', 'home');
-Route::get('/contact', 'HomeController@contact', 'contact');
+Route::map('GET|POST', '/contact', 'HomeController@contact', 'contact');
+
 
 Route::get('/post/{id}/{slug}', 'PostController@show', 'post.show');
 Route::get('/user/{token}/edit', 'UserController@edit', 'user.edit')

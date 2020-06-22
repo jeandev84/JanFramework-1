@@ -2,21 +2,44 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Contracts\Controller;
+use Jan\Component\DI\Container;
+use Jan\Component\Http\Contracts\RequestInterface;
+use Jan\Component\Http\Request;
+
+
 /**
  * Class HomeController
  * @package App\Http\Controllers
 */
-class HomeController
+class HomeController extends Controller
 {
 
-      public function index()
+     /**
+      * @return \Jan\Component\Http\Response
+      * @throws \Jan\Component\DI\Exceptions\InstanceException
+      * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+      * @throws \ReflectionException
+      */
+      public function index(Container $container)
       {
-           echo __METHOD__;
+           return $this->render('blog/home/index');
       }
 
-      public function contact()
+
+      /**
+       * @param Request $request
+       * @return \Jan\Component\Http\Response
+       * @throws \Jan\Component\DI\Exceptions\InstanceException
+       * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+       * @throws \ReflectionException
+      */
+      public function contact(Request $request)
       {
-        echo __METHOD__;
+          echo $request->getMethod() . ' ' . $request->getPath();
+          dump($_POST);
+          dump($request->getFiles('contact[post]'));
+          return $this->render('blog/home/contact');
       }
 
 }

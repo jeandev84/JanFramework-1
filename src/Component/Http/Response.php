@@ -229,7 +229,8 @@ class Response implements ResponseInterface
         if(headers_sent())
         {
             # look for may be return $this / $this->sendBody()
-            return $this;
+            // return $this;
+            return $this->sendBody();
         }
 
         $this->statusMessage();

@@ -128,7 +128,22 @@ class Application extends Container
     */
     protected function registerCoreContainerAliases()
     {
-        //
+        foreach ($this->coreAliases() as $alias => $original)
+        {
+            $this->setAlias($alias, $original);
+        }
     }
 
+
+    /**
+     * @return string[]
+    */
+    private function coreAliases()
+    {
+        return [
+          'Jan\Component\DI\Container' => 'Jan\Component\DI\Contracts\ContainerInterface',
+          'Jan\Component\Http\Request' => 'Jan\Component\Http\Contracts\RequestInterface',
+          'Jan\Component\Http\Response' => 'Jan\Component\Http\Contracts\ResponseInterface',
+        ];
+    }
 }

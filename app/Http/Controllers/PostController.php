@@ -42,6 +42,8 @@ class PostController extends Controller
      * @throws \Jan\Component\DI\Exceptions\InstanceException
      * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
      * @throws \ReflectionException
+     *
+     * URI : post/5/article-4?page=3&sort=asc
      */
      public function show(Container $container, Request $request, $id, $slug): Response
      {

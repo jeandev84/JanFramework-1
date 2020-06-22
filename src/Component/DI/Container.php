@@ -417,7 +417,13 @@ class Container implements \ArrayAccess, ContainerInterface
            if(isset($this->aliases[$abstract]))
            {
                $abstract = $this->aliases[$abstract];
-               return $this->resolve($abstract);
+
+               if(isset($this->instances[$abstract]))
+               {
+                   return $this->instances[$abstract];
+               }
+
+               return $abstract;
            }
 
            // Get concrete

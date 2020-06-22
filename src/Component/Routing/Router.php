@@ -194,22 +194,20 @@ class Router implements RouterInterface
          {
              list($methods, $path) = array_values($route);
 
-             if(! \in_array($requestMethod, $methods))
+             if(\in_array($requestMethod, $methods))
              {
-                  throw new MethodNotAllowedException();
-             }
+                 $pattern = $this->generatePattern(trim($path, '/'));
+                 $uri = trim($this->getUrlPath($requestUri), '/');
 
-             $pattern = $this->generatePattern(trim($path, '/'));
-             $uri = trim($this->getUrlPath($requestUri), '/');
-
-             if(preg_match($pattern, $uri, $matches))
-             {
-                 return array_merge($route, [
-                     'pattern' => $pattern,
-                     'matches' => $this->getFilteredMatchParams($matches),
-                     'name' => $this->getPathName($path),
-                     'middleware' => $this->getMiddleware($path)
-                 ]);
+                 if(preg_match($pattern, $uri, $matches))
+                 {
+                     return array_merge($route, [
+                         'pattern' => $pattern,
+                         'matches' => $this->getFilteredMatchParams($matches),
+                         'name' => $this->getPathName($path),
+                         'middleware' => $this->getMiddleware($path)
+                     ]);
+                 }
              }
          }
 

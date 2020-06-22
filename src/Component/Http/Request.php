@@ -14,6 +14,13 @@ use Jan\Component\Http\Contracts\RequestInterface;
 class Request implements RequestInterface
 {
 
+    const IP_CLIENT_INDEXES = [
+        'HTTP_CLIENT_IP',
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_FORWARDED_FOR'
+    ];
+
+
     /**
      * Base Url
      *
@@ -439,7 +446,7 @@ class Request implements RequestInterface
      * @param string $type
      * @return bool
     */
-    public function method(string $type)
+    public function method($type)
     {
         return $this->getMethod() === strtoupper($type);
     }
@@ -473,9 +480,17 @@ class Request implements RequestInterface
     */
     public function getIpClient()
     {
-         //
          $ip = $this->getServer()->get('REMOTE_ADDR');
 
-         //
+         foreach (self::IP_CLIENT_INDEXES as $ipClient)
+         {
+             if($identified = $this->getServer()->get($ipClient))
+             {
+                 $ip = $identified;
+                 break;
+             }
+         }
+
+         return $ip;
     }
 }
