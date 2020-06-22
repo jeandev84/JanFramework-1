@@ -199,9 +199,10 @@ class Router implements RouterInterface
                   throw new MethodNotAllowedException();
              }
 
-             $pattern = $this->generatePattern($path);
+             $pattern = $this->generatePattern(trim($path, '/'));
+             $uri = trim($this->getUrlPath($requestUri), '/');
 
-             if(preg_match($pattern, $this->getUrlPath($requestUri), $matches))
+             if(preg_match($pattern, $uri, $matches))
              {
                  return array_merge($route, [
                      'pattern' => $pattern,
@@ -242,13 +243,57 @@ class Router implements RouterInterface
     }
 
 
+
+
+    /**
+     * @param string $path
+     * @return false|int|string
+     */
+    public function getPathName(string $path)
+    {
+        return array_search($path, $this->namedRoutes) ?: '';
+    }
+
+
+
+    /**
+     * Set path name
+     *
+     * @param $name
+     * @param $path
+     * @throws RouterException
+   */
+    public function setRouteName($name, $path)
+    {
+        if($name)
+        {
+            if(isset($this->namedRoutes[$name]))
+            {
+                throw new RouterException('This name (%s) already taken!');
+            }
+
+            $this->namedRoutes[$name] = $path;
+        }
+    }
+
+
+    /**
+     * @param $name
+     * @return bool|mixed
+    */
+    public function getRoutePath($name)
+    {
+        return $this->namedRoutes[$name] ?? false;
+    }
+
+
     /**
      * Generate route path
      *
      * @param string $name
      * @param array $params
      * @return mixed
-     */
+    */
     public function generate(string $name, array $params = [])
     {
         if(! isset($this->namedRoutes[$name]))
@@ -329,74 +374,42 @@ class Router implements RouterInterface
       * @param string $path
       * @return string
     */
-    private function generatePattern(string $path)
+    public function generatePattern(string $path)
     {
-         return '#^'. $this->compile(trim($path, '/')) . '$#i';
+         return '#^'. $this->compile($path) . '$#i';
     }
 
 
-
     /**
-     * @return array
+     * @param string $path
+     * @return string
     */
-    private function getFormatParams()
+    private function compile(string $path)
     {
-        $formats = [];
-        foreach ($this->formatParams as $format)
-        {
-            $formats[] = '#'. $format . '#';
-        }
-        return $formats;
+        return preg_replace_callback($this->getFormatParams(), [$this, 'generateRegex'], $path);
     }
 
 
+    /**
+     * Get URL path
+     *
+     * @param string $url
+     * @return string
+    */
+    public function getUrlPath(string $url)
+    {
+        return parse_url($url, PHP_URL_PATH);
+    }
+
 
     /**
-      * @param string $path
-      * @return string
-     */
-     private function compile(string $path)
-     {
-         return preg_replace_callback($this->getFormatParams(), [$this, 'generateRegex'], $path);
-     }
-
-
-
-     /**
-      * @param array $matches
-      * @return string
-     */
-     private function generateRegex(array $matches)
-     {
-         if($this->hasPattern($matches[1]))
-         {
-             return '(?P<'. $matches[1] .'>'. $this->resolvePattern($matches[1]) . ')';
-         }
-         return '([^/]+)';
-     }
-
-
-     /**
-      * Determine if has setted pattern
-      *
-      * @param $key
-      * @return bool
-     */
-     private function hasPattern($key)
-     {
-        return isset($this->patterns[$key]);
-     }
-
-
-
-     /**
-      * @param $key
-      * @return string|string[]
-     */
-     private function resolvePattern($key)
-     {
+     * @param $key
+     * @return string|string[]
+    */
+    private function resolvePattern($key)
+    {
         return str_replace( '(', '(?:', $this->patterns[$key]);
-     }
+    }
 
 
 
@@ -414,47 +427,43 @@ class Router implements RouterInterface
 
 
     /**
-     * Get URL path
-     *
-     * @param string $url
+     * @return array
+     */
+    private function getFormatParams()
+    {
+        $formats = [];
+        foreach ($this->formatParams as $format)
+        {
+            $formats[] = '#'. $format . '#';
+        }
+        return $formats;
+    }
+
+
+
+    /**
+     * @param array $matches
      * @return string
-    */
-    private function getUrlPath(string $url)
+     */
+    private function generateRegex(array $matches)
     {
-        return trim(parse_url($url, PHP_URL_PATH), '/');
+        if($this->hasPattern($matches[1]))
+        {
+            return '(?P<'. $matches[1] .'>'. $this->resolvePattern($matches[1]) . ')';
+        }
+        return '([^/]+)';
     }
 
 
 
     /**
-     * @param string $path
-     * @return false|int|string
+     * Determine if has setted pattern
+     *
+     * @param $key
+     * @return bool
     */
-    private function getPathName(string $path)
+    private function hasPattern($key)
     {
-        return array_search($path, $this->namedRoutes) ?: '';
+        return isset($this->patterns[$key]);
     }
-
-
-
-    /**
-      * Set path name
-      *
-      * @param $name
-      * @param $path
-      * @throws RouterException
-    */
-    private function setRouteName($name, $path)
-    {
-         if($name)
-         {
-             if(isset($this->namedRoutes[$name]))
-             {
-                 throw new RouterException('This name (%s) already taken!');
-             }
-
-             $this->namedRoutes[$name] = $path;
-         }
-    }
-
 }

@@ -7,6 +7,7 @@ use Jan\Component\DI\Container;
 use Jan\Component\DI\Exceptions\InstanceException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
+use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
@@ -43,14 +44,13 @@ class RouteDispatcher
      private $route = [];
 
 
-     /**
-      * RouteDispatcher constructor.
-      *
-      * @param RequestInterface $request
-      * @param Container $container
-      * @throws MethodNotAllowedException
-      * @throws RouterException
-      * @throws Exception
+    /**
+     * RouteDispatcher constructor.
+     *
+     * @param RequestInterface $request
+     * @param Container $container
+     * @throws MethodNotAllowedException
+     * @throws RouterException
      */
      public function __construct(RequestInterface $request, Container $container)
      {

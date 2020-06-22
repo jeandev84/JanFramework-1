@@ -4,10 +4,13 @@ namespace Jan\Foundation\Routing;
 
 use Jan\Component\DI\Container;
 use Jan\Component\DI\Contracts\ContainerInterface;
+use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Http\Response;
 use Jan\Component\Templating\Exceptions\ViewException;
 use Jan\Component\Templating\View;
+
 
 /**
  * Class Controller
@@ -16,10 +19,7 @@ use Jan\Component\Templating\View;
 abstract class Controller
 {
 
-    /**
-     * @var Container
-    */
-    protected $container;
+    /* use ControllerTrait; */
 
 
     /**
@@ -28,27 +28,26 @@ abstract class Controller
     protected $layout = 'default';
 
 
+
     /**
-     * @var
-    */
-    protected $view;
+     * @var Container
+     */
+    protected $container;
 
 
     /**
-     * Controller constructor.
-     *
-     * @param Container $container
+     * @param ContainerInterface $container
     */
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
-         $this->container = $container;
+        $this->container = $container;
     }
 
 
     /**
      * @return Container
     */
-    public function getContainer(): Container
+    public function getContainer()
     {
         return $this->container;
     }
@@ -59,12 +58,14 @@ abstract class Controller
      * @param array $data
      * @param Response|null $response
      * @return Response
-     * @throws ViewException
+     * @throws InstanceException
+     * @throws ResolverDependencyException
+     * @throws \ReflectionException
     */
     public function render(string $template, array $data = [], Response $response = null): Response
     {
          $view = $this->container->get('view');
-         $content = $this->renderTemplate($template, $data);
+         $content = $this->renderTemplate($template.'.php', $data);
 
          ob_start();
          if($this->layout !== false)
@@ -88,8 +89,8 @@ abstract class Controller
      * @param string $template
      * @param array $data
      * @return false|string
-     * @throws \Jan\Component\DI\Exceptions\InstanceException
-     * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+     * @throws InstanceException
+     * @throws ResolverDependencyException
      * @throws \ReflectionException
     */
     public function renderTemplate(string $template, array $data)
@@ -117,8 +118,10 @@ abstract class Controller
     }
 
 
-
-    public function core()
+    /**
+     * @return array
+    */
+    public function coreAliases()
     {
         return [
 

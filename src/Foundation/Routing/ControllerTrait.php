@@ -12,5 +12,26 @@ use Jan\Component\DI\Container;
 trait ControllerTrait
 {
 
+    /**
+     * @var Container
+    */
+    protected $container;
 
+
+    /**
+     * @param Container $container
+    */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
+
+
+    /**
+     * @return Container
+    */
+    public function getContainer()
+    {
+        return $this->container;
+    }
 }

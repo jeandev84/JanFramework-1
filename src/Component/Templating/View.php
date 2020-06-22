@@ -100,10 +100,7 @@ class View
 
           if(! file_exists($template))
           {
-              throw new ViewException(
-                  sprintf('Can not found view (%s) ', $template),
-                  404
-              );
+              throw new ViewException(sprintf('Template file <b>(%s)</b> does not exist!', $template));
           }
 
           return $template;

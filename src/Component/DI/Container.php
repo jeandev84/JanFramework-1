@@ -384,6 +384,14 @@ class Container implements \ArrayAccess, ContainerInterface
                return $this->resolve($abstract, $arguments);
            }
 
+           /*
+           if(isset($this->instances[$abstract]))
+           {
+               return $this->instances[$abstract];
+           }
+           */
+
+           // Get concrete
            $concrete = $this->getConcrete($abstract);
 
            if($this->isSingleton($abstract))

@@ -55,50 +55,128 @@ class Request implements RequestInterface
 
 
     /**
+     * @var array
+    */
+    public $attributes;
+
+
+    /**
      * Files
      *
      * @var array
     */
-    private $files = [];
+    public $files = [];
 
 
     /**
      * @var array
     */
-    private $headers = [];
+    public $cookies = [];
+
+
+    /**
+     * @var array
+     */
+    public $envs = [];
+
+
+
+    /**
+     * @var //HeaderBag
+    */
+    public $headers;
+
+
+    /**
+     * @var array
+    */
+    public $languages = [];
 
 
     /**
      * Request constructor.
      * @param array $queryParams
+     * @param array $attributes
      * @param array $servers
      * @param array $files
+     * @param array $cookies
+     * @param array $envs
      * @param array $headers
+     * @param string $content
+     */
+    public function __construct(
+        $queryParams = [],
+        $attributes = [],
+        $servers = [],
+        $files = [],
+        $cookies = [],
+        $envs = [],
+        $headers = [],
+        $content = ''
+    )
+    {
+        // call initialise here
+        $this->initialise($queryParams, $attributes, $servers, $files, $cookies, $envs, $headers, $content);
+    }
+
+
+    /**
+     * @param array $queryParams
+     * @param array $attributes
+     * @param array $servers
+     * @param array $files
+     * @param array $cookies
+     * @param array $envs
+     * @param array $headers
+     * @param string $content
     */
-    public function __construct($queryParams = [], $servers = [], $files = [], $headers = [])
+    public function initialise(
+        $queryParams = [],
+        $attributes = [],
+        $servers = [],
+        $files = [],
+        $cookies = [],
+        $envs = [],
+        $headers = [],
+        $content = ''
+    )
     {
         $this->setQueryParams(new ParameterBag($queryParams));
         $this->setFiles($files);
+        $this->setAttributes($attributes);
         $this->setServer(new ServerBag($servers));
         $this->setUri(new Uri($this->getUrl()));
+        $this->setCookies($cookies);
         $this->setHeaders($headers);
+        $this->setParsedBody($content);
+        $this->setEnv($envs);
         $this->baseUrl = $this->baseUrl();
     }
 
 
     /**
      * @param array $queryParams
+     * @param array $attributes
      * @param array $servers
      * @param array $files
+     * @param array $cookies
      * @param array $headers
      * @param string $content
      * @return Request
     */
-    public static function create($queryParams = [], $servers = [], $files = [], $headers = [], $content = '')
+    public static function create(
+        $queryParams = [],
+        $attributes = [],
+        $servers = [],
+        $files = [],
+        $cookies = [],
+        $headers = [],
+        $content = '')
     {
-         $request = new static($queryParams, $servers, $files);
+         $request = new static($queryParams, $attributes, $servers, $files, $cookies, $headers, $content);
 
          // do something
+         // if($request->isCli() && ... do something
          return $request;
     }
 
@@ -108,7 +186,7 @@ class Request implements RequestInterface
     */
     public static function fromGlobals()
     {
-        return self::create($_GET, $_SERVER, $_FILES);
+        return self::create($_GET, $_POST, $_SERVER, $_FILES, $_COOKIE);
     }
 
 
@@ -120,7 +198,26 @@ class Request implements RequestInterface
     */
     public function baseUrl()
     {
-        return $this->getScheme() .'://'. $this->getHost();
+        return $this->getScheme() . $this->getHost();
+    }
+
+
+
+    /**
+     * @param $envs
+    */
+    public function setEnv($envs)
+    {
+        $this->envs = $envs;
+    }
+
+
+    /**
+     * @return array
+    */
+    public function getEnv()
+    {
+        return $this->envs;
     }
 
 
@@ -135,10 +232,19 @@ class Request implements RequestInterface
 
     /**
      * @param $server
-     */
+    */
     public function setServer($server): void
     {
         $this->server = $server;
+    }
+
+
+    /**
+     * @param array $attributes
+    */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
     }
 
 
@@ -172,8 +278,8 @@ class Request implements RequestInterface
 
     /**
      * @param array $headers
-     */
-    public function setHeaders(array $headers): void
+    */
+    public function setHeaders($headers): void
     {
         $this->headers = $headers;
     }
@@ -215,8 +321,27 @@ class Request implements RequestInterface
     public function isSecure()
     {
         $port = $this->getServer()->get('SERVER_PORT');
+        return ($this->getServer()->get('HTTPS') == 'on' || $port == 443);
+    }
 
-        return false;
+
+    /**
+     * Is Ajax
+     *
+     * @return bool
+    */
+    public function isXhr()
+    {
+        return $this->getServer()->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest';
+    }
+
+
+    /**
+     * @return bool
+    */
+    public function isCli()
+    {
+        return php_sapi_name() == 'cli' && $this->getServer()->get('argc') > 0;
     }
 
 
@@ -228,7 +353,7 @@ class Request implements RequestInterface
     public function getScheme()
     {
         $isSecure = $this->isSecure();
-        return $isSecure ? 'https' : 'http';
+        return $isSecure ? 'https://' : 'http://';
     }
 
 
@@ -289,6 +414,15 @@ class Request implements RequestInterface
     }
 
 
+    /**
+     * @param null $key
+     * @return mixed|null
+    */
+    public function server($key = null)
+    {
+        return $this->getServer()->get($key, $_SERVER);
+    }
+
 
     /**
      * @return mixed
@@ -308,5 +442,40 @@ class Request implements RequestInterface
     public function method(string $type)
     {
         return $this->getMethod() === strtoupper($type);
+    }
+
+
+
+    /**
+     * @param array $cookies
+    */
+    public function setCookies(array $cookies)
+    {
+        $this->cookies = $cookies;
+    }
+
+
+
+    /**
+     * @param null $key
+     * @return mixed
+    */
+    public function cookies($key = null)
+    {
+        // return $this->cookies->get($key);
+    }
+
+
+    /**
+     * Get client IP
+     *
+     * @return string
+    */
+    public function getIpClient()
+    {
+         //
+         $ip = $this->getServer()->get('REMOTE_ADDR');
+
+         //
     }
 }

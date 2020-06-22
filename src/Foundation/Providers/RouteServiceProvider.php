@@ -4,6 +4,7 @@ namespace Jan\Foundation\Providers;
 
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
 use Jan\Component\Http\Contracts\RequestInterface;
+use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Foundation\Middleware;
 use Jan\Foundation\RouteDispatcher;
 
