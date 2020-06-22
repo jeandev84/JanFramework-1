@@ -18,19 +18,11 @@ $app = new \Jan\Foundation\Application(
 |-------------------------------------------------------------------
 */
 
-$app->singleton(Jan\Contracts\Http\Kernel::class, function ($app) {
-    return new \App\Http\Kernel($app);
-});
+$app->singleton(Jan\Contracts\Http\Kernel::class, App\Http\Kernel::class);
 
+$app->singleton(Jan\Contracts\Console\Kernel::class, App\Console\Kernel::class);
 
-$app->singleton(Jan\Contracts\Console\Kernel::class, function ($app) {
-    return new \App\Console\Kernel($app);
-});
-
-
-$app->singleton(Jan\Contracts\Debug\ExceptionHandler::class, function ($app) {
-    return new \App\Exceptions\ErrorHandler(new \Exception());
-});
+$app->singleton(Jan\Contracts\Debug\ExceptionHandler::class, App\Exceptions\ErrorHandler::class);
 
 
 /*

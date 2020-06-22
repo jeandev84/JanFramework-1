@@ -17,18 +17,8 @@ class View
       protected $basePath;
 
 
-      /** @var string */
-      protected $template;
-
-
       /** @var array */
       protected $data = [];
-
-
-      /**
-       * @var array
-      */
-      protected $extensions = [];
 
 
 
@@ -56,12 +46,12 @@ class View
 
 
       /**
-       * Set globals variables
+       * Set data
        *
        * @param array $data
        * @return View
       */
-      public function setGlobals(array $data)
+      public function setData(array $data)
       {
            $this->data = array_merge($this->data, $data);
 
@@ -70,40 +60,18 @@ class View
 
 
       /**
-       * @param string $template
-       * @return View
-      */
-      public function setPath(string $template)
-      {
-          $this->template = $template;
-
-          return $this;
-      }
-
-
-
-     /**
-      * @param ViewExtension $extension
-     */
-     public function addExtension(ViewExtension $extension)
-     {
-          $this->extensions[] = $extension;
-     }
-
-
-     /**
        * Render view template and optional data
        * @param string $template
        * @return false|string
        * @throws ViewException
-     */
-     public function renderTemplate(string $template)
-     {
+      */
+      public function renderTemplate(string $template)
+      {
            extract($this->data);
            ob_start();
            require $this->resource($template);
            return ob_get_clean();
-     }
+      }
 
 
       /**
@@ -116,7 +84,7 @@ class View
       */
       public function render(string $template, array $data = [])
       {
-           return $this->setGlobals($data)->renderTemplate($template);
+           return $this->setData($data)->renderTemplate($template);
       }
 
 

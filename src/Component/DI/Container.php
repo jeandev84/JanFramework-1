@@ -426,15 +426,17 @@ class Container implements \ArrayAccess, ContainerInterface
                {
                     throw new ResolverDependencyException('Autowire is unabled for resolution');
                }
+
                return $this->resolve($abstract, $arguments);
            }
 
-           if($this->instantiated($abstract))
+           if(isset($this->instances[$abstract]))
            {
                return $this->instances[$abstract];
            }
 
            $concrete = $this->getConcrete($abstract);
+
            if($this->isSingleton($abstract))
            {
                return $this->getSingleton($abstract, $concrete);
@@ -447,6 +449,9 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * @param $abstract
      * @return mixed
+     * @throws InstanceException
+     * @throws ReflectionException
+     * @throws ResolverDependencyException
     */
     public function getConcrete($abstract)
     {
@@ -455,6 +460,11 @@ class Container implements \ArrayAccess, ContainerInterface
         if($concrete instanceof Closure)
         {
             return $concrete($this);
+        }
+
+        if(class_exists($concrete))
+        {
+            return $this->resolve($concrete);
         }
 
         return $concrete;
