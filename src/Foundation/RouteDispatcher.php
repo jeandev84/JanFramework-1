@@ -8,6 +8,7 @@ use Jan\Component\DI\Exceptions\InstanceException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
+use Jan\Component\Http\Response;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
@@ -97,6 +98,7 @@ class RouteDispatcher
     {
         $target = $this->route['target'];
         $parameters = $this->route['matches'];
+        $response = false;
 
         if(is_string($target))
         {
@@ -106,6 +108,7 @@ class RouteDispatcher
             $parameters = $this->resolveActionParams($reflectedMethod);
             $controller = $this->container->get($controllerClass);
             $target = [$controller, $action];
+            $response = true;
         }
 
         if(! is_callable($target))
@@ -113,7 +116,14 @@ class RouteDispatcher
             throw new Exception('No callable action!');
         }
 
-        return call_user_func_array($target, $parameters);
+        $body = call_user_func_array($target, $parameters);
+
+        if($response && ! $body instanceof Response)
+        {
+            throw new Exception('This callback must be instance of Response');
+        }
+
+        return $body;
     }
 
 

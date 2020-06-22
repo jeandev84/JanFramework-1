@@ -260,6 +260,30 @@ class Container implements \ArrayAccess, ContainerInterface
 
 
     /**
+     * @param $alias
+     * @param $original
+    */
+    public function setAlias($alias, $original)
+    {
+        $this->aliases[$alias] = $original;
+    }
+
+
+
+    /**
+     * @param array $aliases
+    */
+    public function setAliases(array $aliases)
+    {
+        foreach ($aliases as $alias => $original)
+        {
+             $this->setAlias($alias, $original);
+        }
+    }
+
+
+
+    /**
      * Singleton
      *
      * @param $abstract
@@ -390,6 +414,11 @@ class Container implements \ArrayAccess, ContainerInterface
                return $this->instances[$abstract];
            }
            */
+           if(isset($this->aliases[$abstract]))
+           {
+               $abstract = $this->aliases[$abstract];
+               return $this->resolve($abstract);
+           }
 
            // Get concrete
            $concrete = $this->getConcrete($abstract);
