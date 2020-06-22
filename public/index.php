@@ -59,4 +59,5 @@ $response->send();
 
 $kernel->terminate($request, $response);
 
+dd($app);
 

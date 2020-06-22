@@ -467,8 +467,8 @@ class Container implements \ArrayAccess, ContainerInterface
      * @param $abstract
      * @param array $arguments
      * @return object
-     * @throws ReflectionException|InstanceException
-    */
+     * @throws ReflectionException|InstanceException|ResolverDependencyException
+     */
     public function resolve($abstract, array $arguments = [])
     {
           $reflectedClass = new ReflectionClass($abstract);

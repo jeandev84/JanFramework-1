@@ -125,7 +125,7 @@ class Application extends Container
      * Register the core class aliases int the container
      *
      * @return void
-     */
+    */
     protected function registerCoreContainerAliases()
     {
         //

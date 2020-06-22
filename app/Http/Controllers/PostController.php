@@ -18,11 +18,13 @@ class PostController
     /**
      * PostController constructor.
      * @param RequestInterface $request
-    */
+     * @param ContainerInterface $container
+     */
     public function __construct(RequestInterface $request, ContainerInterface $container)
     {
-        dump($request);
-        dump($container);
+        // dump($request);
+        // dump($container);
+        echo __METHOD__.'<br>';
     }
 
 
@@ -35,8 +37,7 @@ class PostController
      */
      public function show(Request $request, Response $response, $id, $slug)
      {
-          echo 'ID : '. $id .'<br>';
-          echo 'SLUG : '. $slug .'<br>';
+          echo 'ID : '. $id . ' , SLUG : '. $slug .'<br>';
           echo __METHOD__;
           // dump($response);
           // dump($request);

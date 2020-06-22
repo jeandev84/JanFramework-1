@@ -3,11 +3,15 @@ namespace Jan\Foundation;
 
 
 use Exception;
-use Jan\Component\DI\Contracts\ContainerInterface;
+use Jan\Component\DI\Container;
+use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
+use ReflectionException;
+use ReflectionMethod;
 
 
 /**
@@ -18,7 +22,7 @@ class RouteDispatcher
 {
 
      /**
-      * @var ContainerInterface
+      * @var Container
      */
      private $container;
 
@@ -39,15 +43,16 @@ class RouteDispatcher
      private $route = [];
 
 
-    /**
-     * RouteDispatcher constructor.
-     *
-     * @param RequestInterface $request
-     * @param ContainerInterface $container
-     * @throws MethodNotAllowedException
-     * @throws RouterException
+     /**
+      * RouteDispatcher constructor.
+      *
+      * @param RequestInterface $request
+      * @param Container $container
+      * @throws MethodNotAllowedException
+      * @throws RouterException
+      * @throws Exception
      */
-     public function __construct(RequestInterface $request, ContainerInterface $container)
+     public function __construct(RequestInterface $request, Container $container)
      {
          $route = Route::instance()->match($request->getMethod(), $request->getPath());
 
@@ -59,6 +64,7 @@ class RouteDispatcher
          $this->route = $route;
          $this->container = $container;
      }
+
 
 
      /**
@@ -94,9 +100,9 @@ class RouteDispatcher
 
         if(is_string($target))
         {
-            list($controller, $action) = explode('@', $target);
-            $controller = $this->namespace.$controller;
-            $reflectedMethod = new \ReflectionMethod($controller, $action);
+            list($controller, $action) = explode('@', $target, 2);
+            $controller = sprintf('%s%s', $this->namespace, $controller);
+            $reflectedMethod = new ReflectionMethod($controller, $action);
             $parameters = $this->resolveActionParams($reflectedMethod);
             $target = [$this->container->get($controller), $action];
         }
@@ -111,14 +117,14 @@ class RouteDispatcher
 
 
     /**
-     * @param \ReflectionMethod $reflectedMethod
-     * @return
+     * @param ReflectionMethod $reflectedMethod
+     * @return array
+     * @throws InstanceException
+     * @throws ResolverDependencyException
+     * @throws ReflectionException
     */
-    private function resolveActionParams(\ReflectionMethod $reflectedMethod)
+    private function resolveActionParams(ReflectionMethod $reflectedMethod)
     {
-        return $this->container->getDependencies(
-            $reflectedMethod,
-            $this->route['matches']
-        );
+        return $this->container->getDependencies($reflectedMethod, $this->route['matches']);
     }
 }

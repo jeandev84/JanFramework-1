@@ -65,6 +65,12 @@ class Router implements RouterInterface
 
 
       /**
+       * @var bool
+      */
+      private $prettyUrl = true;
+
+
+      /**
        * Router constructor.
        * @param string $baseUrl
       */
@@ -73,6 +79,17 @@ class Router implements RouterInterface
            $this->setBaseUrl($baseUrl);
       }
 
+
+      /**
+       * @param bool $status
+       * @return $this
+      */
+      public function setPrettyUrl(bool $status)
+      {
+           $this->prettyUrl = $status;
+
+           return $this;
+      }
 
 
       /**
@@ -103,7 +120,7 @@ class Router implements RouterInterface
       */
       public function setRoutes(array $routes)
       {
-          $this->routes = $routes;
+           $this->routes = $routes;
       }
 
 
@@ -171,6 +188,11 @@ class Router implements RouterInterface
      */
      public function map(array $methods, string $path, $target, string $name = null)
      {
+          if(! $this->prettyUrl)
+          {
+              $path .= '.php';
+          }
+
           $route = compact('methods', 'path', 'target');
           $this->routes[] = $this->route = $route;
           $this->routeName($name, $path);

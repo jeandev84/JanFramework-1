@@ -120,13 +120,7 @@ class Asset
      */
      public static function renderCss()
      {
-          $html = '';
-          foreach (self::$css as $link)
-          {
-              $html .= sprintf(self::CSS_BLANK, self::generatePath($link, 'css'));
-              $html .= "\n";
-          }
-          return $html;
+         return self::render(self::$css, self::CSS_BLANK, 'css');
      }
 
 
@@ -135,10 +129,22 @@ class Asset
     */
     public static function renderJs()
     {
+        return self::render(self::$js, self::JS_BLANK, 'js');
+    }
+
+
+    /**
+     * @param array $data
+     * @param string $blank
+     * @param string $ext
+     * @return string
+    */
+    private static function render(array $data, string $blank, string $ext)
+    {
         $html = '';
-        foreach (self::$js as $script)
+        foreach ($data as $file)
         {
-            $html .= sprintf(self::JS_BLANK, self::generatePath($script, 'js'));
+            $html .= sprintf($blank, self::generatePath($file, $ext));
             $html .= "\n";
         }
         return $html;

@@ -69,6 +69,18 @@ class Request implements RequestInterface
     }
 
 
+
+    /**
+     * @param array $queryParams
+     * @param array $servers
+     * @param array $files
+    */
+    public static function create($queryParams = [], $servers = [], $files = [])
+    {
+         //
+    }
+
+
     /**
      * @return static
     */
@@ -113,7 +125,7 @@ class Request implements RequestInterface
     public function getUploadedFiles(string $uploadKey = null)
     {
         $uploadedFiles = [];
-        foreach ($this->files as $file)
+        foreach ($this->files as $file) // as $key => $files
         {
             $uploadedFile = new UploadedFile($file);
             $uploadedFile->setUploadKey($uploadKey);
