@@ -100,11 +100,12 @@ class RouteDispatcher
 
         if(is_string($target))
         {
-            list($controller, $action) = explode('@', $target, 2);
-            $controller = sprintf('%s%s', $this->namespace, $controller);
-            $reflectedMethod = new ReflectionMethod($controller, $action);
+            list($controllerClass, $action) = explode('@', $target, 2);
+            $controllerClass = sprintf('%s%s', $this->namespace, $controllerClass);
+            $reflectedMethod = new ReflectionMethod($controllerClass, $action);
             $parameters = $this->resolveActionParams($reflectedMethod);
-            $target = [$this->container->get($controller), $action];
+            $controller = $this->container->get($controllerClass);
+            $target = [$controller, $action];
         }
 
         if(! is_callable($target))

@@ -1,7 +1,12 @@
 <?php
 
 Route::get('/hello', function () {
-    return 'Привет!';
+//    return 'Привет!';
+    return [
+        'id' => 1,
+        'name' => 'Jean',
+        'age' => 36
+    ];
 });
 
 

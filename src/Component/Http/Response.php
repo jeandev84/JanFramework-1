@@ -23,7 +23,7 @@ class Response implements ResponseInterface
     /**
      * @var string
     */
-    private $body;
+    private $content;
 
 
 
@@ -48,9 +48,52 @@ class Response implements ResponseInterface
     */
     public function __construct(string $content = null, int $status = 200, array $headers = [])
     {
-         $this->withBody($content);
-         $this->withStatus($status);
-         $this->withHeaders($headers);
+         $this->setContent($content);
+         $this->setStatus($status);
+         $this->setHeaders($headers);
+    }
+
+
+    /**
+     * Set protocol version
+     *
+     * @param string $protocolVersion
+     * @return void
+    */
+    public function setProtocolVersion($protocolVersion)
+    {
+        $this->protocolVersion = $protocolVersion;
+    }
+
+
+    /**
+     * @param string $content
+    */
+    public function setContent($content)
+    {
+        $this->content = $content;
+    }
+
+
+    /**
+     * @param int $status
+    */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+
+    /**
+     * @param array $headers
+     * @param null $value
+    */
+    public function setHeaders($headers, $value = null)
+    {
+        foreach ($this->parseHeaders($headers, $value) as $key => $value)
+        {
+            $this->headers[$key] = $value;
+        }
     }
 
 
@@ -60,10 +103,9 @@ class Response implements ResponseInterface
      * @param string $protocolVersion
      * @return $this
     */
-    public function withProtocolVersion(string $protocolVersion)
+    public function withProtocolVersion($protocolVersion)
     {
-        $this->protocolVersion = $protocolVersion;
-
+        $this->setProtocolVersion($protocolVersion);
         return $this;
     }
 
@@ -80,12 +122,12 @@ class Response implements ResponseInterface
     /**
      * Set body
      *
-     * @param string $body
+     * @param string $content
      * @return Response
     */
-    public function withBody($body)
+    public function withBody($content)
     {
-        $this->body = $body;
+        $this->content = $content;
 
         return $this;
     }
@@ -96,18 +138,18 @@ class Response implements ResponseInterface
     */
     public function getBody()
     {
-        return $this->body;
+        return $this->content;
     }
 
 
     /**
-     * @param string $body
+     * @param array $data
      * @return $this
     */
-    public function withJson($body)
+    public function withJson($data)
     {
         $this->withHeaders('Content-Type', 'application/json');
-        return $this->withBody(json_encode($body));
+        return $this->withBody(json_encode($data));
     }
 
 
@@ -143,11 +185,7 @@ class Response implements ResponseInterface
     */
     public function withHeaders($key, $value = null)
     {
-        foreach ($this->parseHeaders($key, $value) as $key => $value)
-        {
-            $this->headers[$key] = $value;
-        }
-
+        $this->setHeaders($key, $value);
         return $this;
     }
 
@@ -169,7 +207,7 @@ class Response implements ResponseInterface
     {
         foreach ($this->headers as $key => $value)
         {
-             header(is_null($value) ? $key : $key .': '. $value);
+             header($key .': '. $value);
         }
     }
 
@@ -179,7 +217,7 @@ class Response implements ResponseInterface
     */
     public function sendBody()
     {
-        echo $this->body;
+        echo $this->content;
     }
 
 
@@ -207,7 +245,7 @@ class Response implements ResponseInterface
     */
     protected function parseHeaders($key, $value)
     {
-        return \is_array($key) ? $key : [$key => $value];
+        return \is_array($key) ? array_merge($key, $this->headers) : [$key => $value];
     }
 
 

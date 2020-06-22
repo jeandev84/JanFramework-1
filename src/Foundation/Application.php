@@ -95,7 +95,7 @@ class Application extends Container
      * Register the basic info the container.
      *
      * @return void
-     */
+    */
     protected function registerBaseBindings()
     {
          $this->instance('app', $this);

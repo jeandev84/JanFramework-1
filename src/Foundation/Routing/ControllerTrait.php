@@ -2,7 +2,8 @@
 namespace Jan\Foundation\Routing;
 
 
-use Jan\Component\DI\Contracts\ContainerInterface;
+use Jan\Component\DI\Container;
+
 
 /**
  * Trait ControllerTrait
@@ -11,26 +12,5 @@ use Jan\Component\DI\Contracts\ContainerInterface;
 trait ControllerTrait
 {
 
-     /**
-      * @var ContainerInterface
-     */
-     protected $container;
 
-
-     /**
-      * @param ContainerInterface $container
-     */
-     public function setContainer(ContainerInterface  $container)
-     {
-           $this->container = $container;
-     }
-
-
-     /**
-      * @return ContainerInterface
-     */
-     public function getContainer(): ContainerInterface
-     {
-         return $this->container;
-     }
 }
