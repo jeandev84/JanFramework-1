@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Component\Http;
+namespace Jan\Component\Http\OldStuff;
 
 
 use Jan\Component\Http\Bag\ParameterBag;
@@ -8,7 +8,7 @@ use Jan\Component\Http\Bag\ParameterBag;
 
 /**
  * Class UploadedFile
- * @package Jan\Component\Http
+ * @package Jan\Component\Http\OldStuff
 */
 class UploadedFile
 {

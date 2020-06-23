@@ -38,7 +38,7 @@ class HomeController extends Controller
       {
           echo $request->getMethod() . ' ' . $request->getPath();
           // dump($_POST, $_FILES);
-          dump($request->file('contact'));
+          dump($uploadedFiles = $request->file('contact'));
 
           return $this->render('blog/home/contact');
       }

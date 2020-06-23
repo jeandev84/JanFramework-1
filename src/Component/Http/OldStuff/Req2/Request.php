@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Component\Http;
+namespace Jan\Component\Http\Req2;
 
 
 use Jan\Component\Http\Bag\ParameterBag;
@@ -345,82 +345,55 @@ class Request implements RequestInterface
             }
 
              $file = $this->files[$input];
-             return $this->getUploadedFiles($file);
+             $uploadedFiles = [];
+             $typeKeys = ['name', 'type', 'tmp_name', 'error', 'size'];
+             $i = 0;
+
+             foreach ($typeKeys as $index)
+             {
+                 if(isset($file[$index][$i]))
+                 {
+                     $uploadedFile = new UploadedFile();
+                     foreach ((array)$file[$index][$i] as $value)
+                     {
+                         if ($index == 'name') {
+                             $uploadedFile->setFilename($value);
+                         }
+
+                         if ($index == 'type') {
+                             $uploadedFile->setMimeType($value);
+                         }
+
+                         if ($index == 'tmp_name') {
+                             $uploadedFile->setTempFile($value);
+                         }
+
+                         if ($index == 'error') {
+                             $uploadedFile->setError($value);
+                         }
+
+                         if ($index == 'size') {
+                             $uploadedFile->setSize($value);
+                         }
+
+                         $uploadedFiles[] = $uploadedFile;
+                         $i++;
+                         continue;
+                     }
+                 }
+             }
+
+             return $uploadedFiles;
+             /*
+             foreach ($file['name'][$i] as $name)
+             {
+                 $uploadedFile->setFilename($name);
+                 $uploadedFiles[] = $uploadedFile;
+                 $i++;
+             }
+             */
         }
 
-
-        /**
-         * @param array $file
-         * @return array
-         *
-         *
-          [
-            new UploadedFile(),
-            new UploadedFile(),
-            new UploadedFile()
-          ]
-         */
-        public function getUploadedFiles(array $file)
-        {
-            $files = [];
-            foreach ($file as $index => $data)
-            {
-                $i = 0;
-                foreach ($data as $value)
-                {
-                    $files[$i][$index] = $data[$i];
-                    $i++;
-                }
-            }
-
-            return $files;
-
-            // return $uploadedFiles;
-        }
-
-
-        /**
-          * @param UploadedFile $uploadedFile
-        */
-        public function addUploadedFile(UploadedFile $uploadedFile)
-        {
-               //
-        }
-
-
-        /**
-         * @param $index
-         * @param $value
-         * @param UploadedFile $uploadedFile
-        */
-        public function isElse($index, $value, UploadedFile $uploadedFile)
-        {
-            if($index == 'name')
-            {
-                $uploadedFile->setFilename($value);
-            }
-
-            if($index == 'type')
-            {
-                $uploadedFile->setMimeType($value);
-            }
-
-
-            if($index == 'tmp_name')
-            {
-                $uploadedFile->setTempFile($value);
-            }
-
-            if($index == 'error')
-            {
-                $uploadedFile->setError($value);
-            }
-
-            if($index == 'size')
-            {
-                $uploadedFile->setSize($value);
-            }
-        }
 
 
         /**
