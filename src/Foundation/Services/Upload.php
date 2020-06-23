@@ -4,6 +4,7 @@ namespace Jan\Foundation\Services;
 
 use Jan\Component\Http\UploadedFile;
 
+
 /**
  * Class Upload
  * @package Jan\Foundation\Services
@@ -21,17 +22,20 @@ class Upload
        * Upload constructor.
        * @param array $uploadedFiles
       */
-      public function __construct(array $uploadedFiles = [])
+      public function __construct(array $uploadedFiles)
       {
             $this->uploadedFiles = $uploadedFiles;
       }
 
 
       /**
-       * @return Upload
+       * @param string $target
+       * @param string $filename
+       * @return array
       */
-      public function move()
+      public function move($target, $filename = null)
       {
+          $uploaded = [];
           foreach ($this->uploadedFiles as $uploadedFile)
           {
               if(! $uploadedFile instanceof UploadedFile)
@@ -39,9 +43,12 @@ class Upload
                    exit('File is not uploadeable');
               }
 
-              dump($uploadedFile);
+              if($uploadedFile->move($target, $filename))
+              {
+                  $uploaded[] = $filename;
+              }
           }
 
-          return $this;
+          return $uploaded;
       }
 }

@@ -333,9 +333,17 @@ class Request implements RequestInterface
     }
 
 
-   /**
-    * @param $input
-    * @return mixed
+    /**
+     * @param $input
+     * @return mixed
+     *
+     * pathinfo(filename) =
+     * [
+        "dirname" => "."
+        "basename" => "jeandev84.jpg"
+        "extension" => "jpg"
+        "filename" => "jeandev84"
+     * ]
     */
     public function file($input)
     {
@@ -349,10 +357,11 @@ class Request implements RequestInterface
 
         foreach ($file as $index => $data)
         {
+            $data = (array) $data;
             $i = 0;
             foreach ($data as $value)
             {
-                $files[$i][$index] = $data[$i];
+                $files[$i][$index] = $value;
                 $i++;
             }
         }
@@ -363,6 +372,10 @@ class Request implements RequestInterface
         {
             $uploadedFile = new UploadedFile();
             $uploadedFile->setFilename($file['name']);
+            $fileInfo = pathinfo($file['name']);
+
+            $uploadedFile->setNameOnly($fileInfo['basename']);
+            $uploadedFile->setExtension($fileInfo['extension'] ?? '');
             $uploadedFile->setMimeType($file['type']);
             $uploadedFile->setTempFile($file['tmp_name']);
             $uploadedFile->setError($file['error']);
@@ -390,6 +403,7 @@ class Request implements RequestInterface
         $files = [];
         foreach ($file as $index => $data)
         {
+            $data = (array) $data;
             $i = 0;
             foreach ($data as $value)
             {
