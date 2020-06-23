@@ -225,7 +225,7 @@ class UploadedFile
     /**
      * @param array $allowedExtensions
      * @return UploadedFile
-     */
+    */
     public function setAllowedExtensions($allowedExtensions): UploadedFile
     {
         $this->allowedExtensions = array_merge($this->allowedExtensions, $allowedExtensions);
@@ -233,13 +233,30 @@ class UploadedFile
     }
 
 
-
     /**
+     * Upload file
+     *
      * @param $target
      * @param $filename
+     * @return bool|string
     */
-    public function move($target, $filename)
+    public function move($target = '/uploads', $filename = null)
     {
-          //
+        $filename = $filename ?? sha1(mt_rand()) . '_' . sha1(mt_rand());
+        $filename .= '.'. $this->extension;
+
+        if(! is_dir($target))
+        {
+            mkdir($target, 0777, true);
+        }
+
+        $uploadedFilePath = rtrim($target, '/') . '/'. $filename;
+
+        if(move_uploaded_file($this->tempFile, $uploadedFilePath))
+        {
+            return $filename;
+        }
+
+        return false;
     }
 }
