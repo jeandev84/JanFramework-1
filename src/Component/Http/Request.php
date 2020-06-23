@@ -333,287 +333,310 @@ class Request implements RequestInterface
     }
 
 
-    /**
-     * @param $input
-     * @return mixed
+   /**
+    * @param $input
+    * @return mixed
     */
     public function file($input)
     {
-            if(empty($this->files[$input]))
-            {
-                return false;
-            }
-
-             $file = $this->files[$input];
-             return $this->getUploadedFiles($file);
+        if(empty($this->files[$input]))
+        {
+            return false;
         }
 
+        $file = $this->files[$input];
+        $files = [];
 
-        /**
-         * @param array $file
-         * @return array
-         *
-         *
-          [
-            new UploadedFile(),
-            new UploadedFile(),
-            new UploadedFile()
-          ]
-         */
-        public function getUploadedFiles(array $file)
+        foreach ($file as $index => $data)
         {
-            $files = [];
-            foreach ($file as $index => $data)
+            $i = 0;
+            foreach ($data as $value)
             {
-                $i = 0;
-                foreach ($data as $value)
-                {
-                    $files[$i][$index] = $data[$i];
-                    $i++;
-                }
-            }
-
-            // return $files;
-
-            $uploadedFiles = [];
-
-            foreach ($files as $file)
-            {
-                 $uploadedFile = new UploadedFile();
-                 $uploadedFile->setFilename($file['name']);
-                 $uploadedFile->setMimeType($file['type']);
-                 $uploadedFile->setTempFile($file['tmp_name']);
-                 $uploadedFile->setError($file['error']);
-                 $uploadedFile->setSize($file['size']);
-                 $uploadedFiles[] = $uploadedFile;
-            }
-
-            return $uploadedFiles;
-        }
-
-
-        /**
-          * @param UploadedFile $uploadedFile
-        */
-        public function addUploadedFile(UploadedFile $uploadedFile)
-        {
-               //
-        }
-
-
-        /**
-         * @param $index
-         * @param $value
-         * @param UploadedFile $uploadedFile
-        */
-        public function isElse($index, $value, UploadedFile $uploadedFile)
-        {
-            if($index == 'name')
-            {
-                $uploadedFile->setFilename($value);
-            }
-
-            if($index == 'type')
-            {
-                $uploadedFile->setMimeType($value);
-            }
-
-
-            if($index == 'tmp_name')
-            {
-                $uploadedFile->setTempFile($value);
-            }
-
-            if($index == 'error')
-            {
-                $uploadedFile->setError($value);
-            }
-
-            if($index == 'size')
-            {
-                $uploadedFile->setSize($value);
+                $files[$i][$index] = $data[$i];
+                $i++;
             }
         }
 
+        $uploadedFiles = [];
 
-        /**
-         * Get Scheme
-         *
-         * @return string
-        */
-        public function getScheme()
+        foreach ($files as $file)
         {
-            return $this->isSecure() ? 'https://' : 'http://';
+            $uploadedFile = new UploadedFile();
+            $uploadedFile->setFilename($file['name']);
+            $uploadedFile->setMimeType($file['type']);
+            $uploadedFile->setTempFile($file['tmp_name']);
+            $uploadedFile->setError($file['error']);
+            $uploadedFile->setSize($file['size']);
+            $uploadedFiles[] = $uploadedFile;
+        }
+
+        return $uploadedFiles;
+    }
+
+
+    /**
+     * @param array $file
+     * @return array
+     *
+     *
+      [
+        new UploadedFile(),
+        new UploadedFile(),
+        new UploadedFile()
+      ]
+    */
+    public function getUploadedFiles(array $file)
+    {
+        $files = [];
+        foreach ($file as $index => $data)
+        {
+            $i = 0;
+            foreach ($data as $value)
+            {
+                $files[$i][$index] = $data[$i];
+                $i++;
+            }
+        }
+
+        $uploadedFiles = [];
+
+        foreach ($files as $file)
+        {
+             $uploadedFile = new UploadedFile();
+             $uploadedFile->setFilename($file['name']);
+             $uploadedFile->setMimeType($file['type']);
+             $uploadedFile->setTempFile($file['tmp_name']);
+             $uploadedFile->setError($file['error']);
+             $uploadedFile->setSize($file['size']);
+             $uploadedFiles[] = $uploadedFile;
+        }
+
+        return $uploadedFiles;
+    }
+
+
+    /**
+      * @param UploadedFile $uploadedFile
+    */
+    public function addUploadedFile(UploadedFile $uploadedFile)
+    {
+           //
+    }
+
+
+    /**
+     * @param $index
+     * @param $value
+     * @param UploadedFile $uploadedFile
+    */
+    public function isElse($index, $value, UploadedFile $uploadedFile)
+    {
+        if($index == 'name')
+        {
+            $uploadedFile->setFilename($value);
+        }
+
+        if($index == 'type')
+        {
+            $uploadedFile->setMimeType($value);
         }
 
 
-        /**
-         * Get Host
-         *
-         * @return string
-        */
-        public function getHost()
+        if($index == 'tmp_name')
         {
-            return $this->getServer()->get('HTTP_HOST');
+            $uploadedFile->setTempFile($value);
         }
 
-
-        /**
-         * @return mixed|string|null
-        */
-        public function getPath()
+        if($index == 'error')
         {
-            return $this->getUri()->getPath();
+            $uploadedFile->setError($value);
         }
 
-
-
-        /**
-         * @return ParameterBag
-        */
-        public function getQueryParams()
+        if($index == 'size')
         {
-            return $this->queryParams;
+            $uploadedFile->setSize($value);
         }
+    }
 
 
-        /**
-         * @return array
-        */
-        public function getQueryString()
-        {
-            return $this->getServer()->get('QUERY_STRING');
-        }
+    /**
+     * Get Scheme
+     *
+     * @return string
+    */
+    public function getScheme()
+    {
+        return $this->isSecure() ? 'https://' : 'http://';
+    }
 
 
-        /**
-         * @return Uri|string
-        */
-        public function getUri()
-        {
-            return $this->uri;
-        }
+    /**
+     * Get Host
+     *
+     * @return string
+    */
+    public function getHost()
+    {
+        return $this->getServer()->get('HTTP_HOST');
+    }
 
 
-        /**
-         * Get server
-        */
-        public function getServer()
-        {
-            return $this->server;
-        }
-
-
-        /**
-         * @param null $key
-         * @return mixed|null
-        */
-        public function server($key = null)
-        {
-            return $this->getServer()->get($key, $_SERVER);
-        }
-
-
-        /**
-         * @return mixed
-        */
-        public function getMethod()
-        {
-            return $this->getServer()->get('REQUEST_METHOD');
-        }
-
-
-        /**
-         * Determine type of request method
-         *
-         * @param string $type
-         * @return bool
-        */
-        public function method($type)
-        {
-            return $this->getMethod() === strtoupper($type);
-        }
+    /**
+     * @return mixed|string|null
+    */
+    public function getPath()
+    {
+        return $this->getUri()->getPath();
+    }
 
 
 
-        /**
-         * @param array $cookies
-        */
-        public function setCookies(array $cookies)
-        {
-            $this->cookies = $cookies;
-        }
+    /**
+     * @return ParameterBag
+    */
+    public function getQueryParams()
+    {
+        return $this->queryParams;
+    }
+
+
+    /**
+     * @return array
+    */
+    public function getQueryString()
+    {
+        return $this->getServer()->get('QUERY_STRING');
+    }
+
+
+    /**
+     * @return Uri|string
+    */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+
+    /**
+     * Get server
+    */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+
+    /**
+     * @param null $key
+     * @return mixed|null
+    */
+    public function server($key = null)
+    {
+        return $this->getServer()->get($key, $_SERVER);
+    }
+
+
+    /**
+     * @return mixed
+    */
+    public function getMethod()
+    {
+        return $this->getServer()->get('REQUEST_METHOD');
+    }
+
+
+    /**
+     * Determine type of request method
+     *
+     * @param string $type
+     * @return bool
+    */
+    public function method($type)
+    {
+        return $this->getMethod() === strtoupper($type);
+    }
 
 
 
-        /**
-         * @param null $key
-         * @return mixed
-        */
-        public function cookies($key = null)
-        {
-            // return $this->cookies->get($key);
-        }
+    /**
+     * @param array $cookies
+    */
+    public function setCookies(array $cookies)
+    {
+        $this->cookies = $cookies;
+    }
 
 
-        /**
-         * Get client IP
-         *
-         * @return string
-        */
-        public function getIpClient()
-        {
-             $ip = $this->getServer()->get('REMOTE_ADDR');
 
-             foreach (self::IP_CLIENT_INDEXES as $ipClient)
+    /**
+     * @param null $key
+     * @return mixed
+    */
+    public function cookies($key = null)
+    {
+        // return $this->cookies->get($key);
+    }
+
+
+    /**
+     * Get client IP
+     *
+     * @return string
+    */
+    public function getIpClient()
+    {
+         $ip = $this->getServer()->get('REMOTE_ADDR');
+
+         foreach (self::IP_CLIENT_INDEXES as $ipClient)
+         {
+             if($identified = $this->getServer()->get($ipClient))
              {
-                 if($identified = $this->getServer()->get($ipClient))
-                 {
-                     $ip = $identified;
-                     break;
-                 }
+                 $ip = $identified;
+                 break;
              }
+         }
 
-             return $ip;
-        }
-
-
-
-        /**
-         * @return bool
-         */
-        public function isSecure()
-        {
-            $port = $this->getServer()->get('SERVER_PORT');
-            return ($this->getServer()->get('HTTPS') == 'on' || $port == 443);
-        }
+         return $ip;
+    }
 
 
-        /**
-         * Is Ajax
-         *
-         * @return bool
-         */
-        public function isXhr()
-        {
-            return $this->getServer()->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest';
-        }
+
+    /**
+     * @return bool
+     */
+    public function isSecure()
+    {
+        $port = $this->getServer()->get('SERVER_PORT');
+        return ($this->getServer()->get('HTTPS') == 'on' || $port == 443);
+    }
 
 
-        /**
-         * @return bool
-         */
-        public function isCli()
-        {
-            return php_sapi_name() == 'cli' && $this->getServer()->get('argc') > 0;
-        }
+    /**
+     * Is Ajax
+     *
+     * @return bool
+     */
+    public function isXhr()
+    {
+        return $this->getServer()->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest';
+    }
 
 
-        /**
-         * @return bool
-        */
-        public function isPost()
-        {
-            return $this->method('POST');
-        }
+    /**
+     * @return bool
+     */
+    public function isCli()
+    {
+        return php_sapi_name() == 'cli' && $this->getServer()->get('argc') > 0;
+    }
+
+
+    /**
+     * @return bool
+    */
+    public function isPost()
+    {
+        return $this->method('POST');
+    }
 }
