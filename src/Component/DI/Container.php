@@ -133,7 +133,7 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function addServiceProvider($provider)
     {
-        if(class_exists($provider))
+        if(is_string($provider))
         {
             $provider = $this->resolve($provider);
         }
@@ -402,7 +402,7 @@ class Container implements \ArrayAccess, ContainerInterface
            {
                if(! $this->autowire)
                {
-                    throw new ResolverDependencyException('Cannot do autowiring dependendies');
+                    throw new ResolverDependencyException('Cannot resolve dependendies');
                }
 
                return $this->resolve($abstract, $arguments);

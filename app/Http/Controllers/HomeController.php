@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Contracts\Controller;
+use Jan\Component\Database\Database;
 use Jan\Component\DI\Container;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Request;
@@ -44,6 +45,7 @@ class HomeController extends Controller
           $upload->setUploadedFiles($uploadedFiles);
           dump($upload);
 
+          dump(Database::instance());
           return $this->render('blog/home/contact');
       }
 

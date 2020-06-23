@@ -158,6 +158,7 @@ class Asset
     */
     private static function generatePath($path, $ext)
     {
-        return self::$baseUrl . '/' . trim(str_replace('.'. $ext, '', $path), '/') . '.'. $ext;
+        $path = trim(str_replace('.'. $ext, '', $path), '/');
+        return self::$baseUrl . '/' . $path . '.'. $ext;
     }
 }
