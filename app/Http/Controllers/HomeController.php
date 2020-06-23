@@ -6,6 +6,7 @@ use App\Http\Contracts\Controller;
 use Jan\Component\DI\Container;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Request;
+use Jan\Foundation\Services\Upload;
 
 
 /**
@@ -27,18 +28,21 @@ class HomeController extends Controller
       }
 
 
-      /**
-       * @param Request $request
-       * @return \Jan\Component\Http\Response
-       * @throws \Jan\Component\DI\Exceptions\InstanceException
-       * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
-       * @throws \ReflectionException
-      */
-      public function contact(Request $request)
+    /**
+     * @param Request $request
+     * @param Upload $upload
+     * @return \Jan\Component\Http\Response
+     * @throws \Jan\Component\DI\Exceptions\InstanceException
+     * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+     * @throws \ReflectionException
+     */
+      public function contact(Request $request, Upload $upload)
       {
           echo $request->getMethod() . ' ' . $request->getPath();
           // dump($_POST, $_FILES);
           dump($uploadedFiles = $request->file('contact'));
+          $upload->setUploadedFiles($uploadedFiles);
+          dump($upload);
 
           return $this->render('blog/home/contact');
       }

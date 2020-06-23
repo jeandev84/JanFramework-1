@@ -100,7 +100,9 @@ class View
 
           if(! file_exists($template))
           {
-              throw new ViewException(sprintf('Template file <b>(%s)</b> does not exist!', $template));
+              throw new ViewException(
+                  sprintf('Template file <b>(%s)</b> does not exist!', $template)
+              );
           }
 
           return $template;

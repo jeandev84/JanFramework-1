@@ -100,7 +100,7 @@ class RouteDispatcher
         $parameters = $this->route['matches'];
         $response = false;
 
-        if(is_string($target))
+        if(is_string($target) && strpos($target, '@') !== false)
         {
             list($controllerClass, $action) = explode('@', $target, 2);
             $controllerClass = sprintf('%s%s', $this->namespace, $controllerClass);

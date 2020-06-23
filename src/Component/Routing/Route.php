@@ -50,20 +50,12 @@ class Route
      */
      public static function map($methods, $path, $target, $name = null)
      {
-         $methods = explode('|', $methods);
-
-         if($prefix = self::option('prefix'))
-         {
-             $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
-         }
-
-         if($namespace = self::option('namespace'))
-         {
-             $target = rtrim($namespace, '\\') .'\\' . $target;
-         }
-
+         $methods = is_array($methods) ?? explode('|', $methods);
+         $path = self::preparePath($path);
+         $target = self::prepareTarget($target);
          return self::instance()->map($methods, $path, $target, $name);
      }
+
 
 
      /**
@@ -185,5 +177,33 @@ class Route
     private static function option(string $key)
     {
         return self::$options[$key] ?? null;
+    }
+
+
+    /**
+     * @param $path
+     * @return string
+    */
+    private static function preparePath($path)
+    {
+        if($prefix = self::option('prefix'))
+        {
+            $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
+        }
+        return $path;
+    }
+
+
+    /**
+     * @param $target
+     * @return string
+    */
+    private static function prepareTarget($target)
+    {
+        if($namespace = self::option('namespace'))
+        {
+            $target = rtrim($namespace, '\\') .'\\' . $target;
+        }
+        return $target;
     }
 }

@@ -22,9 +22,21 @@ class Upload
        * Upload constructor.
        * @param array $uploadedFiles
       */
-      public function __construct(array $uploadedFiles)
+      public function __construct(array $uploadedFiles = [])
       {
-            $this->uploadedFiles = $uploadedFiles;
+            if($uploadedFiles)
+            {
+                $this->setUploadedFiles($uploadedFiles);
+            }
+      }
+
+
+      /**
+       * @param array $uploadedFiles
+      */
+      public function setUploadedFiles($uploadedFiles)
+      {
+          $this->uploadedFiles = $uploadedFiles;
       }
 
 

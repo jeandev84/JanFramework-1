@@ -422,7 +422,7 @@ class Router implements RouterInterface
 
     /**
      * @return array
-     */
+    */
     private function getFormatParams()
     {
         $formats = [];
