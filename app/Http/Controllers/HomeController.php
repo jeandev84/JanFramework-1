@@ -37,8 +37,9 @@ class HomeController extends Controller
       public function contact(Request $request)
       {
           echo $request->getMethod() . ' ' . $request->getPath();
-          dump($_POST);
-          dump($request->getFiles('contact[post]'));
+          // dump($_POST, $_FILES);
+          dump($request->file('contact'));
+
           return $this->render('blog/home/contact');
       }
 

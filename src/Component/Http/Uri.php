@@ -12,16 +12,16 @@ class Uri
       /**
        * @var string
       */
-      private $baseUrl;
+      private $url;
 
 
       /**
       * Uri constructor.
-      * @param string $baseUrl
+      * @param string $url
       */
-      public function __construct(string $baseUrl)
+      public function __construct(string $url)
       {
-          $this->baseUrl = $baseUrl;
+          $this->url = $url;
       }
 
 
@@ -44,11 +44,20 @@ class Uri
 
 
       /**
+       * @return string
+      */
+      public function getUrl()
+      {
+          return $this->url; 
+      }
+      
+      
+      /**
        * @param int $paramType
        * @return mixed|string|null
       */
       private function getParse(int $paramType)
       {
-          return parse_url($this->baseUrl, $paramType);
+          return parse_url($this->url, $paramType);
       }
 }

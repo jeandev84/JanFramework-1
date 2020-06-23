@@ -292,6 +292,23 @@ class Request implements RequestInterface
     }
 
 
+    /**
+     * @return array
+    */
+    public function post($key = null)
+    {
+        return $this->attributes[$key] ?? $this->attributes;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function get($key = null)
+    {
+        return $this->queryParams->get($key, $_GET);
+    }
+
 
     /**
      * Get URL
@@ -312,43 +329,64 @@ class Request implements RequestInterface
     */
     public function getFiles(string $key = null)
     {
-        $uploadedFiles = [];
-        $files = $this->files[$key] ?? $this->files;
-        foreach ($files as $file)
+        return $this->files[$key] ?? $this->files;
+    }
+
+
+    /**
+     * @param $input
+     * @return mixed
+    */
+    public function file($input)
+    {
+        if(! isset($this->files[$input]))
         {
-            $uploadedFiles[] = new UploadedFile($file);
+            return false;
         }
+
+        $files = $this->files[$input];
+        $uploadedFile = new UploadedFile();
+        $uploadedFiles = [];
+        $i = 0;
+
+        foreach ($files as $key => $data)
+        {
+             $data = (array) $data;
+
+             if(isset($data[$i]))
+             {
+                 if($key == 'name')
+                 {
+                     $uploadedFile->setFilename($data[$i]);
+                 }
+
+                 if($key == 'type')
+                 {
+                     $uploadedFile->setMimeType($data[$i]);
+                 }
+
+                 if($key == 'tmp_name')
+                 {
+                     $uploadedFile->setTempFile($data[$i]);
+                 }
+
+                 if($key == 'error')
+                 {
+                     $uploadedFile->setError($data[$i]);
+                 }
+
+                 if($key == 'size')
+                 {
+                     $uploadedFile->setSize($data[$i]);
+                 }
+
+                 $uploadedFiles[] = $uploadedFile;
+             }
+
+             $i++;
+        }
+
         return $uploadedFiles;
-    }
-
-
-    /**
-     * @return bool
-    */
-    public function isSecure()
-    {
-        $port = $this->getServer()->get('SERVER_PORT');
-        return ($this->getServer()->get('HTTPS') == 'on' || $port == 443);
-    }
-
-
-    /**
-     * Is Ajax
-     *
-     * @return bool
-    */
-    public function isXhr()
-    {
-        return $this->getServer()->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest';
-    }
-
-
-    /**
-     * @return bool
-    */
-    public function isCli()
-    {
-        return php_sapi_name() == 'cli' && $this->getServer()->get('argc') > 0;
     }
 
 
@@ -359,8 +397,7 @@ class Request implements RequestInterface
     */
     public function getScheme()
     {
-        $isSecure = $this->isSecure();
-        return $isSecure ? 'https://' : 'http://';
+        return $this->isSecure() ? 'https://' : 'http://';
     }
 
 
@@ -492,5 +529,45 @@ class Request implements RequestInterface
          }
 
          return $ip;
+    }
+
+
+
+    /**
+     * @return bool
+     */
+    public function isSecure()
+    {
+        $port = $this->getServer()->get('SERVER_PORT');
+        return ($this->getServer()->get('HTTPS') == 'on' || $port == 443);
+    }
+
+
+    /**
+     * Is Ajax
+     *
+     * @return bool
+     */
+    public function isXhr()
+    {
+        return $this->getServer()->get('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest';
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isCli()
+    {
+        return php_sapi_name() == 'cli' && $this->getServer()->get('argc') > 0;
+    }
+
+
+    /**
+     * @return bool
+    */
+    public function isPost()
+    {
+        return $this->method('POST');
     }
 }

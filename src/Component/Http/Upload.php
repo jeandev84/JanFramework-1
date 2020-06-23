@@ -1,10 +1,10 @@
 <?php
-namespace Jan\Component\Http;
+namespace Jan\Foundation\Services;
 
 
 /**
  * Class Upload
- * @package Jan\Component\Http
+ * @package Jan\Foundation\Services
 */
 class Upload
 {
