@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Component\Http;
+namespace Jan\Component\Http\RequestUploadedFiles;
 
 
 use Jan\Component\Http\Bag\ParameterBag;
@@ -9,7 +9,7 @@ use Jan\Component\Http\Contracts\RequestInterface;
 
 /**
  * Class Request
- * @package Jan\Component\Http
+ * @package Jan\Component\Http\RequestUploadedFiles
 */
 class Request implements RequestInterface
 {
@@ -387,7 +387,7 @@ class Request implements RequestInterface
                  $uploadedFile->setSize($file['size']);
                  $uploadedFiles[] = $uploadedFile;
             }
-
+            
             return $uploadedFiles;
         }
 
