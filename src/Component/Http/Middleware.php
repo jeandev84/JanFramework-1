@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Foundation;
+namespace Jan\Component\Http;
 
 
 use Jan\Component\Http\Contracts\MiddlewareInterface;
@@ -10,7 +10,7 @@ use Jan\Component\Http\Contracts\ResponseInterface;
 
 /**
  * Class Middleware
- * @package Jan\Foundation
+ * @package Jan\Component\Http
 */
 class Middleware
 {

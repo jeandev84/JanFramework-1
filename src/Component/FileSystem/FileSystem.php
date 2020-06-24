@@ -36,6 +36,20 @@ class FileSystem
       }
 
 
+     /**
+      * @param string $source
+      * @return array|false
+      *
+      * $this->resources('routes/*')
+      * $this->resources('routes/*.php')
+      */
+      public function resources(string $source)
+      {
+          return glob($this->resource($source));
+      }
+
+
+
       /**
        * @param string $path
        * @return false|string
@@ -46,6 +60,14 @@ class FileSystem
       }
 
 
+      /**
+       * @param string $path
+       * @return string|string[]
+      */
+      public function pathinfo(string $path)
+      {
+          return pathinfo($path);
+      }
 
       /**
        * @param string $filename
@@ -80,11 +102,20 @@ class FileSystem
       {
            $target = $this->resource($target);
 
-           if(! is_dir($target))
+           if(! is_dir($target) && mkdir($target, 0777, true))
            {
-               mkdir($target, 0777, true);
+               return true;
            }
 
-           return $target;
+           return false;
+      }
+
+
+      /**
+        * @param string $filename
+      */
+      public function make(string $filename)
+      {
+           dd(pathinfo($filename));
       }
 }

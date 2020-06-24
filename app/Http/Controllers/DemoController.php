@@ -24,10 +24,12 @@ class DemoController extends Controller
       public function index(ContainerInterface $container)
       {
           $fileSystem = new FileSystem($container->get('base.path'));
-
           echo $fileSystem->resource('config/app.php');
           $config = $fileSystem->load('config/app.php');
+          $files = $fileSystem->resources('/config/*.php');
+          $fileSystem->mkdir('storage/cache');
 
+          $fileSystem->make('app/Http/Controllers/TestController.php');
 
           return $this->render('demo/index');
       }

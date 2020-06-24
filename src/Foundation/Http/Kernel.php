@@ -7,7 +7,7 @@ use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Routing\Route;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
-use Jan\Foundation\Middleware;
+use Jan\Component\Http\Middleware;
 use Jan\Foundation\RouteDispatcher;
 
 

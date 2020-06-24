@@ -7,7 +7,6 @@ use Jan\Component\DI\Container;
 use Jan\Component\DI\Exceptions\InstanceException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
-use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Http\Response;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
@@ -100,20 +99,13 @@ class RouteDispatcher
 
 
     /**
-     * @param callable|null $target
-     * @param array $params
      * @return Response|mixed
      * @throws InstanceException
      * @throws ReflectionException
      * @throws ResolverDependencyException
-    */
-    public function callAction(callable $target = null, array $params = [])
+     */
+    public function callAction()
     {
-        if($target)
-        {
-            return call_user_func_array($target, $params);
-        }
-
         $target = $this->getRoute('target');
         $parameters = $this->getRoute('matches');
         $response = false;
