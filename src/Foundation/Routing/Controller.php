@@ -25,7 +25,7 @@ abstract class Controller
     /**
      * @var string
     */
-    protected $layout = 'default';
+    protected $layout;
 
 
 
@@ -95,6 +95,12 @@ abstract class Controller
     */
     public function renderTemplate(string $template, array $data)
     {
+          /*
+          $templateInfo = pathinfo($template);
+          $template = str_replace('.', '/', $templateInfo['filename']);
+          $template .= '.'. $templateInfo['extension'];
+          */
+
           return $this->container->get('view')->render($template, $data);
     }
 

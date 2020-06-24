@@ -27,3 +27,5 @@ Route::map('GET|POST', '/contact', 'HomeController@contact', 'contact');
 Route::get('/post/{id}/{slug}', 'PostController@show', 'post.show');
 Route::get('/user/{token}/edit', 'UserController@edit', 'user.edit')
 ->where('token', '\w+');
+
+Route::get('/demo', 'DemoController@index')->name('demo');

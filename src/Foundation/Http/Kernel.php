@@ -5,6 +5,7 @@ namespace Jan\Foundation\Http;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
+use Jan\Component\Routing\Route;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
 use Jan\Foundation\Middleware;
 use Jan\Foundation\RouteDispatcher;
@@ -16,6 +17,11 @@ use Jan\Foundation\RouteDispatcher;
  */
 class Kernel implements HttpKernelContract
 {
+
+    private const DEFAULT_CONTROLLER = 'Jan\Foundation\DefaultController';
+
+    private const DEFAULT_ACTION = 'welcome';
+
 
     /**
      * @var string[]
@@ -67,6 +73,12 @@ class Kernel implements HttpKernelContract
 
         try {
 
+            if(! Route::instance()->getRoutes())
+            {
+                $body = $this->callDefaultAction();
+                return $response->withBody($body);
+            }
+
             $dispatcher = $this->container->get(RouteDispatcher::class);
             $middlewares = array_merge($dispatcher->getRouteMiddleware(), $this->middlewares);
             $middlewareManager = $this->container->get(Middleware::class);
@@ -94,6 +106,15 @@ class Kernel implements HttpKernelContract
             }
             exit($e->getMessage());
         }
+    }
+
+
+    /**
+     * @return mixed
+    */
+    public function callDefaultAction()
+    {
+        return call_user_func([$this->container->get(self::DEFAULT_CONTROLLER), self::DEFAULT_ACTION]);
     }
 
 

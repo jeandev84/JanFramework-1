@@ -67,6 +67,15 @@ class RouteDispatcher
      }
 
 
+     /**
+      * @param string|null $key
+      * @return array|bool|mixed
+     */
+     public function getRoute($key = null)
+     {
+          return $this->route[$key] ?? $this->route;
+     }
+
 
      /**
       * @param string $namespace
@@ -86,18 +95,27 @@ class RouteDispatcher
      */
      public function getRouteMiddleware()
      {
-         return $this->route['middleware'];
+         return $this->getRoute('middleware');
      }
 
 
     /**
-     * @return mixed
-     * @throws Exception
+     * @param callable|null $target
+     * @param array $params
+     * @return Response|mixed
+     * @throws InstanceException
+     * @throws ReflectionException
+     * @throws ResolverDependencyException
     */
-    public function callAction()
+    public function callAction(callable $target = null, array $params = [])
     {
-        $target = $this->route['target'];
-        $parameters = $this->route['matches'];
+        if($target)
+        {
+            return call_user_func_array($target, $params);
+        }
+
+        $target = $this->getRoute('target');
+        $parameters = $this->getRoute('matches');
         $response = false;
 
         if(is_string($target) && strpos($target, '@') !== false)
@@ -134,8 +152,8 @@ class RouteDispatcher
      * @throws ResolverDependencyException
      * @throws ReflectionException
     */
-    private function resolveActionParams(ReflectionMethod $reflectedMethod)
+    public function resolveActionParams(ReflectionMethod $reflectedMethod)
     {
-        return $this->container->getDependencies($reflectedMethod, $this->route['matches']);
+        return $this->container->getDependencies($reflectedMethod, $this->getRoute('matches'));
     }
 }

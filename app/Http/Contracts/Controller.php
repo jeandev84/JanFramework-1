@@ -15,6 +15,12 @@ class Controller extends BaseController
 {
 
      /**
+      * @var string
+     */
+     protected $layout = 'default';
+
+
+     /**
       * Controller constructor.
       * @param ContainerInterface $container
      */

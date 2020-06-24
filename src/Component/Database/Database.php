@@ -22,7 +22,7 @@ class Database
        /**
         * @var array
        */
-       protected static $config = [
+       private static $config = [
            'driver'    => '',
            'database'  => '',
            'host'      => '',
