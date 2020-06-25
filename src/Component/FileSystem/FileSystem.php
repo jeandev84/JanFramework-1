@@ -163,8 +163,7 @@ class FileSystem
         */
         public function make(string $filename)
         {
-           $dirname = dirname($filename);
-           $target = $this->mkdir($dirname);
+           $target = $this->mkdir(dirname($filename));
            $filename = $this->resource($filename);
            return $target ? (touch($filename) ? $filename : false) : false;
         }
