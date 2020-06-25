@@ -20,8 +20,13 @@ class FileSystem
 
       /**
        * FileSystem constructor.
+       *
+       * Example:
+       *  $filesystem = new FileSytem(__DIR__.'/../')
+       *
        * @param string $root
        * @throws FileSystemException
+       *
       */
       public function __construct(string $root)
       {
@@ -39,6 +44,8 @@ class FileSystem
       /**
        * @param string $path
        * @return string
+       *
+       * $this->resource('config/app.php)
       */
       public function resource(string $path)
       {
@@ -178,11 +185,58 @@ class FileSystem
            $filename = $this->resource($filename);
            return $target ? (touch($filename) ? $filename : false) : false;
         }
+
+
+
+        /**
+         * Read file
+         *
+         * @param string $path
+         * @return false|string
+        */
+        public function read(string $path)
+        {
+            return file_get_contents($this->resource($path));
+        }
+
+
+        /**
+         * Put content into file
+         *
+         * @param string $path
+         * @param $data
+        */
+        public function write(string $path, $data)
+        {
+            file_put_contents($this->resource($path), $data);
+        }
+
+
+        /**
+         * Upload file
+         *
+         * @param $target
+         * @param $filename
+        */
+        public function move($target, $filename)
+        {
+              //
+        }
+
+
+        /**
+         * @param $origin
+         * @param $destination
+        */
+        public function copy($origin, $destination)
+        {
+             //
+        }
 }
 
 /*
 $fileSystem = new FileSystem($container->get('base.path'));
-echo $fileSystem->resource('config/app.php');
++echo $fileSystem->resource('config/app.php');
 $files = $fileSystem->resources('/config/*.php');
 $config = $fileSystem->load('config/app.php');
 $fileSystem->mkdir('storage/cache');
