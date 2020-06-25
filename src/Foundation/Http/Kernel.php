@@ -114,6 +114,7 @@ class Kernel implements HttpKernelContract
     */
     public function callDefaultAction()
     {
+        // Nastya Finagenova
         return call_user_func([$this->container->get(self::DEFAULT_CONTROLLER), self::DEFAULT_ACTION]);
     }
 

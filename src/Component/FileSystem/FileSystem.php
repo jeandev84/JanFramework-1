@@ -62,60 +62,124 @@ class FileSystem
 
       /**
        * @param string $path
-       * @return string|string[]
+       * @return string
       */
-      public function pathinfo(string $path)
+      public function basename(string $path)
       {
-          return pathinfo($path);
-      }
-
-      /**
-       * @param string $filename
-       * @return bool
-      */
-      public function exists(string $filename)
-      {
-           return file_exists($this->resource($filename));
+           return basename($this->resource($path));
       }
 
 
       /**
-       * @param string $filename
-       * @return bool
-      */
-      public function load(string $filename)
-      {
+        * @param string $path
+        * @return string
+       */
+       public function dirname(string $path)
+       {
+          return dirname($this->resource($path));
+       }
+
+
+       /**
+        * @param string $path
+        * @return string
+       */
+       public function nameOnly(string $path)
+       {
+          return $this->details($path, 'filename');
+       }
+
+
+        /**
+         * @param string $path
+         * @return string
+        */
+        public function extension(string $path)
+        {
+            return $this->details($path, 'extension');
+        }
+
+
+
+        /**
+         * @param string $path
+         * @param string $context
+         * @return string|string[]
+        */
+        public function details(string $path, $context = null)
+        {
+            $details = pathinfo($this->resource($path));
+            return $details[$context] ?? $details;
+        }
+
+
+
+        /**
+         * @param string $filename
+         * @return bool
+        */
+         public function exists(string $filename)
+         {
+            return file_exists($this->resource($filename));
+         }
+
+
+
+        /**
+          * @param string $filename
+          * @return bool
+        */
+        public function load(string $filename)
+        {
             if(! $this->exists($filename))
             {
                 return false;
             }
 
             return require $this->resource($filename);
-      }
+        }
 
 
-      /**
-       * @param string $target
-       * @return string
-      */
-      public function mkdir(string $target)
-      {
-           $target = $this->resource($target);
+        /**
+         * @param string $target
+         * @return string
+        */
+        public function mkdir(string $target)
+        {
+            $target = $this->resource($target);
 
-           if(! is_dir($target) && mkdir($target, 0777, true))
-           {
-               return true;
-           }
+            if(! is_dir($target))
+            {
+               mkdir($target, 0777, true);
+            }
 
-           return false;
-      }
+            return $target;
+        }
 
 
-      /**
-        * @param string $filename
-      */
-      public function make(string $filename)
-      {
-           dd(pathinfo($filename));
-      }
+        /**
+         * @param string $filename
+         * @return bool
+        */
+        public function make(string $filename)
+        {
+           $dirname = dirname($filename);
+           $target = $this->mkdir($dirname);
+           $filename = $this->resource($filename);
+           return $target ? (touch($filename) ? $filename : false) : false;
+        }
 }
+
+/*
+$fileSystem = new FileSystem($container->get('base.path'));
+echo $fileSystem->resource('config/app.php');
+$files = $fileSystem->resources('/config/*.php');
+$config = $fileSystem->load('config/app.php');
+$fileSystem->mkdir('storage/cache');
+
+$fileSystem->make('app/Http/Controllers/TestController.php');
+$fileSystem->make('database/migrations/2020_06_25_users_table.php');
+$fileSystem->make('.env');
+$fileSystem->make('bootstrap/cache/.gitignore');
+$fileSystem->details('config/app.php')
+*/
