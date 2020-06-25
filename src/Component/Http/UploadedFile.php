@@ -242,6 +242,11 @@ class UploadedFile
     */
     public function move($target = '/uploads', $filename = null)
     {
+        if($this->error != UPLOAD_ERR_OK) {
+
+            return false;
+        }
+
         $filename = $filename ?? sha1(mt_rand()) . '_' . sha1(mt_rand());
         $filename .= '.'. $this->extension;
 

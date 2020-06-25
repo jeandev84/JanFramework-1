@@ -2,6 +2,9 @@
 namespace Jan\Component\FileSystem;
 
 
+use Exception;
+use Jan\Component\FileSystem\Exceptions\FileSystemException;
+
 /**
  * Class FileSystem
  * @package Jan\Component\FileSystem
@@ -15,12 +18,20 @@ class FileSystem
       protected $root;
 
 
-     /**
-      * FileSystem constructor.
-      * @param string $root
+      /**
+       * FileSystem constructor.
+       * @param string $root
+       * @throws FileSystemException
       */
       public function __construct(string $root)
       {
+           if(! is_dir($root))
+           {
+               throw new FileSystemException(
+                   sprintf('%s is not a directory', $root)
+               );
+           }
+
            $this->root = $root;
       }
 

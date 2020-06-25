@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Foundation;
+namespace Jan\Foundation\Http;
 
 
 use Jan\Component\DI\Contracts\ContainerInterface;
