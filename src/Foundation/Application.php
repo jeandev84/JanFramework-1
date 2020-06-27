@@ -2,10 +2,15 @@
 namespace Jan\Foundation;
 
 
+use Closure;
 use Exception;
 use Jan\Component\DI\Container;
+use Jan\Component\Http\Contracts\RequestInterface;
+use Jan\Component\Http\Contracts\ResponseInterface;
+use Jan\Component\Routing\Exception\RouterException;
+use Jan\Component\Routing\Route;
 use Jan\Foundation\Exceptions\NotFoundHttpException;
-
+use ReflectionException;
 
 
 /**
@@ -38,7 +43,7 @@ class Application extends Container
      * Application constructor.
      * @param string $basePath
      * @return void
-     * @throws \ReflectionException
+     * @throws ReflectionException
     */
     public function __construct(string $basePath = null)
     {
@@ -49,6 +54,25 @@ class Application extends Container
         $this->registerBaseBindings();
         $this->registerBaseServiceProviders();
         $this->registerCoreContainerAliases();
+    }
+
+
+    /**
+     * @param $methods
+     * @param $path
+     * @param Closure $closure
+     * @param null $name
+     * @return \Jan\Component\Routing\Router
+     * @throws \Jan\Component\DI\Exceptions\InstanceException
+     * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+     * @throws RouterException
+     * @throws ReflectionException
+     */
+    public function map($methods, $path, Closure $closure, $name = null)
+    {
+        $request = $this->get(RequestInterface::class);
+        $response = $this->get(ResponseInterface::class);
+        return Route::instance()->map($methods, $path, $closure($request, $response), $name);
     }
 
 
@@ -107,7 +131,7 @@ class Application extends Container
      * Register all of the base service providers
      *
      * @return void
-     * @throws \ReflectionException
+     * @throws ReflectionException
     */
     protected function registerBaseServiceProviders()
     {
