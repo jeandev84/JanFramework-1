@@ -4,6 +4,7 @@ namespace Jan\Component\Http;
 
 use Jan\Component\Http\Contracts\ResponseInterface;
 
+
 /**
  * Class Response
  * @package Jan\Component\Http
@@ -58,11 +59,13 @@ class Response implements ResponseInterface
      * Set protocol version
      *
      * @param string $protocolVersion
-     * @return void
-    */
+     * @return Response
+     */
     public function setProtocolVersion($protocolVersion)
     {
         $this->protocolVersion = $protocolVersion;
+
+        return $this;
     }
 
 
@@ -240,6 +243,26 @@ class Response implements ResponseInterface
 
 
     /**
+     * @return $this
+    */
+    public function statusMessage()
+    {
+        $message = $this->messages[$this->status] ?? '';
+
+        if(! $this->protocolVersion)
+        {
+            http_response_code($this->status);
+        }
+
+        if($message)
+        {
+            $this->withHeaders($this->protocolVersion .' '. $this->status .' ' . $message);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param $key
      * @param $value
      * @return array
@@ -249,19 +272,4 @@ class Response implements ResponseInterface
         return \is_array($key) ? $key : [$key => $value];
     }
 
-
-    /**
-     * @return string
-    */
-    protected function statusMessage()
-    {
-        $message = $this->messages[$this->status] ?? '';
-
-        if(! $message)
-        {
-            http_response_code($this->status);
-        }
-
-        $this->withHeaders($this->protocolVersion .' '. $this->status .' ' . $message);
-    }
 }

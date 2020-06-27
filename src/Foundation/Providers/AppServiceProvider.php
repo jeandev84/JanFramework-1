@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider implements BootableServiceProvi
 
 
         $this->container->singleton(Response::class, function () {
-            return new Response();
+           return new Response();
         });
 
 

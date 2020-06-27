@@ -38,6 +38,11 @@ interface ResponseInterface
      public function withHeaders($headers);
 
 
+     /**
+      * @param $version
+      * @return mixed
+     */
+     public function withProtocolVersion($version);
 
 
      /**

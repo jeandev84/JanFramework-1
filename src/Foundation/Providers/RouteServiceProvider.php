@@ -27,7 +27,7 @@ class RouteServiceProvider extends ServiceProvider
 
          $this->container->singleton(RouteDispatcher::class, function () {
              $dispatcher = new RouteDispatcher($this->container);
-             $dispatcher->setControllerNamespace('App\\Http\\Controllers');
+             $dispatcher->namespace('App\\Http\\Controllers');
              return $dispatcher;
          });
     }

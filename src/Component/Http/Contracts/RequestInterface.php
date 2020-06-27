@@ -32,4 +32,10 @@ interface RequestInterface
      * @return mixed
     */
     public function getFiles();
+
+
+    /**
+     * @return mixed
+    */
+    public function getProtocolVersion();
 }

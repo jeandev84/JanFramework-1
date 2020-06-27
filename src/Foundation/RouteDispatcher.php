@@ -17,6 +17,7 @@ use Jan\Component\Routing\Router;
 use ReflectionException;
 use ReflectionMethod;
 
+
 /**
  * Class RouteDispatcher
  * @package Jan\Foundation
@@ -45,9 +46,9 @@ class RouteDispatcher
 
     /**
      * RouteDispatcher constructor.
-     * @param Application $container
-     */
-    public function __construct(Application $container)
+     * @param Container $container
+    */
+    public function __construct(Container $container)
     {
           $this->container = $container;
     }
@@ -57,7 +58,7 @@ class RouteDispatcher
      * @param string $namespace
      * @return RouteDispatcher
     */
-    public function setControllerNamespace(string $namespace)
+    public function namespace(string $namespace)
     {
         $this->namespace = rtrim($namespace, '\\') .'\\';
 
@@ -88,6 +89,8 @@ class RouteDispatcher
     public function dispatch(RequestInterface $request, ResponseInterface $response)
     {
         $router = Route::instance();
+        $version = $request->getProtocolVersion();
+        $response->withProtocolVersion($version);
 
         if(! $router->getRoutes())
         {
@@ -118,14 +121,20 @@ class RouteDispatcher
                 throw new Exception('This callback must be instance of Response');
             }
 
-            return $body;
+            return $body->withProtocolVersion($version);
         }
 
         $body = $this->call($target, $params);
 
+        /* dd($body); */
         if(is_array($body))
         {
             return $response->withJson($body);
+        }
+
+        if($body instanceof Response)
+        {
+            return $body->withProtocolVersion($version);
         }
 
         return $response->withBody((string)$body);

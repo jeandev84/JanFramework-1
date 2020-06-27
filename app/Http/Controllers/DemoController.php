@@ -8,6 +8,8 @@ use Jan\Component\DI\Exceptions\InstanceException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\FileSystem\Exceptions\FileSystemException;
 use Jan\Component\FileSystem\FileSystem;
+use Jan\Component\Http\Request;
+use Jan\Component\Http\Response;
 use ReflectionException;
 
 
@@ -32,5 +34,15 @@ class DemoController extends Controller
           $fileSystem->make('app/Http/Controllers/TestController.php');
 
           return $this->render('demo/index');
+      }
+
+
+      /**
+       * @param Request $request
+       * @return Response
+      */
+      public function send(Request $request)
+      {
+          return new Response('Demo controller to send');
       }
 }

@@ -439,41 +439,6 @@ class Request implements RequestInterface
 
 
     /**
-     * @param $index
-     * @param $value
-     * @param UploadedFile $uploadedFile
-    */
-    public function isElse($index, $value, UploadedFile $uploadedFile)
-    {
-        if($index == 'name')
-        {
-            $uploadedFile->setFilename($value);
-        }
-
-        if($index == 'type')
-        {
-            $uploadedFile->setMimeType($value);
-        }
-
-
-        if($index == 'tmp_name')
-        {
-            $uploadedFile->setTempFile($value);
-        }
-
-        if($index == 'error')
-        {
-            $uploadedFile->setError($value);
-        }
-
-        if($index == 'size')
-        {
-            $uploadedFile->setSize($value);
-        }
-    }
-
-
-    /**
      * Get Scheme
      *
      * @return string
@@ -481,6 +446,15 @@ class Request implements RequestInterface
     public function getScheme()
     {
         return $this->isSecure() ? 'https://' : 'http://';
+    }
+
+
+    /**
+     * @return mixed|null
+    */
+    public function getProtocolVersion()
+    {
+        return $this->getServer()->get('SERVER_PROTOCOL');
     }
 
 
