@@ -126,14 +126,14 @@ class RouteDispatcher
 
         $body = $this->call($target, $params);
 
-        if(is_array($body))
-        {
-            return $response->withJson($body);
-        }
-
         if($body instanceof Response)
         {
             return $body->withProtocolVersion($version);
+        }
+
+        if(is_array($body))
+        {
+            return $response->withJson($body);
         }
 
         return $response->withBody((string)$body);
