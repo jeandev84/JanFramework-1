@@ -54,7 +54,7 @@ class RouteDispatcher
     */
     public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
+          $this->container = $container;
     }
 
 
@@ -93,15 +93,12 @@ class RouteDispatcher
     public function dispatch(RequestInterface $request, ResponseInterface $response)
     {
         $middleware = $this->container->get('middleware');
-        $route = Route::instance()->match($request->getMethod(), $request->getPath());
+        $router = Route::instance();
+        $route = $router->match($request->getMethod(), $request->getPath());
 
-        $target = $route['target'];
-        $params = $route['matches'];
-
-        if(! Route::instance()->getRoutes())
+        if(! $router->getRoutes())
         {
-              $target = [$this->container->get(DefaultController::class), 'welcome'];
-              return $response->withBody($this->call($target, []));
+            return $this->call([$this->container->get(DefaultController::class), 'welcome']);
         }
 
         if(! $route)
@@ -109,16 +106,16 @@ class RouteDispatcher
             throw new Exception('Route not found', 404);
         }
 
+        $target = $route['target'];
+        $params = $route['matches'];
+
         $middleware->addStack(array_merge($route['middleware'], $this->middleware));
         $response = $middleware->handle($request, $response);
 
         if(is_string($target) && strpos($target, '@') !== false)
         {
             list($controller, $action) = explode('@', $target, 2);
-            $controller = sprintf('%s%s', $this->namespace, $controller);
-            $reflectedMethod = new ReflectionMethod($controller, $action);
-            $params = $this->container->get($reflectedMethod, $params);
-            $body = $this->call([$this->container->get($controller), $action], $params);
+            $body = $this->callControllerAndAction($controller, $action, $params);
 
             if(! $body instanceof Response)
             {
@@ -135,7 +132,7 @@ class RouteDispatcher
             return $response->withJson($body);
         }
 
-        return $response->withBody((string) $body);
+        return $response->withBody((string)$body);
     }
 
 
@@ -145,7 +142,7 @@ class RouteDispatcher
      * @return mixed
      * @throws Exception
     */
-    public function call($target, $params)
+    public function call($target, $params = [])
     {
         if(! is_callable($target))
         {
@@ -153,5 +150,23 @@ class RouteDispatcher
         }
 
         return call_user_func_array($target, $params);
+    }
+
+
+    /**
+     * @param string $controller
+     * @param string $action
+     * @param array $params
+     * @return mixed
+     * @throws InstanceException
+     * @throws ReflectionException
+     * @throws ResolverDependencyException
+    */
+    private function callControllerAndAction(string $controller, string $action, array $params = [])
+    {
+        $controller = sprintf('%s%s', $this->namespace, $controller);
+        $reflectedMethod = new ReflectionMethod($controller, $action);
+        $params = $this->container->get($reflectedMethod, $params);
+        return $this->call([$this->container->get($controller), $action], $params);
     }
 }

@@ -3,8 +3,10 @@ namespace Jan\Foundation;
 
 
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\Templating\View;
+use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Foundation\Routing\Controller;
+use ReflectionException;
 
 
 /**
@@ -23,22 +25,25 @@ class DefaultController extends Controller
       /**
        * DefaultController constructor.
        * @param ContainerInterface $container
+       * @throws InstanceException
+       * @throws ReflectionException
+       * @throws ResolverDependencyException
       */
       public function __construct(ContainerInterface $container)
       {
           parent::__construct($container);
-          $container->get('view')->setBasePath(__DIR__ . '/Resources/views/');
+          $this->container->get('view')->setBasePath(__DIR__ . '/Resources/views/');
       }
 
 
      /**
        * @return false|string
-       * @throws \Jan\Component\DI\Exceptions\InstanceException
-       * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
-       * @throws \ReflectionException
+       * @throws InstanceException
+       * @throws ResolverDependencyException
+       * @throws ReflectionException
       */
       public function welcome()
       {
-           return $this->container->get('view')->render('welcome.php');
+           return $this->render('welcome');
       }
 }
