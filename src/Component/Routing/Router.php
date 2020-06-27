@@ -284,19 +284,18 @@ class Router implements RouterInterface
     /**
      * Generate route path
      *
-     * @param string $name
+     * @param string $context
      * @param array $params
      * @return mixed
     */
-    public function generate(string $name, array $params = [])
+    public function generate(string $context, array $params = [])
     {
-        if(! isset($this->namedRoutes[$name]))
+        if(! isset($this->namedRoutes[$context]))
         {
-             $queryString = $params ? http_build_query($params) : '';
-             return $this->generateUrl($name, $queryString);
+             return $this->generateUrl($context, http_build_query($params));
         }
 
-        $path = $this->namedRoutes[$name];
+        $path = $this->namedRoutes[$context];
 
         if($params)
         {
@@ -312,13 +311,12 @@ class Router implements RouterInterface
 
     /**
      * @param string $path
-     * @param string $queryString
+     * @param string $qs [ query string ]
      * @return string
-   */
-    public function generateUrl(string $path, string $queryString = '')
+     */
+    public function generateUrl(string $path, string $qs = '')
     {
-        $qs = $queryString ? '?'. $queryString : '';
-        return rtrim($this->baseUrl, '/') . '/' . trim($path, '/') . $qs;
+        return rtrim($this->baseUrl, '/') . '/' . trim($path, '/') . ($qs ? '?'. $qs : $qs);
     }
 
 

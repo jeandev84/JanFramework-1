@@ -87,12 +87,14 @@ class RouteDispatcher
     */
     public function dispatch(RequestInterface $request, ResponseInterface $response)
     {
-        if(! Route::instance()->getRoutes())
+        $router = Route::instance();
+
+        if(! $router->getRoutes())
         {
             return $this->call([$this->container->get(DefaultController::class), 'welcome']);
         }
 
-        $route = Route::instance()->match($request->getMethod(), $request->getPath());
+        $route = $router->match($request->getMethod(), $request->getPath());
 
         if(! $route)
         {
