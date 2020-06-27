@@ -111,7 +111,7 @@ class RouteDispatcher
         if(is_string($target) && strpos($target, '@') !== false)
         {
             list($controller, $action) = explode('@', $target, 2);
-            $body = $this->callControllerAndAction($controller, $action, $params);
+            $body = $this->callAction($controller, $action, $params);
 
             if(! $body instanceof Response)
             {
@@ -158,7 +158,7 @@ class RouteDispatcher
      * @throws ReflectionException
      * @throws ResolverDependencyException
     */
-    private function callControllerAndAction(string $controller, string $action, array $params = [])
+    private function callAction(string $controller, string $action, array $params = [])
     {
         $controller = sprintf('%s%s', $this->namespace, $controller);
         $reflectedMethod = new ReflectionMethod($controller, $action);
