@@ -87,13 +87,12 @@ class RouteDispatcher
     */
     public function dispatch(RequestInterface $request, ResponseInterface $response)
     {
-        $middleware = $this->container->get('middleware');
-        $route = Route::instance()->match($request->getMethod(), $request->getPath());
-
         if(! Route::instance()->getRoutes())
         {
             return $this->call([$this->container->get(DefaultController::class), 'welcome']);
         }
+
+        $route = Route::instance()->match($request->getMethod(), $request->getPath());
 
         if(! $route)
         {
@@ -103,6 +102,7 @@ class RouteDispatcher
         $target = $route['target'];
         $params = $route['matches'];
 
+        $middleware = $this->container->get('middleware');
         $middleware->addStack(array_merge($route['middleware'], $this->middleware));
         $response = $middleware->handle($request, $response);
 
