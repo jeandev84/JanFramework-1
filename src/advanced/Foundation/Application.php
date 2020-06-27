@@ -5,6 +5,7 @@ namespace Jan\Foundation;
 use Closure;
 use Exception;
 use Jan\Component\DI\Container;
+use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Routing\Exception\RouterException;
@@ -56,24 +57,6 @@ class Application extends Container
         $this->registerCoreContainerAliases();
     }
 
-
-    /**
-     * @param $methods
-     * @param $path
-     * @param Closure $closure
-     * @param null $name
-     * @return \Jan\Component\Routing\Router
-     * @throws \Jan\Component\DI\Exceptions\InstanceException
-     * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
-     * @throws RouterException
-     * @throws ReflectionException
-     */
-    public function map($methods, $path, Closure $closure, $name = null)
-    {
-        $request = $this->get(RequestInterface::class);
-        $response = $this->get(ResponseInterface::class);
-        return Route::instance()->map($methods, $path, $closure($request, $response), $name);
-    }
 
 
     /**
