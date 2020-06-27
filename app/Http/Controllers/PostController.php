@@ -39,7 +39,7 @@ class PostController extends Controller
      * @param int|null $id
      * @param string $slug
      * @return Response
-     * @throws \Jan\Component\DI\Exceptions\InstanceException
+     * @throws \Jan\Component\DI\Exceptions\ContainerException
      * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
      * @throws \ReflectionException
      *

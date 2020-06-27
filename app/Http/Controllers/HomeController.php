@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 # use Jan\Component\Database\Database;
 use App\Http\Contracts\Controller;
 use Jan\Component\DI\Container;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Request;
@@ -22,7 +22,7 @@ class HomeController extends Controller
 
      /**
       * @return Response
-      * @throws InstanceException
+      * @throws ContainerException
       * @throws ResolverDependencyException
       * @throws \ReflectionException
       */
@@ -36,7 +36,7 @@ class HomeController extends Controller
      * @param Request $request
      * @param Upload $upload
      * @return Response
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws \ReflectionException
      */

@@ -4,7 +4,7 @@ namespace Jan\Foundation\Reviews;
 
 use Exception;
 use Jan\Component\DI\Container;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Response;
@@ -100,7 +100,7 @@ class RouteDispatcher
 
     /**
      * @return Response|mixed
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
      */
@@ -140,7 +140,7 @@ class RouteDispatcher
     /**
      * @param ReflectionMethod $reflectedMethod
      * @return array
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws ReflectionException
     */

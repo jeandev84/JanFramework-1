@@ -3,8 +3,9 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Contracts\Controller;
+use Jan\Component\Database\Database;
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\FileSystem\Exceptions\FileSystemException;
 use Jan\Component\FileSystem\FileSystem;
@@ -23,7 +24,7 @@ class DemoController extends Controller
     /**
      * @param ContainerInterface $container
      * @return \Jan\Component\Http\Response
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws ReflectionException
      * @throws FileSystemException

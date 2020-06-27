@@ -5,7 +5,7 @@ namespace Jan\Component\DI;
 use Closure;
 use Jan\Component\DI\Contracts\BootableServiceProvider;
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
 use ReflectionClass;
@@ -127,7 +127,7 @@ class Container implements \ArrayAccess, ContainerInterface
      *  Example:
      *  $this->addServiceProvider(new \App\Providers\AppServiceProvider());
      *  $this->addServiceProvider(App\Providers\AppServiceProvider::class);
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
     */
@@ -149,7 +149,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
     /**
      * @param array $providers
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
     */
@@ -392,7 +392,7 @@ class Container implements \ArrayAccess, ContainerInterface
      * @param $abstract
      * @param array $arguments
      * @return mixed
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
      */
@@ -450,7 +450,7 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * @param $abstract
      * @return mixed
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
     */
@@ -478,7 +478,7 @@ class Container implements \ArrayAccess, ContainerInterface
      * @param $abstract
      * @param array $arguments
      * @return object|array
-     * @throws ReflectionException|InstanceException|ResolverDependencyException
+     * @throws ReflectionException|ContainerException|ResolverDependencyException
      */
     public function resolve($abstract, array $arguments = [])
     {
@@ -486,7 +486,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
           if(! $reflectedClass->isInstantiable())
           {
-              throw new InstanceException(sprintf('Class [%s] is not instantiable dependency.', $abstract));
+              throw new ContainerException(sprintf('Class [%s] is not instantiable dependency.', $abstract));
           }
 
           if(! $constructor = $reflectedClass->getConstructor())
@@ -502,7 +502,7 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * @param ReflectionClass $reflectionClass
      * @return array|mixed|object|null
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
     */
@@ -544,7 +544,7 @@ class Container implements \ArrayAccess, ContainerInterface
      * @param ReflectionMethod $reflectionMethod
      * @param array $arguments
      * @return array
-     * @throws ReflectionException|InstanceException|ResolverDependencyException
+     * @throws ReflectionException|ContainerException|ResolverDependencyException
     */
     public function resolveMethodDependencies(ReflectionMethod $reflectionMethod, $arguments = [])
     {

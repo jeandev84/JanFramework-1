@@ -3,7 +3,7 @@ namespace Jan\Foundation;
 
 
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Foundation\Routing\Controller;
 use ReflectionException;
@@ -25,7 +25,7 @@ class DefaultController extends Controller
       /**
        * DefaultController constructor.
        * @param ContainerInterface $container
-       * @throws InstanceException
+       * @throws ContainerException
        * @throws ReflectionException
        * @throws ResolverDependencyException
       */
@@ -38,7 +38,7 @@ class DefaultController extends Controller
 
      /**
        * @return false|string
-       * @throws InstanceException
+       * @throws ContainerException
        * @throws ResolverDependencyException
        * @throws ReflectionException
       */

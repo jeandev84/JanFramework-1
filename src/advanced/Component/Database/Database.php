@@ -7,6 +7,7 @@ use Jan\Component\Database\Exceptions\DatabaseException;
 use PDO;
 use PDOException;
 
+
 /**
  * Class Database
  * @package Jan\Component\Database
@@ -14,8 +15,15 @@ use PDOException;
 class Database
 {
 
+       const DEFAULT_PDO_OPTIONS = [
+           PDO::ATTR_PERSISTENT => true, // permit to insert/ persist data in to database
+           PDO::ATTR_EMULATE_PREPARES => 0,
+           PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+           PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+       ];
+
        /**
-        * @var Database
+        * @var PDO
        */
        private static $instance;
 
@@ -24,17 +32,17 @@ class Database
         * @var array
        */
        private static $config = [
-           'driver'    => '',
-           'database'  => '',
-           'host'      => '',
-           'port'      => '',
-           'charset'   => '',
-           'username'  => '',
+           'driver'    => 'mysql',
+           'database'  => 'janframework',
+           'host'      => '127.0.0.1',
+           'port'      => '3306',
+           'charset'   => 'utf8',
+           'username'  => 'root',
            'password'  => '',
-           'collation' => '',
-           'options'   => '',
+           'collation' => 'utf8_unicode_ci',
+           'options'   => [],
            'prefix'    => '',
-           'engine'    => ''
+           'engine'    => 'innodb'
        ];
 
 
@@ -42,33 +50,32 @@ class Database
        private function __wakeup() {}
 
 
-       /**+
-        * @param array $config
-        * @throws DatabaseException
+       /**
+         * Make connection
+         *
+         * @param array $config
+         * @return PDO
+         * @throws DatabaseException
+         * @throws Exception
        */
-       public static function connect(array $config)
+       public static function connect(array $config = [])
        {
-            foreach ($config as $key => $value)
-            {
-                if(! \array_key_exists($key, self::$config))
-                {
-                     throw new DatabaseException(
-                         sprintf('Key (%s) is not valid database config param!', $key)
-                     );
-                }
+            self::setConfiguration($config);
 
-                self::$config[$key] = $value;
+            if($instance = self::instance())
+            {
+                return $instance;
             }
        }
 
 
        /**
-        * Get instance connection to database
-        *
-        * @return array|Database
-        * @throws \Exception
+         * Get instance connection to database
+         *
+         * @return PDO
+         * @throws Exception
        */
-       public static function instance()
+       public static function instance(): PDO
        {
            if(! self::$instance)
            {
@@ -92,46 +99,78 @@ class Database
                if(! \in_array($driver, PDO::getAvailableDrivers()))
                {
                     throw new Exception(
-                        sprintf('Driver (%s) is not available!', $driver)
+                        sprintf('(%s) is not available driver !', $driver)
                     );
                }
 
-               $dsn = $driver .':';
+               $dsn = sprintf('%s:', $driver);
 
                $username = self::config('username');
                $password = self::config('password');
-               $options = self::config('options');
+               $options = array_merge(self::DEFAULT_PDO_OPTIONS, self::config('options'));
 
-               if($driver === 'sqlite')
+               switch($driver)
                {
-                   $dsn .= self::config('database');
-                   $username = null;
-                   $password = null;
+                   case 'sqlite':
+                       $dsn .= sprintf('%s', self::config('database'));
+                       $username = null;
+                       $password = null;
+                       break;
 
-               } else {
-
-                   $dsn .= 'host='. self::config('host');;
-                   $dsn .= 'dbname='. self::config('database');
-                   $dsn .= 'charset='. self::config('charset');
+                   default:
+                       $dsn .= sprintf('host=%s;port=%s;dbname=%s;charset=%s',
+                           self::config('host'),
+                           self::config('port'),
+                           self::config('database'),
+                           self::config('charset')
+                       );
                }
 
-               return new PDO(strtolower($dsn), $username, $password, $options);
+               return new PDO($dsn, $username, $password, $options);
 
            } catch (PDOException $e) {
 
-               echo '<div>'. $e->getMessage() . '</div>';
                throw $e;
            }
        }
 
 
+       /**
+        * @param $sql
+        * @param array $params
+       */
+       public static function execute($sql, $params = [])
+       {
 
-      /**
-       * @param $key
-       * @return mixed|null
-      */
-      public static function config($key)
-      {
-          return self::$config[$key] ?? null;
-      }
+       }
+
+
+       /**
+        * @param $key
+        * @return mixed|null
+       */
+       public static function config($key)
+       {
+           return self::$config[$key] ?? null;
+       }
+
+
+       /**
+        * @param array $config
+        * @throws DatabaseException
+       */
+       private static function setConfiguration(array $config)
+       {
+              foreach ($config as $key => $value)
+              {
+                  if(! \array_key_exists($key, self::$config))
+                  {
+                      throw new DatabaseException(
+                          sprintf('Key (%s) is not valid database config param!', $key)
+                      );
+                  }
+
+                  self::$config[$key] = $value;
+              }
+       }
 }

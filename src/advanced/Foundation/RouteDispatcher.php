@@ -5,7 +5,7 @@ namespace Jan\Foundation;
 use Exception;
 use Jan\Component\DI\Container;
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
@@ -81,7 +81,7 @@ class RouteDispatcher
      * @return mixed
      * @throws MethodNotAllowedException
      * @throws RouterException
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws ReflectionException
      * @throws Exception
@@ -163,7 +163,7 @@ class RouteDispatcher
      * @param string $action
      * @param array $params
      * @return mixed
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
      * @throws Exception

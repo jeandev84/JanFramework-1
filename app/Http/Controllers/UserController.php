@@ -2,19 +2,24 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Contracts\Controller;
+use Jan\Component\Database\Database;
+use PDO;
+
 /**
  * Class UserController
  * @package App\Http\Controllers
 */
-class UserController
+class UserController extends Controller
 {
 
       /**
-        * @param string $token
+       * @param string $token
+       * @return \Jan\Component\Http\Response
       */
       public function edit(string $token)
       {
-           echo __METHOD__ . ' TOKEN : ' . $token;
-           echo '<br>';
+           dd(Database::instance());
+           return $this->render('users/edit', compact('token'));
       }
 }

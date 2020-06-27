@@ -4,7 +4,7 @@ namespace Jan\Foundation\Routing;
 
 use Jan\Component\DI\Container;
 use Jan\Component\DI\Contracts\ContainerInterface;
-use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Http\Response;
@@ -58,7 +58,7 @@ abstract class Controller
      * @param array $data
      * @param Response|null $response
      * @return Response
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws \ReflectionException
     */
@@ -89,7 +89,7 @@ abstract class Controller
      * @param string $template
      * @param array $data
      * @return false|string
-     * @throws InstanceException
+     * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws \ReflectionException
     */
