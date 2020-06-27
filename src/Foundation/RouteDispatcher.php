@@ -30,11 +30,6 @@ class RouteDispatcher
     private $container;
 
 
-    /**
-     * @var Router
-    */
-    private $router;
-
 
     /**
      * @var string
