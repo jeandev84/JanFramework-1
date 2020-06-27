@@ -3,7 +3,6 @@
 use Jan\Component\Http\Response;
 
 Route::get('/hello', function () {
-
     return new Response('Привет друзья! как ваши дела?', 301);
 });
 

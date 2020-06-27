@@ -126,7 +126,6 @@ class RouteDispatcher
 
         $body = $this->call($target, $params);
 
-        /* dd($body); */
         if(is_array($body))
         {
             return $response->withJson($body);
