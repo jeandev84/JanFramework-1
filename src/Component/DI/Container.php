@@ -10,7 +10,7 @@ use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
 use ReflectionClass;
 use ReflectionException;
-
+use ReflectionMethod;
 
 
 /**
@@ -391,14 +391,14 @@ class Container implements \ArrayAccess, ContainerInterface
      *
      * @param $abstract
      * @param array $arguments
-     * @return object
+     * @return mixed
      * @throws InstanceException
      * @throws ReflectionException
      * @throws ResolverDependencyException
      */
     public function get($abstract, $arguments = [])
     {
-           if(! $this->has($abstract))
+           if(is_string($abstract) && ! $this->has($abstract))
            {
                if(! $this->autowire)
                {
@@ -408,12 +408,20 @@ class Container implements \ArrayAccess, ContainerInterface
                return $this->resolve($abstract, $arguments);
            }
 
+
+           if($abstract instanceof ReflectionMethod)
+           {
+               return $this->getDependencies($abstract, $arguments);
+           }
+
+
            /*
            if(isset($this->instances[$abstract]))
            {
                return $this->instances[$abstract];
            }
            */
+
            if(isset($this->aliases[$abstract]))
            {
                $abstract = $this->aliases[$abstract];
@@ -425,6 +433,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
                return $abstract;
            }
+
 
            // Get concrete
            $concrete = $this->getConcrete($abstract);
@@ -468,7 +477,7 @@ class Container implements \ArrayAccess, ContainerInterface
      *
      * @param $abstract
      * @param array $arguments
-     * @return object
+     * @return object|array
      * @throws ReflectionException|InstanceException|ResolverDependencyException
      */
     public function resolve($abstract, array $arguments = [])
@@ -493,12 +502,12 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * Resolve method dependencies
      *
-     * @param \ReflectionMethod $reflectionMethod
+     * @param ReflectionMethod $reflectionMethod
      * @param array $arguments
      * @return array
      * @throws ReflectionException|InstanceException|ResolverDependencyException
     */
-    public function getDependencies(\ReflectionMethod $reflectionMethod, $arguments = [])
+    public function getDependencies(ReflectionMethod $reflectionMethod, $arguments = [])
     {
         $dependencies = [];
 
@@ -520,7 +529,7 @@ class Container implements \ArrayAccess, ContainerInterface
                     {
                         $dependencies[] = $arguments[$parameter->getName()];
                     }else {
-                        $dependencies = array_merge($dependencies, array_values($arguments));
+                        $dependencies = array_merge($dependencies, $arguments);
                     }
                 }
 

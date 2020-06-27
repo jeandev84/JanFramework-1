@@ -19,11 +19,4 @@ interface Kernel
      */
      public function handle(RequestInterface $request): ResponseInterface;
 
-
-     /**
-      * @param RequestInterface $request
-      * @param ResponseInterface $response
-      * @return mixed
-     */
-     public function terminate(RequestInterface $request, ResponseInterface $response);
 }

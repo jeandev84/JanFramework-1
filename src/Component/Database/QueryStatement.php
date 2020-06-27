@@ -5,6 +5,7 @@ namespace Jan\Component\Database;
 use Exception;
 use PDO;
 
+
 /**
  * Class QueryStatement
  * @package Jan\Component\Database
@@ -13,7 +14,7 @@ class QueryStatement
 {
 
        /**
-        * @var Connection
+        * @var PDO
        */
        protected $connection;
 

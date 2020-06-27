@@ -1,11 +1,13 @@
 <?php
-namespace Jan\Foundation;
+namespace Jan\Foundation\Http;
 
 
+use Jan\Component\DI\Container;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Routing\Route;
+use Jan\Component\Routing\Router;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
 use Jan\Component\Http\Middleware;
 use Jan\Foundation\RouteDispatcher;
@@ -17,11 +19,6 @@ use Jan\Foundation\RouteDispatcher;
  */
 class Kernel implements HttpKernelContract
 {
-
-    private const DEFAULT_CONTROLLER = 'Jan\Foundation\DefaultController';
-
-    private const DEFAULT_ACTION = 'welcome';
-
 
     /**
      * @var string[]
@@ -35,13 +32,6 @@ class Kernel implements HttpKernelContract
      * @var array
     */
     protected $middlewares = [];
-
-
-
-    /**
-     * @var array
-    */
-    protected $routeMiddlewares = [];
 
 
 
@@ -68,35 +58,9 @@ class Kernel implements HttpKernelContract
     */
     public function handle(RequestInterface $request): ResponseInterface
     {
-        # Route Dispatcher
-        $response = $this->container->get(ResponseInterface::class);
-
         try {
 
-            if(! Route::instance()->getRoutes())
-            {
-                $body = $this->callDefaultAction();
-                return $response->withBody($body);
-            }
-
-            $dispatcher = $this->container->get(RouteDispatcher::class);
-            $middlewares = array_merge($dispatcher->getRouteMiddleware(), $this->middlewares);
-            $middlewareManager = $this->container->get(Middleware::class);
-            $middlewareManager->addStack($middlewares);
-            $response = $middlewareManager->handle($request, $response);
-            $body = $dispatcher->callAction();
-
-            if($body instanceof ResponseInterface)
-            {
-                return $body;
-            }
-
-            if(is_array($body))
-            {
-                return $response->withJson($body);
-            }
-
-            return $response->withBody($body);
+            $response = $this->dispatchRoute($request);
 
         } catch (\Exception $e) {
 
@@ -104,28 +68,24 @@ class Kernel implements HttpKernelContract
             {
                 exit('404 Page not found');
             }
+
             exit($e->getMessage());
         }
-    }
 
-
-    /**
-     * @return mixed
-    */
-    public function callDefaultAction()
-    {
-        // Nastya Finagenova
-        return call_user_func([$this->container->get(self::DEFAULT_CONTROLLER), self::DEFAULT_ACTION]);
+        return $response;
     }
 
 
     /**
      * @param RequestInterface $request
-     * @param ResponseInterface $response
-    */
-    public function terminate(RequestInterface $request, ResponseInterface $response)
+     * @return mixed
+     */
+    protected function dispatchRoute(RequestInterface $request)
     {
-          //
+         $response = $this->container->get(ResponseInterface::class);
+         $dispatcher = $this->container->get(RouteDispatcher::class);
+         $dispatcher->middlewareGroup($this->middlewares);
+         return $dispatcher->dispatch($request, $response);
     }
 
 

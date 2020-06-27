@@ -236,11 +236,11 @@ class UploadedFile
     /**
      * Upload file
      *
-     * @param $target
+     * @param $target [ __DIR__.'/uploads']
      * @param $filename
      * @return bool|string
     */
-    public function move($target = '/uploads', $filename = null)
+    public function move($target, $filename = null)
     {
         if($this->error != UPLOAD_ERR_OK) {
 

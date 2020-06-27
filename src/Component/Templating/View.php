@@ -12,7 +12,6 @@ use Jan\Component\Templating\Exceptions\ViewException;
 class View
 {
 
-
       /** @var string */
       protected $basePath;
 

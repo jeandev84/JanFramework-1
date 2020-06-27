@@ -51,11 +51,4 @@ $response = $kernel->handle(
 $response->send();
 
 
-/*
-|-------------------------------------------------------
-|    Terminate
-|-------------------------------------------------------
-*/
-
-$kernel->terminate($request, $response);
 

@@ -2,11 +2,14 @@
 namespace App\Http\Controllers;
 
 
+# use Jan\Component\Database\Database;
 use App\Http\Contracts\Controller;
-use Jan\Component\Database\Database;
 use Jan\Component\DI\Container;
+use Jan\Component\DI\Exceptions\InstanceException;
+use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Request;
+use Jan\Component\Http\Response;
 use Jan\Foundation\Services\Upload;
 
 
@@ -18,12 +21,12 @@ class HomeController extends Controller
 {
 
      /**
-      * @return \Jan\Component\Http\Response
-      * @throws \Jan\Component\DI\Exceptions\InstanceException
-      * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+      * @return Response
+      * @throws InstanceException
+      * @throws ResolverDependencyException
       * @throws \ReflectionException
       */
-      public function index(Container $container)
+      public function index(RequestInterface $request)
       {
            return $this->render('blog/home/index');
       }
@@ -32,9 +35,9 @@ class HomeController extends Controller
     /**
      * @param Request $request
      * @param Upload $upload
-     * @return \Jan\Component\Http\Response
-     * @throws \Jan\Component\DI\Exceptions\InstanceException
-     * @throws \Jan\Component\DI\Exceptions\ResolverDependencyException
+     * @return Response
+     * @throws InstanceException
+     * @throws ResolverDependencyException
      * @throws \ReflectionException
      */
       public function contact(Request $request, Upload $upload)
@@ -44,8 +47,6 @@ class HomeController extends Controller
           dump($uploadedFiles = $request->file('contact'));
           $upload->setUploadedFiles($uploadedFiles);
           dump($upload);
-
-          dump(Database::instance());
           return $this->render('blog/home/contact');
       }
 

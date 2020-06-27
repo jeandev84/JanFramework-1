@@ -220,17 +220,17 @@ class FileSystem
         */
         public function move($target, $filename)
         {
-              //
+            move_uploaded_file($this->mkdir($target), $filename);
         }
 
 
         /**
-         * @param $origin
+         * @param $source
          * @param $destination
         */
-        public function copy($origin, $destination)
+        public function copy($source, $destination)
         {
-             //
+             copy($source, $destination);
         }
 }
 

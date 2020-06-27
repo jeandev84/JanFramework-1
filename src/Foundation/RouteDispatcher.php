@@ -4,16 +4,18 @@ namespace Jan\Foundation;
 
 use Exception;
 use Jan\Component\DI\Container;
+use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\DI\Exceptions\InstanceException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\Http\Contracts\RequestInterface;
+use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Http\Response;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
+use Jan\Component\Routing\Router;
 use ReflectionException;
 use ReflectionMethod;
-
 
 /**
  * Class RouteDispatcher
@@ -22,130 +24,134 @@ use ReflectionMethod;
 class RouteDispatcher
 {
 
-     /**
-      * @var Container
-     */
-     private $container;
+    /**
+     * @var Container
+    */
+    private $container;
 
 
-     /**
-      * target namespace
-      *
-      * @var string
-     */
-     private $namespace;
+    /**
+     * @var Router
+    */
+    private $router;
 
 
-     /**
-      * Route parameters
-      *
-      * @var array
-     */
-     private $route = [];
+    /**
+     * @var string
+    */
+    private $namespace;
+
+
+    /**
+     * @var array
+    */
+    private $middleware = [];
 
 
     /**
      * RouteDispatcher constructor.
-     *
-     * @param RequestInterface $request
-     * @param Container $container
-     * @throws MethodNotAllowedException
-     * @throws RouterException
-     */
-     public function __construct(RequestInterface $request, Container $container)
-     {
-         $route = Route::instance()->match($request->getMethod(), $request->getPath());
-
-         if(! $route)
-         {
-             throw new Exception('Route not found', 404);
-         }
-
-         $this->route = $route;
-         $this->container = $container;
-     }
-
-
-     /**
-      * @param string|null $key
-      * @return array|bool|mixed
-     */
-     public function getRoute($key = null)
-     {
-          return $this->route[$key] ?? $this->route;
-     }
-
-
-     /**
-      * @param string $namespace
-      * @return RouteDispatcher
-     */
-     public function setControllerNamespace(string $namespace)
-     {
-          $this->namespace = rtrim($namespace, '\\') .'\\';
-
-          return $this;
-     }
-
-
-
-     /**
-      * @return mixed
-     */
-     public function getRouteMiddleware()
-     {
-         return $this->getRoute('middleware');
-     }
+     * @param ContainerInterface $container
+    */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
 
     /**
-     * @return Response|mixed
-     * @throws InstanceException
-     * @throws ReflectionException
-     * @throws ResolverDependencyException
-     */
-    public function callAction()
+     * @param string $namespace
+     * @return RouteDispatcher
+    */
+    public function setControllerNamespace(string $namespace)
     {
-        $target = $this->getRoute('target');
-        $parameters = $this->getRoute('matches');
-        $response = false;
+        $this->namespace = rtrim($namespace, '\\') .'\\';
+
+        return $this;
+    }
+
+
+    /**
+     * @param array $middleware
+    */
+    public function middlewareGroup(array $middleware)
+    {
+        $this->middleware = $middleware;
+    }
+
+
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return mixed
+     * @throws MethodNotAllowedException
+     * @throws RouterException
+     * @throws InstanceException
+     * @throws ResolverDependencyException
+     * @throws ReflectionException
+     * @throws Exception
+    */
+    public function dispatch(RequestInterface $request, ResponseInterface $response)
+    {
+        $middleware = $this->container->get('middleware');
+        $route = Route::instance()->match($request->getMethod(), $request->getPath());
+
+        $target = $route['target'];
+        $params = $route['matches'];
+
+        if(! Route::instance()->getRoutes())
+        {
+              $target = [$this->container->get(DefaultController::class), 'welcome'];
+              return $response->withBody($this->call($target, []));
+        }
+
+        if(! $route)
+        {
+            throw new Exception('Route not found', 404);
+        }
+
+        $middleware->addStack(array_merge($route['middleware'], $this->middleware));
+        $response = $middleware->handle($request, $response);
 
         if(is_string($target) && strpos($target, '@') !== false)
         {
-            list($controllerClass, $action) = explode('@', $target, 2);
-            $controllerClass = sprintf('%s%s', $this->namespace, $controllerClass);
-            $reflectedMethod = new ReflectionMethod($controllerClass, $action);
-            $parameters = $this->resolveActionParams($reflectedMethod);
-            $controller = $this->container->get($controllerClass);
-            $target = [$controller, $action];
-            $response = true;
+            list($controller, $action) = explode('@', $target, 2);
+            $controller = sprintf('%s%s', $this->namespace, $controller);
+            $reflectedMethod = new ReflectionMethod($controller, $action);
+            $params = $this->container->get($reflectedMethod, $params);
+            $body = $this->call([$this->container->get($controller), $action], $params);
+
+            if(! $body instanceof Response)
+            {
+                throw new Exception('This callback must be instance of Response');
+            }
+
+            return $body;
         }
 
+        $body = $this->call($target, $params);
+
+        if(is_array($body))
+        {
+            return $response->withJson($body);
+        }
+
+        return $response->withBody((string) $body);
+    }
+
+
+    /**
+     * @param callable $target
+     * @param array $params
+     * @return mixed
+     * @throws Exception
+    */
+    public function call($target, $params)
+    {
         if(! is_callable($target))
         {
             throw new Exception('No callable action!');
         }
 
-        $body = call_user_func_array($target, $parameters);
-
-        if($response && ! $body instanceof Response)
-        {
-            throw new Exception('This callback must be instance of Response');
-        }
-
-        return $body;
-    }
-
-
-    /**
-     * @param ReflectionMethod $reflectedMethod
-     * @return array
-     * @throws InstanceException
-     * @throws ResolverDependencyException
-     * @throws ReflectionException
-    */
-    public function resolveActionParams(ReflectionMethod $reflectedMethod)
-    {
-        return $this->container->getDependencies($reflectedMethod, $this->getRoute('matches'));
+        return call_user_func_array($target, $params);
     }
 }

@@ -5,6 +5,7 @@ namespace Jan\Component\Database;
 use Exception;
 use Jan\Component\Database\Exceptions\DatabaseException;
 use PDO;
+use PDOException;
 
 /**
  * Class Database
@@ -86,22 +87,41 @@ class Database
        {
            try {
 
-               $dsn = self::config('driver') .':host='. self::config('host');
-               /*
-               $pdo = new PDO(
-                   $dsn,
-                   self::config('username'),
-                   self::config('password'),
-                   self::config('options')
-               );
-               */
-               $pdo = null;
-           } catch (Exception $e) {
+               $driver = self::config('driver');
 
+               if(! \in_array($driver, PDO::getAvailableDrivers()))
+               {
+                    throw new Exception(
+                        sprintf('Driver (%s) is not available!', $driver)
+                    );
+               }
+
+               $dsn = $driver .':';
+
+               $username = self::config('username');
+               $password = self::config('password');
+               $options = self::config('options');
+
+               if($driver === 'sqlite')
+               {
+                   $dsn .= self::config('database');
+                   $username = null;
+                   $password = null;
+
+               } else {
+
+                   $dsn .= 'host='. self::config('host');;
+                   $dsn .= 'dbname='. self::config('database');
+                   $dsn .= 'charset='. self::config('charset');
+               }
+
+               return new PDO(strtolower($dsn), $username, $password, $options);
+
+           } catch (PDOException $e) {
+
+               echo '<div>'. $e->getMessage() . '</div>';
                throw $e;
            }
-
-           return $pdo;
        }
 
 
@@ -112,6 +132,6 @@ class Database
       */
       public static function config($key)
       {
-             return self::$config[$key] ?? null;
-       }
+          return self::$config[$key] ?? null;
+      }
 }
