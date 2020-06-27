@@ -45,9 +45,9 @@ class RouteDispatcher
 
     /**
      * RouteDispatcher constructor.
-     * @param ContainerInterface $container
-    */
-    public function __construct(ContainerInterface $container)
+     * @param Application $container
+     */
+    public function __construct(Application $container)
     {
           $this->container = $container;
     }
@@ -157,12 +157,13 @@ class RouteDispatcher
      * @throws InstanceException
      * @throws ReflectionException
      * @throws ResolverDependencyException
+     * @throws Exception
     */
     private function callAction(string $controller, string $action, array $params = [])
     {
         $controller = sprintf('%s%s', $this->namespace, $controller);
         $reflectedMethod = new ReflectionMethod($controller, $action);
-        $params = $this->container->get($reflectedMethod, $params);
+        $params = $this->container->resolveMethodDependencies($reflectedMethod, $params);
         return $this->call([$this->container->get($controller), $action], $params);
     }
 }

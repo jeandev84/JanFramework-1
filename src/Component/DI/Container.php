@@ -411,7 +411,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
            if($abstract instanceof ReflectionMethod)
            {
-               return $this->getDependencies($abstract, $arguments);
+               return $this->resolveMethodDependencies($abstract, $arguments);
            }
 
 
@@ -494,9 +494,48 @@ class Container implements \ArrayAccess, ContainerInterface
                 return $this->instances[$abstract] = $reflectedClass->newInstance();
           }
 
-          $dependencies = $this->getDependencies($constructor, $arguments);
+          $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
           return $this->instances[$abstract] = $reflectedClass->newInstanceArgs($dependencies);
     }
+
+
+    /**
+     * @param ReflectionClass $reflectionClass
+     * @return array|mixed|object|null
+     * @throws InstanceException
+     * @throws ReflectionException
+     * @throws ResolverDependencyException
+    */
+    public function resolveClassDependencies(ReflectionClass $reflectionClass)
+    {
+         $classname = $reflectionClass->getName();
+         /* $dependencies = []; */
+
+         if($this->has($classname))
+         {
+             return $this->get($classname);
+         }
+
+         $interfaces = $reflectionClass->getInterfaces();
+
+         foreach ($interfaces as $interface)
+         {
+             if($dependency = $this->resolveClassDependencies($interface))
+             {
+                 /* $dependencies[] = $dependency; */
+                 return $dependency;
+             }
+         }
+
+         if($parentClass = $reflectionClass->getParentClass())
+         {
+             /* $dependencies[] = $this->resolveClassDependencies($parentClass); */
+             return $this->resolveClassDependencies($parentClass);
+         }
+
+         /* return $dependencies; */
+    }
+
 
 
     /**
@@ -507,7 +546,7 @@ class Container implements \ArrayAccess, ContainerInterface
      * @return array
      * @throws ReflectionException|InstanceException|ResolverDependencyException
     */
-    public function getDependencies(ReflectionMethod $reflectionMethod, $arguments = [])
+    public function resolveMethodDependencies(ReflectionMethod $reflectionMethod, $arguments = [])
     {
         $dependencies = [];
 
