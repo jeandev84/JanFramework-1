@@ -104,7 +104,7 @@ class FileSystem
        */
        public function nameOnly(string $path)
        {
-          return $this->details($path, 'filename');
+          return $this->info($path, 'filename');
        }
 
 
@@ -114,7 +114,7 @@ class FileSystem
         */
         public function extension(string $path)
         {
-            return $this->details($path, 'extension');
+            return $this->info($path, 'extension');
         }
 
 
@@ -124,10 +124,10 @@ class FileSystem
          * @param string $context
          * @return string|string[]
         */
-        public function details(string $path, $context = null)
+        public function info(string $path, $context = null)
         {
-            $details = pathinfo($this->resource($path));
-            return $details[$context] ?? $details;
+            $info = pathinfo($this->resource($path));
+            return $info[$context] ?? $info;
         }
 
 
@@ -245,5 +245,5 @@ $fileSystem->make('app/Http/Controllers/TestController.php');
 $fileSystem->make('database/migrations/2020_06_25_users_table.php');
 $fileSystem->make('.env');
 $fileSystem->make('bootstrap/cache/.gitignore');
-$fileSystem->details('config/app.php')
+$fileSystem->info('config/app.php')
 */

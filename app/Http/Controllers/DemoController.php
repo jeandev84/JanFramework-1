@@ -21,14 +21,14 @@ use ReflectionException;
 class DemoController extends Controller
 {
 
-    /**
-     * @param ContainerInterface $container
-     * @return \Jan\Component\Http\Response
-     * @throws ContainerException
-     * @throws ResolverDependencyException
-     * @throws ReflectionException
-     * @throws FileSystemException
-     */
+      /**
+       * @param ContainerInterface $container
+       * @return \Jan\Component\Http\Response
+       * @throws ContainerException
+       * @throws ResolverDependencyException
+       * @throws ReflectionException
+       * @throws FileSystemException
+      */
       public function index(ContainerInterface $container)
       {
           $fileSystem = new FileSystem($container->get('base.path'));

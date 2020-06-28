@@ -19,7 +19,6 @@ class UserController extends Controller
       */
       public function edit(string $token)
       {
-           dd(Database::instance());
            return $this->render('users/edit', compact('token'));
       }
 }

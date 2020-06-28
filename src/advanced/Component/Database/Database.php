@@ -61,11 +61,6 @@ class Database
        public static function connect(array $config = [])
        {
             self::setConfiguration($config);
-
-            if($instance = self::instance())
-            {
-                return $instance;
-            }
        }
 
 
@@ -109,6 +104,7 @@ class Database
                $password = self::config('password');
                $options = array_merge(self::DEFAULT_PDO_OPTIONS, self::config('options'));
 
+               // TODO Refactoring Drivers
                switch($driver)
                {
                    case 'sqlite':
