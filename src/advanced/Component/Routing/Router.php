@@ -31,6 +31,12 @@ class Router implements RouterInterface
       /**
        * @var array
       */
+      private $options = [];
+
+
+      /**
+       * @var array
+      */
       private $namedRoutes = [];
 
 
@@ -181,12 +187,11 @@ class Router implements RouterInterface
 
     /**
      * Determine if current route path match URI
-     *
-     * @param string $requestMethod
-     * @param string $requestUri
-     * @return array|bool
-     * @throws MethodNotAllowedException
-     * @throws RouterException
+      *
+      * @param string $requestMethod
+      * @param string $requestUri
+      * @return array|bool
+      * @throws RouterException
      */
      public function match(string $requestMethod, string $requestUri)
      {
