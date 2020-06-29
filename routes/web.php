@@ -1,5 +1,4 @@
 <?php
-
 use Jan\Component\Http\Response;
 
 
@@ -26,6 +25,7 @@ Route::map('GET|POST', '/contact', 'HomeController@contact', 'contact');
 
 # Post controllers
 Route::get('/post/{id}/{slug}', 'PostController@show', 'post.show');
+
 
 
 # User controllers

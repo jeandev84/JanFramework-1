@@ -20,8 +20,13 @@ class UserController extends Controller
         */
         public function index()
         {
+            Database::connect([]);
+            dump(Database::pdo());
+            Database::disconnect();
+
+            // dd(Database::pdo());
             // dd(password_hash('yurev085', PASSWORD_BCRYPT));
-            // dd(User::findAll()->get());
+            //dd(User::findAll()->get());
 
             /*
             $user = new User();
