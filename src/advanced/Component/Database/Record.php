@@ -4,13 +4,14 @@ namespace Jan\Component\Database;
 
 use Exception;
 use Jan\Component\Database\Connection\PDO\Statement;
+use ReflectionClass;
 
 
 /**
  * Class ActiveRecord
  * @package Jan\Component\Database
 */
-class ActiveRecord
+class Record
 {
 
     /**
@@ -21,7 +22,7 @@ class ActiveRecord
 
     /**
      * @var array
-     */
+    */
     protected $fillable = [];
 
 
@@ -207,7 +208,7 @@ class ActiveRecord
     */
     protected static function getTable()
     {
-        $reflectedClass = new \ReflectionClass(static::class);
+        $reflectedClass = new ReflectionClass(static::class);
         $name = mb_strtolower($reflectedClass->getShortName()).'s';
         return Database::config('prefix') . $name;
     }

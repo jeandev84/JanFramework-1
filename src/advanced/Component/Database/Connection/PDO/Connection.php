@@ -97,8 +97,9 @@ class Connection implements ConnectionInterface
      * @param array $params
      * @param null $classMap
      * @return Statement
+     * @throws Exception
     */
-    public function query($sql, $params = [], $classMap = null)
+    public function execute($sql, $params = [], $classMap = null)
     {
         $statement = new Statement($this->pdo);
         return $statement->query($sql, $params, $classMap);

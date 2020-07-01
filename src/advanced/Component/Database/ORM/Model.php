@@ -1,14 +1,14 @@
 <?php
 namespace Jan\Component\Database\ORM;
 
-use Jan\Component\Database\ActiveRecord;
+use Jan\Component\Database\Record;
 
 
 /**
  * Class Model
  * @package Jan\Component\Database\ORM
 */
-class Model extends ActiveRecord implements \ArrayAccess
+class Model extends Record implements \ArrayAccess
 {
 
     /**

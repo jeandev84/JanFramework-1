@@ -197,6 +197,7 @@ class Statement
     /**
      * @param string $sql
      * @throws Exception
+     * @return mixed|void
     */
     public function exec(string $sql)
     {

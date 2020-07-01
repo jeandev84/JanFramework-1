@@ -21,7 +21,7 @@ class UserController extends Controller
         public function index()
         {
             Database::connect([]);
-            dump(Database::pdo()->query('SELECT * FROM users', [], User::class)->get());
+            dump(Database::pdo()->execute('SELECT * FROM users', [], User::class)->get());
             Database::disconnect();
             // dump(Database::getConnection());
             // dd(password_hash('yurev085', PASSWORD_BCRYPT));

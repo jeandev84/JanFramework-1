@@ -133,14 +133,14 @@ class Database
 
 
       /**
-       * @return mixed|string
+       * @return ConnectionInterface
        * @throws Exception
       */
       public static function getConnection()
       {
            if(! self::isConnected())
            {
-               return null;
+                throw new DatabaseException('No connection to database runned!');
            }
 
            return self::$connection;
@@ -152,43 +152,45 @@ class Database
        * @return mixed
        * @throws Exception
       */
-      public static function query($sql)
+      public static function exec($sql)
       {
-           return self::getConnection()->query($sql);
+           return self::getConnection()->execute($sql);
       }
 
 
-    /**
-     * Create database if not exist
-     * @throws Exception
-    */
-    public static function create()
-    {
-        self::query(sprintf('CREATE DATABASE %s IF NOT EXISTS',
+      /**
+       * Create database if not exist
+       * @throws Exception
+      */
+      public static function create()
+      {
+         $sql = sprintf('CREATE DATABASE %s IF NOT EXISTS',
             self::config('database')
-        ));
+         );
+
+         self::exec($sql);
     }
 
 
     /**
      * @param string $table
-     * @param string $columnItems
+     * @param string $columnSettings
+     * @return string
      * @throws Exception
-     */
-    public static function schema(string $table, string $columnItems = '')
+    */
+    public static function schema(string $table, string $columnSettings)
     {
         $sql = sprintf(
-        'CREATE TABLE `%s` 
-               IF NOT EXISTS (%s) 
-               ENGINE = %s DEFAULT 
-               CHARSET=%s',
+    'CREATE TABLE `%s` 
+            IF NOT EXISTS (%s) 
+            ENGINE=%s DEFAULT CHARSET=%s',
             $table,
-            $columnItems,
+            $columnSettings,
             self::getEngine(),
             self::config('charset')
         );
 
-        self::query($sql);
+        self::exec($sql);
     }
 
 
@@ -282,10 +284,6 @@ class Database
     public static function getEngine()
     {
         $engine = self::config('engine');
-        if(isset(self::ENGINES[$engine]))
-        {
-            return self::ENGINES[$engine];
-        }
-        return $engine;
+        return self::ENGINES[$engine] ?? $engine;
     }
 }
