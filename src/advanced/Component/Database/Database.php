@@ -3,10 +3,14 @@ namespace Jan\Component\Database;
 
 
 use Exception;
+use Jan\Component\Database\Connection\ConnectionInterface;
+use Jan\Component\Database\Connection\MySqli\Connection as MySqli;
 use Jan\Component\Database\Connection\PDO\Drivers\MySqlConnection;
+use Jan\Component\Database\Connection\PDO\Drivers\OracleConnection;
+use Jan\Component\Database\Connection\PDO\Drivers\PgsqlConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\SqliteConnection;
 use Jan\Component\Database\Exceptions\DatabaseException;
-use PDO;
+
 
 
 /**
@@ -51,14 +55,17 @@ class Database
       {
            self::setConfiguration($config);
 
-           switch (self::config('type'))
+           if (! self::isConnected())
            {
-              case 'pdo':
-                  self::$connection = self::pdo();
-                  break;
-              case 'mysqli':
-                  self::$connection = self::mysqli();
-                  break;
+               switch (self::config('type'))
+               {
+                   case 'pdo':
+                       self::$connection = self::pdo();
+                       break;
+                   case 'mysqli':
+                       self::$connection = self::mysqli();
+                       break;
+               }
            }
       }
 
@@ -68,14 +75,17 @@ class Database
       */
       public static function disconnect()
       {
-           switch (self::config('type'))
+           if(self::isConnected())
            {
-               case 'pdo':
-                   self::$connection = null;
-                   break;
-               case 'mysqli':
-                   // mysqli_close(self::$connection);
-                   break;
+               switch (self::config('type'))
+               {
+                   case 'pdo':
+                       self::$connection = null;
+                       break;
+                   case 'mysqli':
+                       // mysqli_close(self::$connection);
+                       break;
+               }
            }
       }
 
@@ -86,12 +96,12 @@ class Database
       */
       public static function pdo()
       {
-          $driver = strtolower(self::config('driver'));
+          $driver = trim(strtolower(self::config('driver')));
 
           foreach (self::pdoDrivers() as $connection)
           {
-               $pattern = '#^'. $connection->getDriverName() .'$#i';
-               if(preg_match($pattern, $driver))
+               $pattern = '#^'. $driver .'$#i';
+               if(preg_match($pattern, $connection->getDriverName()))
                {
                     return $connection;
                }
@@ -104,7 +114,16 @@ class Database
       */
       public static function mysqli()
       {
-           return 'nothing';
+           return new MySqli();
+      }
+
+
+      /**
+       * @return bool
+      */
+      public static function isConnected()
+      {
+          return self::$connection instanceof ConnectionInterface;
       }
 
 
@@ -114,17 +133,61 @@ class Database
       */
       public static function getConnection()
       {
-           if(! self::$connection)
+           if(! self::isConnected())
            {
                return null;
            }
 
-           return self::$connection->getConnection();
+           return self::$connection;
       }
 
 
+      /**
+       * @param $sql
+       * @return mixed
+       * @throws Exception
+      */
+      public static function query($sql)
+      {
+           return self::getConnection()->query($sql);
+      }
 
-     /**
+
+    /**
+     * Create database if not exist
+     * @throws Exception
+    */
+    public static function create()
+    {
+        self::query(sprintf('CREATE DATABASE %s IF NOT EXISTS',
+            self::config('database')
+        ));
+    }
+
+
+    /**
+     * @param string $table
+     * @param string $columnItems
+     * @throws Exception
+     */
+    public static function schema(string $table, string $columnItems = '')
+    {
+        $sql = sprintf(
+        'CREATE TABLE `%s` 
+               IF NOT EXISTS (%s) 
+               ENGINE = %s DEFAULT 
+               CHARSET=%s',
+            $table,
+            $columnItems,
+            self::config('engine'),
+            self::config('charset')
+        );
+
+        self::query($sql);
+    }
+
+
+    /**
       * @param array $config
       * @throws DatabaseException
      */
@@ -158,7 +221,7 @@ class Database
      * @return array
      * @throws Exception
     */
-    protected static function pdoDrivers()
+    public static function pdoDrivers()
     {
         return [
             new MySqlConnection(
@@ -171,6 +234,18 @@ class Database
                 self::getDsnDriver('sqlite'),
                 null,
                 null,
+                self::config('options')
+            ),
+            new PgsqlConnection(
+                self::getDsnDriver('pgsql'),
+                self::config('username'),
+                self::config('password'),
+                self::config('options')
+            ),
+            new OracleConnection(
+                self::getDsnDriver('oci'),
+                self::config('username'),
+                self::config('password'),
                 self::config('options')
             )
         ];

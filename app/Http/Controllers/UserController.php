@@ -22,7 +22,7 @@ class UserController extends Controller
         public function index()
         {
             Database::connect([]);
-            dump(Database::getConnection());
+            dump(Database::getConnection()->query('SELECT * FROM users')->get());
             Database::disconnect();
             dump(Database::getConnection());
             // dd(password_hash('yurev085', PASSWORD_BCRYPT));

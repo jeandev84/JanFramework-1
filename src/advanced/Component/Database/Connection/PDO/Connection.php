@@ -2,10 +2,13 @@
 namespace Jan\Component\Database\Connection\PDO;
 
 
+use Closure;
 use Exception;
 use Jan\Component\Database\Connection\ConnectionInterface;
 use PDO;
-
+use PDOException;
+use PDOStatement;
+use stdClass;
 
 
 /**
@@ -27,6 +30,25 @@ class Connection implements ConnectionInterface
      * @var PDO
     */
     protected $pdo;
+
+
+    /**
+     * @var PDOStatement
+    */
+    private $statement;
+
+
+    /**
+     * @var array
+    */
+    protected $records = [];
+
+
+    /**
+     * @var string
+    */
+    private $classMap;  /* stdClass::class */
+
 
 
     /**
@@ -53,7 +75,7 @@ class Connection implements ConnectionInterface
                     );
                 }
 
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
 
                  throw $e;
             }
@@ -93,10 +115,131 @@ class Connection implements ConnectionInterface
 
     /**
      * @param string $sql
-     * @return mixed
-     */
-    public function query($sql)
+     * @param array $params
+     * @param string $classMap
+     * @return Connection
+    */
+    public function query($sql, $params = [], $classMap = null)
     {
-        // TODO: Implement query() method.
+        try {
+
+            $this->statement = $this->pdo->prepare($sql);
+
+            if($this->statement->execute($params))
+            {
+                $this->records[] = compact('sql', 'params');
+            }
+
+            $this->classMap = $classMap;
+
+        } catch (PDOException $e) {
+
+            throw $e;
+        }
+
+        return $this;
+    }
+
+
+
+    /**
+     * @throws Exception
+     */
+    public function beginTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+
+
+    /**
+     * @throws Exception
+    */
+    public function rollback()
+    {
+        $this->pdo->rollBack();
+    }
+
+
+    /**
+     * @throws Exception
+    */
+    public function commit()
+    {
+        $this->pdo->commit();
+    }
+
+
+    /**
+     * @param Closure $callback
+     * @throws Exception
+     */
+    public function transaction(Closure $callback)
+    {
+        try {
+
+            $this->beginTransaction();
+            $callback();
+            $this->commit();
+
+        } catch (PDOException $e) {
+
+            $this->rollback();
+            throw $e;
+        }
+    }
+
+
+
+    /**
+     * @param string $sql
+     * @throws Exception
+     */
+    public function exec(string $sql)
+    {
+        try {
+
+            if($this->pdo->exec($sql))
+            {
+                $this->records[] = compact('sql');
+            }
+
+        } catch (PDOException $e) {
+
+            throw $e;
+        }
+    }
+
+
+
+    /**
+     * @param int|string $fetchStyle
+     * @return array
+    */
+    public function get(string $fetchStyle = PDO::FETCH_OBJ)
+    {
+        if($this->classMap)
+        {
+            return $this->statement->fetchAll(PDO::FETCH_CLASS, $this->classMap);
+        }
+
+        return $this->statement->fetchAll($fetchStyle);
+    }
+
+
+    /**
+     * Get first result
+    */
+    public function first()
+    {
+        //
+    }
+
+
+    /**
+     * Get one result
+    */
+    public function one()
+    {
+        //
     }
 }
