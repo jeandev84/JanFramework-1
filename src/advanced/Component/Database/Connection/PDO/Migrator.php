@@ -2,6 +2,7 @@
 namespace Jan\Component\Database\Connection\PDO;
 
 
+use App\Migrations\Version202005061548;
 use Exception;
 use Jan\Component\Database\Migration\Migration;
 use PDO;
@@ -30,7 +31,7 @@ class Migrator
      * Migration constructor.
      * @param PDO $connection
      * @throws Exception
-     */
+    */
     public function __construct(PDO $connection)
     {
         $this->statement = new Statement($connection);
@@ -39,9 +40,15 @@ class Migrator
 
     /**
      * Generate migration
-     */
+    */
     public function generate()
     {
+        $migrations = [
+          new Version202005061548(),
+          new Version202005061548(),
+          new Version202005061548()
+        ];
+
         //
         dd($this->statement);
     }
@@ -50,7 +57,7 @@ class Migrator
     /**
      * @param Migration $migration
      * @param string $direction
-     */
+    */
     public function run(Migration $migration, $direction = 'up')
     {
         switch ($direction)
