@@ -2,9 +2,10 @@
 namespace Jan\Component\Database\Migration;
 
 
-use Jan\Component\Database\Manager;
-use Jan\Component\Database\Exceptions\DatabaseException;
+use Exception;
+use Jan\Component\Database\Connection\PDO\Statement;
 use PDO;
+
 
 /**
  * Class Migrator
@@ -20,23 +21,29 @@ class Migrator
 
 
     /**
-     * @var PDO
+     * @var Statement
     */
-    protected $connection;
+    protected $statement;
 
 
     /**
      * Migration constructor.
-     * @param PDO|null $connection
+     * @param PDO $connection
+     * @throws Exception
     */
-    public function __construct(PDO $connection = null)
+    public function __construct(PDO $connection)
     {
-         if(! $connection)
-         {
-             $connection = Manager::pdo();
-         }
+         $this->statement = new Statement($connection);
+    }
 
-         $this->connection = $connection;
+
+    /**
+     * Generate migration
+    */
+    public function generate()
+    {
+         //
+        dd($this->statement);
     }
 
 
@@ -46,7 +53,15 @@ class Migrator
     */
     public function run(Migration $migration, $direction = 'up')
     {
-
+           switch ($direction)
+           {
+               case 'up':
+                    echo 'Up';
+                   break;
+               case 'down':
+                   echo 'Down';
+                   break;
+           }
     }
 
 

@@ -2,9 +2,9 @@
 namespace Jan\Component\Database\ORM;
 
 
-use ArrayAccess;
 use Exception;
-use Jan\Component\Database\Manager;
+use Jan\Component\Database\Connection\PDO\Statement;
+use Jan\Component\Database\Database;
 
 
 /**
@@ -113,7 +113,7 @@ class ActiveRecord
 
 
     /**
-     * @return Manager
+     * @return Statement
      * @throws Exception
     */
     public static function findAll()
@@ -145,7 +145,7 @@ class ActiveRecord
 
     /**
      * @param $id
-     * @return Manager
+     * @return Statement
      * @throws Exception
     */
     public static function find($id)
@@ -160,7 +160,7 @@ class ActiveRecord
     /**
      * @param $condition
      * @param $value
-     * @return Manager
+     * @return Statement
      * @throws Exception
     */
     public static function where($condition, $value)
@@ -194,12 +194,12 @@ class ActiveRecord
     /**
      * @param $sql
      * @param array $params
-     * @return Manager
+     * @return Statement
      * @throws Exception
     */
     protected static function query($sql, $params = [])
     {
-        return Manager::query($sql, $params, static::class);
+        return Manager::getStatement()->query($sql, $params, static::class);
     }
 
 
@@ -210,6 +210,6 @@ class ActiveRecord
     {
         $reflectedClass = new \ReflectionClass(static::class);
         $name = mb_strtolower($reflectedClass->getShortName()).'s';
-        return Manager::config('prefix') . $name;
+        return Database::config('prefix') . $name;
     }
 }

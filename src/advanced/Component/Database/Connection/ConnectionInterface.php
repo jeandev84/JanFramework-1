@@ -12,11 +12,4 @@ interface ConnectionInterface
       * @return mixed
      */
      public function getConnection();
-
-
-     /**
-      * @param string $sql
-      * @return mixed
-     */
-     public function query($sql);
 }

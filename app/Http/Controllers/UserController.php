@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Entity\User;
 use App\Http\Contracts\Controller;
 use Jan\Component\Database\Database;
-use Jan\Component\Database\Manager;
-use PDO;
+
 
 /**
  * Class UserController
@@ -22,9 +21,9 @@ class UserController extends Controller
         public function index()
         {
             Database::connect([]);
-            dump(Database::getConnection()->query('SELECT * FROM users')->get());
+            dump(Database::pdo()->query('SELECT * FROM users', [], User::class)->get());
             Database::disconnect();
-            dump(Database::getConnection());
+            // dump(Database::getConnection());
             // dd(password_hash('yurev085', PASSWORD_BCRYPT));
             //dd(User::findAll()->get());
 

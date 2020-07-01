@@ -14,7 +14,7 @@ use Jan\Component\Database\Exceptions\DatabaseException;
 
 
 /**
- * Class Database
+ * Class Manager
  * @package Jan\Component\Database
 */
 class Database

@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Contracts\Controller;
-use Jan\Component\Database\Manager;
+use Jan\Component\Database\Database;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
