@@ -5,6 +5,7 @@ namespace Jan\Component\Database\ORM;
 use Exception;
 use Jan\Component\Database\Connection\PDO\Statement;
 use Jan\Component\Database\Database;
+use Jan\Component\Database\Manager;
 
 
 /**

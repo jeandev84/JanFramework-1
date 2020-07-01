@@ -20,11 +20,17 @@ use Jan\Component\Database\Exceptions\DatabaseException;
 class Database
 {
 
+     const ENGINES = [
+        'innodb' => 'InnoDB',
+        'myisam' => 'MyISAM'
+     ];
+
+
      /**
       * @var array
      */
      private static $config = [
-        'type'       => 'pdo', // mysqli
+        'type'       => 'pdo', // mysqli (type connection)
         'driver'     => 'mysql',
         'database'   => 'janframework',
         'host'       => '127.0.0.1',
@@ -35,7 +41,7 @@ class Database
         'collation'  => 'utf8_unicode_ci',
         'options'    => [],
         'prefix'     => '',
-        'engine'     => 'InnoDB',
+        'engine'     => 'innodb', // InnoDB, MyISAM
         'migration_path' => ''
       ];
 
@@ -179,7 +185,7 @@ class Database
                CHARSET=%s',
             $table,
             $columnItems,
-            self::config('engine'),
+            self::getEngine(),
             self::config('charset')
         );
 
@@ -277,5 +283,20 @@ class Database
         }
 
         return $dsn;
+    }
+
+
+    /**
+     * @param string
+     * @return mixed|string|null
+    */
+    public static function getEngine()
+    {
+        $engine = self::config('engine');
+        if(isset(self::ENGINES[$engine]))
+        {
+            return self::ENGINES[$engine];
+        }
+        return $engine;
     }
 }
