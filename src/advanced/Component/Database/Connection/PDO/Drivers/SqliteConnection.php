@@ -13,8 +13,8 @@ class SqliteConnection extends Connection
 {
 
     /**
-     * @return mixed
-     */
+     * @return string
+    */
     public function getDriverName()
     {
         return 'sqlite';

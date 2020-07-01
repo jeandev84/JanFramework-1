@@ -3,14 +3,16 @@ namespace Jan\Component\Database\Connection\PDO;
 
 
 use Exception;
+use Jan\Component\Database\Connection\ConnectionInterface;
 use PDO;
+
 
 
 /**
  * Class Connection
  * @package Jan\Component\Database\Connection\PDO
 */
-class Connection
+class Connection implements ConnectionInterface
 {
 
     const DEFAULT_PDO_OPTIONS = [
@@ -77,11 +79,24 @@ class Connection
     }
 
 
-
     /**
      * Get driver name
      *
      * @return string
+     * @throws Exception
     */
-    public function getDriverName() {}
+    public function getDriverName()
+    {
+         throw new Exception('You must to set driver name!');
+    }
+
+
+    /**
+     * @param string $sql
+     * @return mixed
+     */
+    public function query($sql)
+    {
+        // TODO: Implement query() method.
+    }
 }

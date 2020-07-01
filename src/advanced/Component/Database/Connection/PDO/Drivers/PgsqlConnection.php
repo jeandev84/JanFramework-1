@@ -5,19 +5,17 @@ namespace Jan\Component\Database\Connection\PDO\Drivers;
 use Jan\Component\Database\Connection\PDO\Connection;
 
 
-
 /**
- * Class MySqlConnection
+ * Class PgsqlConnection
  * @package Jan\Component\Database\Connection\PDO\Drivers
 */
-class MySqlConnection extends Connection
+class PgsqlConnection extends Connection
 {
-
-    /**
-     * @return string
-    */
-    public function getDriverName()
-    {
-        return 'mysql';
-    }
+     /**
+      * @return string
+     */
+     public function getDriverName()
+     {
+         return 'pgsql';
+     }
 }
