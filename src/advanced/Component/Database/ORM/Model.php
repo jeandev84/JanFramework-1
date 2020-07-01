@@ -7,7 +7,7 @@ namespace Jan\Component\Database\ORM;
  * Class Model
  * @package Jan\Component\Database\ORM
 */
-class Model extends Repository implements \ArrayAccess
+class Model extends ActiveRecord implements \ArrayAccess
 {
 
     /**

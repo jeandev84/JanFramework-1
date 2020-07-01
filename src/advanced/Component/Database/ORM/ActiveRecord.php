@@ -4,14 +4,14 @@ namespace Jan\Component\Database\ORM;
 
 use ArrayAccess;
 use Exception;
-use Jan\Component\Database\Database;
+use Jan\Component\Database\Manager;
 
 
 /**
- * Class Repository
+ * Class ActiveRecord
  * @package Jan\Component\Database\ORM
 */
-class Repository
+class ActiveRecord
 {
 
     /**
@@ -113,7 +113,7 @@ class Repository
 
 
     /**
-     * @return Database
+     * @return Manager
      * @throws Exception
     */
     public static function findAll()
@@ -145,7 +145,7 @@ class Repository
 
     /**
      * @param $id
-     * @return Database
+     * @return Manager
      * @throws Exception
     */
     public static function find($id)
@@ -160,7 +160,7 @@ class Repository
     /**
      * @param $condition
      * @param $value
-     * @return Database
+     * @return Manager
      * @throws Exception
     */
     public static function where($condition, $value)
@@ -194,12 +194,12 @@ class Repository
     /**
      * @param $sql
      * @param array $params
-     * @return Database
+     * @return Manager
      * @throws Exception
     */
     protected static function query($sql, $params = [])
     {
-        return Database::query($sql, $params, static::class);
+        return Manager::query($sql, $params, static::class);
     }
 
 
@@ -210,6 +210,6 @@ class Repository
     {
         $reflectedClass = new \ReflectionClass(static::class);
         $name = mb_strtolower($reflectedClass->getShortName()).'s';
-        return Database::config('prefix') . $name;
+        return Manager::config('prefix') . $name;
     }
 }

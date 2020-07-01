@@ -2,7 +2,8 @@
 namespace Jan\Component\Database\Migration;
 
 
-use Jan\Component\Database\Database;
+use Jan\Component\Database\Manager;
+use Jan\Component\Database\Exceptions\DatabaseException;
 use PDO;
 
 /**
@@ -12,43 +13,67 @@ use PDO;
 class Migrator
 {
 
-    /** @var PDO $connection */
-    protected $connection;
+    /**
+     * @var string
+    */
+    private $migrationTable = 'migrations';
 
+
+    /**
+     * @var PDO
+    */
+    protected $connection;
 
 
     /**
      * Migration constructor.
-     * @param PDO $connection
-     * @throws \Exception
+     * @param PDO|null $connection
     */
     public function __construct(PDO $connection = null)
     {
-        if(! $connection)
-        {
-            $connection = Database::instance();
-        }
+         if(! $connection)
+         {
+             $connection = Manager::pdo();
+         }
 
-        $this->connection = $connection;
+         $this->connection = $connection;
     }
 
 
     /**
-     * @param string $sql
-     */
-    public function addSql(string $sql)
+     * @param Migration $migration
+     * @param string $direction
+    */
+    public function run(Migration $migration, $direction = 'up')
+    {
+
+    }
+
+
+
+    /**
+     *  Migrate table to the database
+    */
+    public function migrate()
+    {
+       //
+    }
+
+
+    /**
+     * Truncate table from the database
+    */
+    public function rollback()
     {
         //
     }
 
 
     /**
-     * @param string $column
-     * @return $this
+     * Drop table from the database
     */
-    public function addColumn(string $column)
+    public function reset()
     {
-        return $this;
+        //
     }
-
 }
