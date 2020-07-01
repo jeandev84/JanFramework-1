@@ -1,6 +1,7 @@
 <?php
 namespace Jan\Component\Database\ORM;
 
+use Jan\Component\Database\ActiveRecord;
 
 
 /**

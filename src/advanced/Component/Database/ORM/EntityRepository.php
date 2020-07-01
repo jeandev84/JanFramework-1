@@ -3,10 +3,10 @@ namespace Jan\Component\Database\ORM;
 
 
 /**
- * Trait SoftDelete
+ * Class EntityRepository
  * @package Jan\Component\Database\ORM
 */
-trait SoftDelete
+class EntityRepository
 {
 
 }

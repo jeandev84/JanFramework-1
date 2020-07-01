@@ -103,14 +103,13 @@ class Database
       public static function pdo()
       {
           $driver = trim(strtolower(self::config('driver')));
+          $connection = self::getConnectionByDriver($driver);
 
-          foreach (self::pdoDrivers() as $connection)
+          $pattern = '#^'. $driver .'$#i';
+
+          if(preg_match($pattern, $connection->getDriverName()))
           {
-               $pattern = '#^'. $driver .'$#i';
-               if(preg_match($pattern, $connection->getDriverName()))
-               {
-                    return $connection;
-               }
+              return $connection;
           }
       }
 
@@ -224,65 +223,55 @@ class Database
 
 
     /**
-     * @return array
+     * @param string $driver
+     * @return ConnectionInterface
      * @throws Exception
     */
-    public static function pdoDrivers()
+    private static function getConnectionByDriver($driver)
     {
-        return [
-            new MySqlConnection(
-                self::getDsnDriver('mysql'),
-                self::config('username'),
-                self::config('password'),
-                self::config('options')
-            ),
-            new SqliteConnection(
-                self::getDsnDriver('sqlite'),
-                null,
-                null,
-                self::config('options')
-            ),
-            new PgsqlConnection(
-                self::getDsnDriver('pgsql'),
-                self::config('username'),
-                self::config('password'),
-                self::config('options')
-            ),
-            new OracleConnection(
-                self::getDsnDriver('oci'),
-                self::config('username'),
-                self::config('password'),
-                self::config('options')
-            )
-        ];
+        $dsn = sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s',
+            $driver,
+            self::config('host'),
+            self::config('port'),
+            self::config('database'),
+            self::config('charset')
+        );
 
-    }
-
-
-    /**
-     * @param string $driver
-     * @return string
-    */
-    private static function getDsnDriver(string $driver)
-    {
-        $dsn = $driver .':';
-
-        switch ($driver)
-        {
-            case 'sqlite':
-                $dsn .= self::config('database');
-            break;
-
-            default:
-                $dsn .= sprintf('host=%s;port=%s;dbname=%s;charset=%s',
-                    self::config('host'),
-                    self::config('port'),
-                    self::config('database'),
-                    self::config('charset')
+        switch ($driver) {
+            case 'mysql':
+                return new MySqlConnection($dsn,
+                    self::config('username'),
+                    self::config('password'),
+                    self::config('options')
                 );
+                break;
+
+            case 'sqlite':
+                return new SqliteConnection(
+                    $driver.':'. self::config('database'),
+                    null,
+                    null,
+                    self::config('options')
+                );
+                break;
+
+            case 'pgsql':
+                new PgsqlConnection($dsn,
+                    self::config('username'),
+                    self::config('password'),
+                    self::config('options')
+                );
+                break;
+
+            case 'oci':
+                return new OracleConnection($dsn,
+                    self::config('username'),
+                    self::config('password'),
+                    self::config('options')
+                );
+                break;
         }
 
-        return $dsn;
     }
 
 

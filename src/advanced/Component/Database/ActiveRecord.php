@@ -1,16 +1,14 @@
 <?php
-namespace Jan\Component\Database\ORM;
+namespace Jan\Component\Database;
 
 
 use Exception;
 use Jan\Component\Database\Connection\PDO\Statement;
-use Jan\Component\Database\Database;
-use Jan\Component\Database\Manager;
 
 
 /**
  * Class ActiveRecord
- * @package Jan\Component\Database\ORM
+ * @package Jan\Component\Database
 */
 class ActiveRecord
 {
