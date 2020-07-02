@@ -51,7 +51,7 @@ class Migrator
      * @param string $table
      * @return Migrator
     */
-    public function setBaseTable(string $table)
+    public function table(string $table)
     {
         $this->table = $table;
         return $this;
@@ -65,7 +65,7 @@ class Migrator
     */
     public function getMigrationTable()
     {
-         return $this->version;
+         return $this->table;
     }
 
 

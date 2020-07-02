@@ -165,7 +165,6 @@ class BluePrint
    {
       // (name type(length) default, ...., PRIMARY KEY name)
       $sql = '';
-
       foreach ($this->columns as $column)
       {
           $sql .= $column->name();

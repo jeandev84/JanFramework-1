@@ -152,6 +152,7 @@ class Column
     public function type()
     {
         $type = $this->getParam('type');
+
         if(in_array($type, self::TYPES))
         {
              return $type .'()';
