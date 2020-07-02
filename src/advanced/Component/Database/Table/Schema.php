@@ -24,8 +24,7 @@ class Schema
      {
          $blueprint = new BluePrint($table);
          $closure($blueprint);
-         $columnSettings = '';
-         Database::schema($table, $columnSettings);
+         Database::schema($table, $blueprint->buildColumnSql());
      }
 
 
