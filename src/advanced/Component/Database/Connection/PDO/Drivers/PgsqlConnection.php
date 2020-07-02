@@ -2,14 +2,14 @@
 namespace Jan\Component\Database\Connection\PDO\Drivers;
 
 
-use Jan\Component\Database\Connection\PDO\Connection;
+use Jan\Component\Database\Connection\PDO\PDOConnection;
 
 
 /**
  * Class PgsqlConnection
  * @package Jan\Component\Database\Connection\PDO\Drivers
 */
-class PgsqlConnection extends Connection
+class PgsqlConnection extends PDOConnection
 {
      /**
       * @return string

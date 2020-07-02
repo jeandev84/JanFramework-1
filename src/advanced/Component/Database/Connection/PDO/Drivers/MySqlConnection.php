@@ -2,7 +2,7 @@
 namespace Jan\Component\Database\Connection\PDO\Drivers;
 
 
-use Jan\Component\Database\Connection\PDO\Connection;
+use Jan\Component\Database\Connection\PDO\PDOConnection;
 
 
 
@@ -10,7 +10,7 @@ use Jan\Component\Database\Connection\PDO\Connection;
  * Class MySqlConnection
  * @package Jan\Component\Database\Connection\PDO\Drivers
 */
-class MySqlConnection extends Connection
+class MySqlConnection extends PDOConnection
 {
 
     /**

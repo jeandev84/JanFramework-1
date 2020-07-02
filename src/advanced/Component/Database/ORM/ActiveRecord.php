@@ -3,6 +3,7 @@ namespace Jan\Component\Database\ORM;
 
 
 use Exception;
+use Jan\Component\Database\Connection\PDO\PDOConnection;
 use Jan\Component\Database\Connection\PDO\Statement;
 use Jan\Component\Database\Database;
 use ReflectionClass;
@@ -200,7 +201,14 @@ class ActiveRecord
     */
     protected static function query($sql, $params = [])
     {
-        return Database::pdo()->execute($sql, $params, static::class);
+        $connectionType = Database::getConnection();
+
+        if(! $connectionType instanceof PDOConnection)
+        {
+             throw new Exception('active records work only for pdo connection!');
+        }
+
+        return $connectionType->execute($sql, $params, static::class);
     }
 
 

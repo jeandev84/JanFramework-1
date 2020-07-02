@@ -12,7 +12,7 @@ use PDOException;
  * Class Connection
  * @package Jan\Component\Database\Connection\PDO
 */
-class Connection implements ConnectionInterface
+class PDOConnection implements ConnectionInterface
 {
 
     const DEFAULT_PDO_OPTIONS = [

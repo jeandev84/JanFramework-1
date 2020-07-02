@@ -1,11 +1,11 @@
 <?php
-namespace Jan\Component\Database\Table;
+namespace Jan\Component\Database;
 
 
 
 /**
  * Class Migration
- * @package Jan\Component\Database\Table
+ * @package Jan\Component\Database
 */
 abstract class Migration
 {

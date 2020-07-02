@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Jan\Component\Database\Database;
 
+
 /**
  * Class Schema
  * @package Jan\Component\Database\Table
@@ -24,7 +25,7 @@ class Schema
      {
          $blueprint = new BluePrint($table);
          $closure($blueprint);
-         Database::schema($table, $blueprint->buildColumnSql());
+         Database::createTable($table, $blueprint->buildColumnSql());
      }
 
 
@@ -34,7 +35,7 @@ class Schema
      */
      public static function dropIfExists(string $table)
      {
-         Database::exec(sprintf('DROP TABLE IF EXISTS `%s`', $table));
+         Database::dropTableIfExists($table);
      }
 
 
@@ -44,6 +45,6 @@ class Schema
     */
     public static function drop(string $table)
     {
-        Database::exec(sprintf('DROP TABLE `%s`', $table));
+        Database::dropTable($table);
     }
 }

@@ -178,7 +178,7 @@ class Database
      * @return string
      * @throws Exception
     */
-    public static function schema(string $table, string $columnSettings)
+    public static function createTable(string $table, string $columnSettings)
     {
         $sql = sprintf(
     'CREATE TABLE `%s` 
@@ -191,6 +191,37 @@ class Database
         );
 
         self::exec($sql);
+    }
+
+
+    /**
+     * @param $table
+     * @throws Exception
+    */
+    public static function dropTableIfExists($table)
+    {
+        self::exec(sprintf('DROP TABLE IF EXISTS `%s`', $table));
+    }
+
+
+    /**
+     * @param $table
+     * @throws Exception
+    */
+    public static function dropTable($table)
+    {
+        self::exec(sprintf('DROP TABLE `%s`', $table));
+    }
+
+
+
+    /**
+     * @param $table
+     * @throws Exception
+    */
+    public static function truncate($table)
+    {
+        self::exec(sprintf('TRUNCATE TABLE %s', $table));
     }
 
 
