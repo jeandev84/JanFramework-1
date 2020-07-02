@@ -1,17 +1,18 @@
 <?php
-namespace Jan\Component\Database;
+namespace Jan\Component\Database\ORM;
 
 
 use Exception;
 use Jan\Component\Database\Connection\PDO\Statement;
+use Jan\Component\Database\Database;
 use ReflectionClass;
 
 
 /**
  * Class ActiveRecord
- * @package Jan\Component\Database
+ * @package Jan\Component\Database\ORM
 */
-class Record
+class ActiveRecord
 {
 
     /**
@@ -199,7 +200,7 @@ class Record
     */
     protected static function query($sql, $params = [])
     {
-        return Manager::getStatement()->query($sql, $params, static::class);
+        return Database::pdo()->execute($sql, $params, static::class);
     }
 
 
