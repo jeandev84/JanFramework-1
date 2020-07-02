@@ -16,8 +16,8 @@ require(__DIR__ . '/vendor/autoload.php');
 $app = require(__DIR__ . '/bootstrap/app.php');
 
 
+// TO FIX
 $kernel = $app->get(Jan\Contracts\Console\Kernel::class);
-
 
 $status = $kernel->handle(
     $input = new \Jan\Component\Console\Input\ArgvInput(),

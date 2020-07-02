@@ -2,6 +2,8 @@
 namespace Jan\Component\Routing;
 
 
+use Closure;
+use Exception;
 use Jan\Component\Routing\Contracts\RouterInterface;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
@@ -169,20 +171,127 @@ class Router implements RouterInterface
 
 
      /**
-      * @param array $methods
+      * @param array $options
+      * @param \Closure $callback
+     */
+     public function group(array $options, \Closure $callback)
+     {
+         $this->options = $options;
+         $callback();
+         $this->options = $options;
+     }
+
+
+    /**
+     * @param $prefix
+     * @param Closure $callback
+    */
+    public function prefix($prefix, Closure $callback)
+    {
+        $this->group(compact('prefix'), $callback);
+    }
+
+
+    /**
+     * @param $namespace
+     * @param Closure $callback
+    */
+    public function namespace($namespace, Closure $callback)
+    {
+        $this->group(compact('namespace'), $callback);
+    }
+
+     /**
       * @param string $path
       * @param $target
       * @param string|null $name
-      * @return Router
+      * @return $this
       * @throws RouterException
      */
-     public function map(array $methods, string $path, $target, string $name = null)
+     public function get(string $path, $target, string $name = null)
      {
+          return $this->map(['GET'], $path, $target, $name);
+     }
+
+
+    /**
+     * @param string $path
+     * @param $target
+     * @param string|null $name
+     * @return $this
+     * @throws RouterException
+    */
+     public function post(string $path, $target, string $name = null)
+     {
+         return $this->map(['POST'], $path, $target, $name);
+     }
+
+
+    /**
+     * @param string $path
+     * @param $target
+     * @param string|null $name
+     * @return $this
+     * @throws RouterException
+     */
+    public function put(string $path, $target, string $name = null)
+    {
+        return $this->map(['PUT'], $path, $target, $name);
+    }
+
+
+    /**
+     * @param string $path
+     * @param $target
+     * @param string|null $name
+     * @return $this
+     * @throws RouterException
+    */
+    public function delete(string $path, $target, string $name = null)
+    {
+        return $this->map(['DELETE'], $path, $target, $name);
+    }
+
+
+
+    /**
+     * @param $methods
+     * @param string $path
+     * @param $target
+     * @param string|null $name
+     * @return Router
+     * @throws RouterException
+     * @throws Exception
+    */
+    public function map($methods, string $path, $target, string $name = null)
+    {
+          $methods = $this->mapMethods($methods);
           $route = compact('methods', 'path', 'target');
           $this->routes[] = $this->route = $route;
           $this->setRouteName($name, $path);
           return $this;
-     }
+    }
+
+
+    /**
+     * @param $methods
+     * @return array|false|string[]
+     * @throws Exception
+    */
+    private function mapMethods($methods)
+    {
+        if(is_array($methods))
+        {
+            return $methods;
+        }
+
+        if(is_string($methods))
+        {
+            return explode('|', $methods);
+        }
+
+        throw new Exception('Methods must to be array or string seperated by "|"');
+    }
 
 
     /**

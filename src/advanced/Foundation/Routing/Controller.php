@@ -70,7 +70,7 @@ abstract class Controller
          ob_start();
          if($this->layout !== false)
          {
-              require $view->resource('layouts/'. $this->layout .'.php');
+              require $view->resource(sprintf('layouts/%s.php', $this->layout));
               $content = ob_get_clean();
          }
 

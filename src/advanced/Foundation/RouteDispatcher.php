@@ -51,8 +51,6 @@ class RouteDispatcher
     public function __construct(Container $container)
     {
           $this->container = $container;
-
-          $this->route = Route::instance()->match('GET', 'PATH');
     }
 
 

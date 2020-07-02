@@ -50,7 +50,6 @@ class Route
      */
      public static function map($methods, $path, $target, $name = null)
      {
-         $methods = is_array($methods) ? $methods : explode('|', $methods);
          $path = self::preparePath($path);
          $target = self::prepareTarget($target);
          return self::instance()->map($methods, $path, $target, $name);
