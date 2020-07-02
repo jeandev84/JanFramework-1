@@ -2,14 +2,10 @@
 namespace Jan\Foundation\Http;
 
 
-use Jan\Component\DI\Container;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
-use Jan\Component\Routing\Route;
-use Jan\Component\Routing\Router;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
-use Jan\Component\Http\Middleware;
 use Jan\Foundation\RouteDispatcher;
 
 

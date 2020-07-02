@@ -2,11 +2,11 @@
 namespace Jan\Foundation\Console;
 
 
-use Jan\Component\Console\Contracts\InputInterface;
-use Jan\Component\Console\Contracts\OutputInterface;
+use Jan\Component\Console\Input\InputInterface;
+use Jan\Component\Console\Output\OutputInterface;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Contracts\Console\Kernel as ConsoleKernelContract;
-
+use Jan\Foundation\Console;
 
 
 /**
@@ -49,7 +49,8 @@ class Kernel implements ConsoleKernelContract
     */
     public function handle(InputInterface $input, OutputInterface $output)
     {
-            //
+         $console = new Console();
+         return $console->run($input, $output);
     }
 
 

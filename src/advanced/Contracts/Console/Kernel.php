@@ -2,8 +2,8 @@
 namespace Jan\Contracts\Console;
 
 
-use Jan\Component\Console\Contracts\InputInterface;
-use Jan\Component\Console\Contracts\OutputInterface;
+use Jan\Component\Console\Input\InputInterface;
+use Jan\Component\Console\Output\OutputInterface;
 
 
 

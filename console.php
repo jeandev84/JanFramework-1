@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+/*
+|------------------------------------------------------------------
+|   Framework console
+|   Ex: $ php console --help or -h
+|   Ex: $ php console make:controller HomeController
+|   Ex: $ php console make:entity Cart [ will be generated entity and repository]
+|   Ex: $ php console make:model User [ will be generated only model as entity ]
+|   Ex: $ php console server [ Run server ]
+|------------------------------------------------------------------
+*/
+
+
+require(__DIR__ . '/vendor/autoload.php');
+$app = require(__DIR__ . '/bootstrap/app.php');
+
+
+$kernel = $app->get(Jan\Contracts\Console\Kernel::class);
+
+
+$status = $kernel->handle(
+    $input = new \Jan\Component\Console\Input\ArgvInput(),
+    new \Jan\Component\Console\Output\ConsoleOutput()
+);
+
+// $kernel->terminate($input, $status);
+exit($status);

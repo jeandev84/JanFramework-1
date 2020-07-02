@@ -7,6 +7,7 @@ use Jan\Component\Console\Input\InputInterface;
 use Jan\Component\Console\Output\OutputInterface;
 use Jan\Component\Http\Request;
 
+
 /**
  * Class Console
  * @package Jan\Foundation
@@ -72,6 +73,6 @@ class Console
     */
     public function run(InputInterface $input, OutputInterface $output)
     {
-
+          return 'Console::run';
     }
 }

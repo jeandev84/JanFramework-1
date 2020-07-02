@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Component\Console\Contracts;
+namespace Jan\Component\Console\Input;
 
 
 /**

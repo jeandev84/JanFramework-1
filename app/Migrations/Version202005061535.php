@@ -7,10 +7,10 @@ use Jan\Component\Database\Migration;
 
 
 /**
- * Class Version202005061548
+ * Class Version202005061535
  * @package App\Migrations
 */
-class Version202005061548 extends Migration
+class Version202005061535 extends Migration
 {
 
     /**

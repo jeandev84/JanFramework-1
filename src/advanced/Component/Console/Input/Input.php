@@ -4,6 +4,7 @@ namespace Jan\Component\Console\Input;
 
 use InvalidArgumentException;
 
+
 /**
  * Class Input
  * @package Jan\Component\Console\Input
