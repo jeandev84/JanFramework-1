@@ -34,9 +34,7 @@ class Schema
      */
      public static function dropIfExists(string $table)
      {
-         Database::exec(
-             sprintf('DROP TABLE IF EXISTS `%s`', $table)
-         );
+         Database::exec(sprintf('DROP TABLE IF EXISTS `%s`', $table));
      }
 
 
@@ -46,8 +44,6 @@ class Schema
     */
     public static function drop(string $table)
     {
-        Database::exec(
-            sprintf('DROP TABLE `%s`', $table)
-        );
+        Database::exec(sprintf('DROP TABLE `%s`', $table));
     }
 }
