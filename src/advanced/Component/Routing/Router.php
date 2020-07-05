@@ -451,10 +451,21 @@ class Router implements RouterInterface
     {
         if(! isset($this->namedRoutes[$context]))
         {
-             return $this->generateUrl($context, http_build_query($params));
+             return $this->generateUrl($context, $params);
         }
 
-        $path = $this->namedRoutes[$context];
+        return $this->generatePathByName($context, $params);
+    }
+
+
+    /**
+     * @param $name
+     * @param array $params
+     * @return string
+     */
+    private function generatePathByName($name, $params = [])
+    {
+        $path = $this->namedRoutes[$name];
 
         if($params)
         {
@@ -468,14 +479,17 @@ class Router implements RouterInterface
     }
 
 
+
     /**
      * @param string $path
-     * @param string $qs [ query string ]
+     * @param array $params
      * @return string
      */
-    public function generateUrl(string $path, string $qs = '')
+    public function generateUrl(string $path, array $params = [])
     {
-        return $this->baseUrl . '/' . trim($path, '/') . ($qs ? '?'. $qs : $qs);
+        $qs = http_build_query($params);
+
+        return $this->baseUrl . '/' . trim($path, '/') . ($qs ? '?'. $qs : '');
     }
 
 
