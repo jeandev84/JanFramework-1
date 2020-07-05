@@ -96,7 +96,7 @@ class Router implements RouterInterface
       */
       public function setBaseUrl(string $baseUrl)
       {
-          $this->baseUrl = $baseUrl;
+          $this->baseUrl = rtrim($baseUrl, '/');
 
           return $this;
       }
@@ -178,9 +178,9 @@ class Router implements RouterInterface
 
      /**
       * @param array $options
-      * @param \Closure $callback
+      * @param Closure $callback
      */
-     public function group(array $options, \Closure $callback)
+     public function group(array $options, Closure $callback)
      {
          $this->options = $options;
          $callback();
@@ -220,26 +220,26 @@ class Router implements RouterInterface
      }
 
 
-    /**
-     * @param string $path
-     * @param $target
-     * @param string|null $name
-     * @return $this
-     * @throws RouterException
-    */
+     /**
+      * @param string $path
+      * @param $target
+      * @param string|null $name
+      * @return $this
+      * @throws RouterException
+     */
      public function post(string $path, $target, string $name = null)
      {
          return $this->map(['POST'], $path, $target, $name);
      }
 
 
-    /**
-     * @param string $path
-     * @param $target
-     * @param string|null $name
-     * @return $this
-     * @throws RouterException
-     */
+     /**
+      * @param string $path
+      * @param $target
+      * @param string|null $name
+      * @return $this
+      * @throws RouterException
+    */
     public function put(string $path, $target, string $name = null)
     {
         return $this->map(['PUT'], $path, $target, $name);
@@ -271,44 +271,26 @@ class Router implements RouterInterface
     */
     public function map(array $methods, string $path, $target, string $name = null)
     {
-          $route = compact('methods', 'path', 'target');
-          $this->routes[] = $this->route = $route;
+          $this->routes[] = $this->route = [
+              'methods' => $methods,
+              'path'    => $path,
+              'target'  => $target
+          ];
+
           $this->setRouteName($name, $path);
           return $this;
     }
 
 
     /**
-     * @param $methods
-     * @return array|false|string[]
-     * @throws Exception
-    */
-    /*
-    private function mapMethods($methods)
-    {
-        if(is_array($methods))
-        {
-            return $methods;
-        }
-
-        if(is_string($methods))
-        {
-            return explode('|', $methods);
-        }
-
-        throw new Exception('Methods must to be array or string seperated by "|"');
-    }
-    */
-
-    /**
-     * Determine if current route path match URI
+      * Determine if current route path match URI
       *
       * @param string $requestMethod
       * @param string $requestUri
       * @return array|bool
-     */
-     public function match(string $requestMethod, string $requestUri)
-     {
+    */
+    public function match(string $requestMethod, string $requestUri)
+    {
          foreach ($this->routes as $route)
          {
              list($methods, $path) = array_values($route);
@@ -324,7 +306,7 @@ class Router implements RouterInterface
 
 
      /**
-      * @param $path
+      * @param string $path
       * @return array
      */
      private function getNewParams($path)
@@ -352,8 +334,10 @@ class Router implements RouterInterface
          if(preg_match($pattern, $uri, $matches))
          {
              $this->setMatches($matches);
+
              return true;
          }
+
          return false;
      }
 
@@ -369,8 +353,8 @@ class Router implements RouterInterface
       }
 
 
-     /**
-      * @param array $matches
+      /**
+       * @param array $matches
       */
       private function setMatches(array $matches)
       {
@@ -491,8 +475,7 @@ class Router implements RouterInterface
      */
     public function generateUrl(string $path, string $qs = '')
     {
-        return rtrim($this->baseUrl, '/') .
-               '/' . trim($path, '/') . ($qs ? '?'. $qs : $qs);
+        return $this->baseUrl . '/' . trim($path, '/') . ($qs ? '?'. $qs : $qs);
     }
 
 
@@ -531,8 +514,11 @@ class Router implements RouterInterface
     private function getFilteredMatchParams()
     {
         $matches = $this->getMatches();
+
         return array_filter($matches, function ($key) {
+
             return ! is_numeric($key);
+
         }, ARRAY_FILTER_USE_KEY);
     }
 
