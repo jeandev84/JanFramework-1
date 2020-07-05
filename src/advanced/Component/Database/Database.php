@@ -103,7 +103,7 @@ class Database
       public static function pdo()
       {
           $driver = trim(strtolower(self::config('driver')));
-          $connection = self::getConnectionByDriver($driver);
+          $connection = self::getPDOConnectionByDriver($driver);
 
           $pattern = '#^'. $driver .'$#i';
 
@@ -260,7 +260,7 @@ class Database
      * @return ConnectionInterface
      * @throws Exception
     */
-    private static function getConnectionByDriver($driver)
+    private static function getPDOConnectionByDriver($driver)
     {
         $dsn = sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s',
             $driver,

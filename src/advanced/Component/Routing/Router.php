@@ -45,6 +45,12 @@ class Router implements RouterInterface
       /**
        * @var array
       */
+      private $matches = [];
+
+
+      /**
+       * @var array
+      */
       private $patterns = [
           'id'   => '[0-9]+',
           'slug' => '[a-z\-0-9]+'
@@ -263,9 +269,8 @@ class Router implements RouterInterface
      * @throws RouterException
      * @throws Exception
     */
-    public function map($methods, string $path, $target, string $name = null)
+    public function map(array $methods, string $path, $target, string $name = null)
     {
-          $methods = $this->mapMethods($methods);
           $route = compact('methods', 'path', 'target');
           $this->routes[] = $this->route = $route;
           $this->setRouteName($name, $path);
@@ -278,6 +283,7 @@ class Router implements RouterInterface
      * @return array|false|string[]
      * @throws Exception
     */
+    /*
     private function mapMethods($methods)
     {
         if(is_array($methods))
@@ -292,7 +298,7 @@ class Router implements RouterInterface
 
         throw new Exception('Methods must to be array or string seperated by "|"');
     }
-
+    */
 
     /**
      * Determine if current route path match URI
@@ -300,24 +306,16 @@ class Router implements RouterInterface
       * @param string $requestMethod
       * @param string $requestUri
       * @return array|bool
-      * @throws RouterException
      */
      public function match(string $requestMethod, string $requestUri)
      {
          foreach ($this->routes as $route)
          {
              list($methods, $path) = array_values($route);
-             $pattern = $this->generatePattern(trim($path, '/'));
-             $uri = trim($this->getPathUrl($requestUri), '/');
 
-             if(\in_array($requestMethod, $methods) && preg_match($pattern, $uri, $matches))
+             if($this->isMathMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
              {
-                 return array_merge($route, [
-                     'pattern' => $pattern,
-                     'matches' => $this->getFilteredMatchParams($matches),
-                     'name' => $this->getPathName($path),
-                     'middleware' => $this->getMiddleware($path)
-                 ]);
+                 return array_merge($route, $this->getNewParams($path));
              }
          }
 
@@ -325,17 +323,80 @@ class Router implements RouterInterface
      }
 
 
-
-    /**
-     * @param array $middleware
-     * @return Router
+     /**
+      * @param $path
+      * @return array
      */
-    public function middleware(array $middleware = [])
-    {
+     private function getNewParams($path)
+     {
+         return [
+             'pattern' => $this->generatePattern($path),
+             'matches' => $this->getFilteredMatchParams(),
+             'name' => $this->getPathName($path),
+             'middleware' => $this->getMiddleware($path)
+         ];
+     }
+
+
+     /**
+      * @param string $path
+      * @param string $requestUri
+      * @return array|bool
+     */
+     private function isMatchPaths(string $path, string $requestUri)
+     {
+         $pattern = $this->generatePattern($path);
+         $uri = $this->getPathUrl($requestUri);
+         $matches = [];
+
+         if(preg_match($pattern, $uri, $matches))
+         {
+             $this->setMatches($matches);
+             return true;
+         }
+         return false;
+     }
+
+
+      /**
+       * @param string $requestMethod
+       * @param array $methods
+       * @return bool
+      */
+      private function isMathMethods(string $requestMethod, array $methods)
+      {
+           return \in_array($requestMethod, $methods);
+      }
+
+
+     /**
+      * @param array $matches
+      */
+      private function setMatches(array $matches)
+      {
+         $this->matches = $matches;
+      }
+
+
+     /**
+      * @return array
+     */
+     private function getMatches()
+     {
+         return $this->matches;
+     }
+
+
+     /**
+      * @param array $middleware
+      * @return Router
+     */
+     public function middleware(array $middleware = [])
+     {
         $this->middleware[$this->route['path']] = $middleware;
 
         return $this;
-    }
+     }
 
 
 
@@ -430,7 +491,8 @@ class Router implements RouterInterface
      */
     public function generateUrl(string $path, string $qs = '')
     {
-        return rtrim($this->baseUrl, '/') . '/' . trim($path, '/') . ($qs ? '?'. $qs : $qs);
+        return rtrim($this->baseUrl, '/') .
+               '/' . trim($path, '/') . ($qs ? '?'. $qs : $qs);
     }
 
 
@@ -464,11 +526,11 @@ class Router implements RouterInterface
 
 
     /**
-     * @param $matches
      * @return array
     */
-    private function getFilteredMatchParams($matches)
+    private function getFilteredMatchParams()
     {
+        $matches = $this->getMatches();
         return array_filter($matches, function ($key) {
             return ! is_numeric($key);
         }, ARRAY_FILTER_USE_KEY);
@@ -482,7 +544,7 @@ class Router implements RouterInterface
     */
     public function generatePattern(string $path)
     {
-         return '#^'. $this->compile($path) . '$#i';
+         return '#^'. $this->compile(trim($path, '/')) . '$#i';
     }
 
 
@@ -504,7 +566,7 @@ class Router implements RouterInterface
     */
     public function getPathUrl(string $url)
     {
-        return parse_url($url, PHP_URL_PATH);
+        return trim(parse_url($url, PHP_URL_PATH), '/');
     }
 
 

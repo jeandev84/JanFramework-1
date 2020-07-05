@@ -85,6 +85,12 @@ class Kernel implements HttpKernelContract
     }
 
 
+    protected function respond()
+    {
+
+    }
+
+
     /**
      *  Load environment variables
     */
