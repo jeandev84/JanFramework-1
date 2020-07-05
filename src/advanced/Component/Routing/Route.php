@@ -8,6 +8,8 @@ use Closure;
 /**
  * Class Route
  * @package Jan\Component\Routing
+ *
+ * Route facade
 */
 class Route
 {
@@ -15,7 +17,7 @@ class Route
      /**
       * @var Router
      */
-     private static $router;
+     private static $instance;
 
 
      /**
@@ -25,12 +27,12 @@ class Route
      */
      public static function instance()
      {
-        if(! self::$router)
+        if(! self::$instance)
         {
-            self::$router = new Router();
+            self::$instance = new Router();
         }
 
-        return static::$router;
+        return static::$instance;
      }
 
 
@@ -41,7 +43,6 @@ class Route
      */
      public static function __callStatic($method, $arguments)
      {
-          // $router = new Router();
           $router = self::instance();
 
           if(method_exists($router, $method))

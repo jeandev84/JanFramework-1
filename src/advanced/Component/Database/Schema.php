@@ -1,10 +1,10 @@
 <?php
-namespace Jan\Component\Database\Table;
+namespace Jan\Component\Database;
 
 
 use Closure;
 use Exception;
-use Jan\Component\Database\Database;
+use Jan\Component\Database\Table\BluePrint;
 
 
 /**

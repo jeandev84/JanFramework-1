@@ -63,16 +63,25 @@ class Database
 
            if (! self::isConnected())
            {
-               switch (self::config('type'))
-               {
-                   case 'pdo':
-                       self::$connection = self::pdo();
-                       break;
-                   case 'mysqli':
-                       self::$connection = self::mysqli();
-                       break;
-               }
+               self::connectByType();
            }
+      }
+
+
+      /**
+       * @throws Exception
+      */
+      private static function connectByType()
+      {
+          switch (self::config('type'))
+          {
+              case 'pdo':
+                  self::$connection = self::pdo();
+                  break;
+              case 'mysqli':
+                  self::$connection = self::mysqli();
+                  break;
+          }
       }
 
 
@@ -83,17 +92,27 @@ class Database
       {
            if(self::isConnected())
            {
-               switch (self::config('type'))
-               {
-                   case 'pdo':
-                       self::$connection = null;
-                       break;
-                   case 'mysqli':
-                       // mysqli_close(self::$connection);
-                       break;
-               }
+               self::disconnectByType();
            }
       }
+
+
+      /**
+       * Disconnect by type
+      */
+      private static function disconnectByType()
+      {
+          switch (self::config('type'))
+          {
+              case 'pdo':
+                  self::$connection = null;
+                  break;
+              case 'mysqli':
+                  // mysqli_close(self::$connection);
+                  break;
+          }
+      }
+
 
 
       /**
@@ -112,6 +131,7 @@ class Database
               return $connection;
           }
       }
+
 
 
       /**
@@ -180,10 +200,7 @@ class Database
     */
     public static function createTable(string $table, string $columnSettings)
     {
-        $sql = sprintf(
-    'CREATE TABLE `%s` 
-            IF NOT EXISTS (%s) 
-            ENGINE=%s DEFAULT CHARSET=%s',
+        $sql = sprintf('CREATE TABLE `%s` IF NOT EXISTS (%s) ENGINE=%s DEFAULT CHARSET=%s',
             $table,
             $columnSettings,
             self::getEngine(),
@@ -256,11 +273,26 @@ class Database
 
 
     /**
-     * @param string $driver
-     * @return ConnectionInterface
+     * @param string
+     * @return mixed|string|null
+    */
+    public static function getEngine()
+    {
+        $engine = self::config('engine');
+        return self::ENGINES[$engine] ?? $engine;
+    }
+
+
+    /**
+     * @param $driver
+     * @param string $dsn
+     * @param string $username
+     * @param string $password
+     * @param array $options
+     * @return MySqlConnection|OracleConnection|SqliteConnection
      * @throws Exception
     */
-    private static function getPDOConnectionByDriver($driver)
+    public static function getPDOConnectionByDriver($driver)
     {
         $dsn = sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s',
             $driver,
@@ -304,17 +336,5 @@ class Database
                 );
                 break;
         }
-
-    }
-
-
-    /**
-     * @param string
-     * @return mixed|string|null
-    */
-    public static function getEngine()
-    {
-        $engine = self::config('engine');
-        return self::ENGINES[$engine] ?? $engine;
     }
 }
