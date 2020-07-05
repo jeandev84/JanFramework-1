@@ -295,7 +295,7 @@ class Router implements RouterInterface
      * @throws RouterException
      * @throws Exception
     */
-    public function map(array $methods, string $path, $target, string $name = null)
+    public function map($methods, string $path, $target, string $name = null)
     {
           $this->routes[] = $this->route = [
               'methods' => $this->mapMethods($methods),
@@ -343,6 +343,8 @@ class Router implements RouterInterface
          }
 
          return explode('|', $methods);
+
+         /* return is_array($methods) ? $methods : explode('|', $methods); */
      }
 
 

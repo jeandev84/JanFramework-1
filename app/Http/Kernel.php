@@ -3,7 +3,7 @@ namespace App\Http;
 
 
 use Jan\Foundation\Http\Kernel as HttpKernel;
-
+use Jan\Foundation\Middlewares\RouteDispatcher;
 
 
 /**
@@ -12,5 +12,7 @@ use Jan\Foundation\Http\Kernel as HttpKernel;
 */
 class Kernel extends HttpKernel
 {
-
+    protected $middlewares = [
+        // RouteDispatcher::class
+    ];
 }

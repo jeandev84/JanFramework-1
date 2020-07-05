@@ -4,6 +4,7 @@ namespace Jan\Foundation\Facades;
 
 use Jan\Component\Routing\Router;
 
+
 /**
  * Class Route
  * @package Jan\Foundation\Facades

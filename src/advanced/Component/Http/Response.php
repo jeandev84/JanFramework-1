@@ -19,11 +19,13 @@ class Response implements ResponseInterface
      * phrases (message http response)
     */
     protected $messages = [
+
         // INFORMATIONAL CODES
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
         103 => 'Early Hints',
+
         // SUCCESS CODES
         200 => 'OK',
         201 => 'Created',
@@ -35,6 +37,7 @@ class Response implements ResponseInterface
         207 => 'Multi-Status',
         208 => 'Already Reported',
         226 => 'IM Used',
+
         // REDIRECTION CODES
         300 => 'Multiple Choices',
         301 => 'Moved Permanently',
@@ -45,6 +48,7 @@ class Response implements ResponseInterface
         306 => 'Switch Proxy', // Deprecated to 306 => '(Unused)'
         307 => 'Temporary Redirect',
         308 => 'Permanent Redirect',
+
         // CLIENT ERROR
         400 => 'Bad Request',
         401 => 'Unauthorized',
@@ -76,6 +80,7 @@ class Response implements ResponseInterface
         431 => 'Request Header Fields Too Large',
         444 => 'Connection Closed Without Response',
         451 => 'Unavailable For Legal Reasons',
+
         // SERVER ERROR
         499 => 'Client Closed Request',
         500 => 'Internal Server Error',

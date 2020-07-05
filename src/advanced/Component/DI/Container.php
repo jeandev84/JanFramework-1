@@ -20,12 +20,6 @@ use ReflectionMethod;
 class Container implements \ArrayAccess, ContainerInterface
 {
 
-    /**
-     * @var bool
-    */
-    protected $autowire = true;
-
-
     /** @var Container */
     protected static $instance;
 
@@ -100,20 +94,6 @@ class Container implements \ArrayAccess, ContainerInterface
             list($abstract, $concrete, $singleton) = $config;
             $this->bind($abstract, $concrete, $singleton);
         }
-
-        return $this;
-    }
-
-
-    /**
-     * Set autowiring status
-     *
-     * @param bool $status
-     * @return $this
-    */
-    public function autowire(bool $status)
-    {
-        $this->autowire = $status;
 
         return $this;
     }
@@ -400,11 +380,6 @@ class Container implements \ArrayAccess, ContainerInterface
     {
            if(is_string($abstract) && ! $this->has($abstract))
            {
-               if(! $this->autowire)
-               {
-                    throw new ResolverDependencyException('Cannot resolve dependendies');
-               }
-
                return $this->resolve($abstract, $arguments);
            }
 
