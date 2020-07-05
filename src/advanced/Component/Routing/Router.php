@@ -188,24 +188,25 @@ class Router implements RouterInterface
      }
 
 
-    /**
-     * @param $prefix
-     * @param Closure $callback
-    */
-    public function prefix($prefix, Closure $callback)
-    {
+     /**
+      * @param $prefix
+      * @param Closure $callback
+     */
+     public function prefix($prefix, Closure $callback)
+     {
         $this->group(compact('prefix'), $callback);
-    }
+     }
 
 
-    /**
-     * @param $namespace
-     * @param Closure $callback
-    */
-    public function namespace($namespace, Closure $callback)
-    {
-        $this->group(compact('namespace'), $callback);
-    }
+     /**
+      * @param $namespace
+      * @param Closure $callback
+     */
+     public function namespace($namespace, Closure $callback)
+     {
+         $this->group(compact('namespace'), $callback);
+     }
+
 
      /**
       * @param string $path
@@ -259,6 +260,31 @@ class Router implements RouterInterface
     }
 
 
+    /**
+     * Add new package or resources of routes
+     * Using for system CRUD or api
+     *
+     *
+     * @param string $path
+     * @param string $controller
+     * @return void
+     * @throws RouterException
+     *
+     * Example (path => 'api/', 'controller' => 'PostController')
+     */
+    public function resource(string $path, string $controller)
+    {
+        $name = str_replace('/', '.', trim($path, '/'));
+
+        $this->get($path.'/', $controller.'@index', $name .'.list');
+        $this->get($path.'/new', $controller.'@new', $name. '.new');
+        $this->post($path.'/store', $controller.'@store', $name.'.store');
+        $this->get($path.'/{id}', $controller.'@show', $name.'.show');
+        $this->map('GET|POST', $path.'/{id}/edit', $controller.'@edit', $name.'.edit');
+        $this->delete($path.'/{id}/delete', $controller.'@delete', $name.'.delete');
+        $this->get($path.'/{id}/restore', $controller.'@restore', $name.'.restore');
+    }
+
 
     /**
      * @param $methods
@@ -272,9 +298,9 @@ class Router implements RouterInterface
     public function map(array $methods, string $path, $target, string $name = null)
     {
           $this->routes[] = $this->route = [
-              'methods' => $methods,
-              'path'    => $path,
-              'target'  => $target
+              'methods' => $this->mapMethods($methods),
+              'path'    => $this->mapPath($path),
+              'target'  => $this->mapTarget($target)
           ];
 
           $this->setRouteName($name, $path);
@@ -306,11 +332,55 @@ class Router implements RouterInterface
 
 
      /**
+      * @param $methods
+      * @return array|false|string[]
+     */
+     private function mapMethods($methods)
+     {
+         if(is_array($methods))
+         {
+             return $methods;
+         }
+
+         return explode('|', $methods);
+     }
+
+
+    /**
+     * @param $path
+     * @return string
+    */
+    private function mapPath($path)
+    {
+        if($prefix = $this->getOption('prefix'))
+        {
+            $path = rtrim($prefix, '/') . '/'. ltrim($path, '/');
+        }
+        return $path;
+    }
+
+
+    /**
+     * @param $target
+     * @return string
+    */
+    private function mapTarget($target)
+    {
+        if($namespace = $this->getOption('namespace'))
+        {
+            $target = rtrim($namespace, '\\') .'\\' . $target;
+        }
+        return $target;
+    }
+
+
+
+    /**
       * @param string $path
       * @return array
-     */
-     private function getNewParams($path)
-     {
+    */
+    private function getNewParams($path)
+    {
          return [
              'pattern' => $this->generatePattern($path),
              'matches' => $this->getFilteredMatchParams(),
@@ -397,11 +467,10 @@ class Router implements RouterInterface
 
 
 
-
     /**
      * @param string $path
      * @return false|int|string
-     */
+    */
     public function getPathName(string $path)
     {
         return array_search($path, $this->namedRoutes) ?: '';
@@ -415,7 +484,7 @@ class Router implements RouterInterface
      * @param $name
      * @param $path
      * @throws RouterException
-   */
+    */
     public function setRouteName($name, $path)
     {
         if($name)
@@ -429,15 +498,6 @@ class Router implements RouterInterface
         }
     }
 
-
-    /**
-     * @param $name
-     * @return bool|mixed
-    */
-    public function getRoutePath($name)
-    {
-        return $this->namedRoutes[$name] ?? false;
-    }
 
 
     /**
@@ -633,5 +693,17 @@ class Router implements RouterInterface
     private function hasPattern($key)
     {
         return isset($this->patterns[$key]);
+    }
+
+
+    /**
+     * Get option by given param
+     *
+     * @param $key
+     * @return mixed|null
+    */
+    private function getOption($key)
+    {
+        return $this->options[$key] ?? null;
     }
 }

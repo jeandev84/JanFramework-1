@@ -34,14 +34,16 @@ class Loader
      }
 
 
-     /**
-      * @param $controller
-      * @param $action
-      * @param array $params
+    /**
+     * @param $controller
+     * @param $action
+     * @param array $params
+     * @return mixed
+     * @throws Exception
      */
      public function callAction($controller, $action, $params = [])
      {
-
+         return $this->call([$controller, $action], $params);
      }
 
 
