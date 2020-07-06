@@ -4,11 +4,11 @@ namespace Jan\Component\Database;
 
 use Exception;
 use Jan\Component\Database\Connection\ConnectionInterface;
-use Jan\Component\Database\Connection\MySqli\Connection as MySqli;
 use Jan\Component\Database\Connection\PDO\Drivers\MySqlConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\OracleConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\PgsqlConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\SqliteConnection;
+use Jan\Component\Database\Connection\PDO\PDOConnection;
 use Jan\Component\Database\Exceptions\DatabaseException;
 
 
@@ -30,7 +30,6 @@ class Database
       * @var array
      */
      private static $config = [
-        'type'       => 'pdo', // mysqli (type connection)
         'driver'     => 'mysql',
         'database'   => 'janframework',
         'host'       => '127.0.0.1',
@@ -52,6 +51,9 @@ class Database
       protected static $connection;
 
 
+      /** @var  */
+      protected static $instance;
+
 
       /**
        * @param array $config
@@ -63,25 +65,23 @@ class Database
 
            if (! self::isConnected())
            {
-               self::connectByType();
+               self::$connection = self::pdo();
            }
       }
 
 
       /**
+       * @return mixed
        * @throws Exception
       */
-      private static function connectByType()
+      public static function instance()
       {
-          switch (self::config('type'))
+          if(! self::$instance)
           {
-              case 'pdo':
-                  self::$connection = self::pdo();
-                  break;
-              case 'mysqli':
-                  self::$connection = self::mysqli();
-                  break;
+              self::$instance = self::getConnection();
           }
+
+          return self::$instance;
       }
 
 
@@ -92,55 +92,21 @@ class Database
       {
            if(self::isConnected())
            {
-               self::disconnectByType();
+               self::$connection = null;
            }
       }
 
 
       /**
-       * Disconnect by type
-      */
-      private static function disconnectByType()
-      {
-          switch (self::config('type'))
-          {
-              case 'pdo':
-                  self::$connection = null;
-                  break;
-              case 'mysqli':
-                  // mysqli_close(self::$connection);
-                  break;
-          }
-      }
-
-
-
-      /**
-       * @return mixed
+       * @return PDOConnection
        * @throws Exception
       */
-      public static function pdo()
+      public static function pdo(): PDOConnection
       {
           $driver = trim(strtolower(self::config('driver')));
-          $connection = self::getPDOConnectionByDriver($driver);
-
-          $pattern = '#^'. $driver .'$#i';
-
-          if(preg_match($pattern, $connection->getDriverName()))
-          {
-              return $connection;
-          }
+          return self::getPDOConnectionByDriver($driver);
       }
 
-
-
-      /**
-       * @return string
-      */
-      public static function mysqli()
-      {
-           return new MySqli();
-      }
 
 
       /**
@@ -207,6 +173,7 @@ class Database
             self::config('charset')
         );
 
+        dd($sql);
         self::exec($sql);
     }
 
@@ -253,7 +220,7 @@ class Database
             if(! \array_key_exists($key, self::$config))
             {
                 throw new DatabaseException(
-                    sprintf('Key (%s) is not valid database config param!', $key)
+                    sprintf('Key (%s) is not valid database configuration param!', $key)
                 );
             }
 
@@ -285,16 +252,30 @@ class Database
 
     /**
      * @param $driver
-     * @param string $dsn
-     * @param string $username
-     * @param string $password
-     * @param array $options
-     * @return MySqlConnection|OracleConnection|SqliteConnection
+     * @return PDOConnection
      * @throws Exception
     */
     public static function getPDOConnectionByDriver($driver)
     {
-        $dsn = sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s',
+        foreach (self::connectionStuff($driver) as $connection)
+        {
+            $pattern = '#^'. $driver .'$#i';
+
+            if(preg_match($pattern, $connection->getDriverName()))
+            {
+                return $connection;
+            }
+        }
+    }
+
+
+    /**
+     * @param $driver
+     * @return string
+    */
+    private static function getDsnByDriver($driver)
+    {
+        return sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s',
             $driver,
             self::config('host'),
             self::config('port'),
@@ -302,39 +283,41 @@ class Database
             self::config('charset')
         );
 
-        switch ($driver) {
-            case 'mysql':
-                return new MySqlConnection($dsn,
+    }
+
+
+    /**
+     * @param $driver
+     * @return array
+     * @throws Exception
+    */
+    private static function connectionStuff($driver)
+    {
+        $dsn = self::getDsnByDriver($driver);
+
+        return [
+            new MySqlConnection($dsn,
                     self::config('username'),
                     self::config('password'),
                     self::config('options')
-                );
-                break;
-
-            case 'sqlite':
-                return new SqliteConnection(
-                    $driver.':'. self::config('database'),
-                    null,
-                    null,
-                    self::config('options')
-                );
-                break;
-
-            case 'pgsql':
-                new PgsqlConnection($dsn,
+            ),
+            new SqliteConnection(
+           $driver.':'. self::config('database'),
+       null,
+       null,
+                self::config('options')
+            ),
+            new PgsqlConnection($dsn,
+                self::config('username'),
+                self::config('password'),
+                self::config('options')
+            ),
+            new OracleConnection($dsn,
                     self::config('username'),
                     self::config('password'),
                     self::config('options')
-                );
-                break;
+             )
+            ];
 
-            case 'oci':
-                return new OracleConnection($dsn,
-                    self::config('username'),
-                    self::config('password'),
-                    self::config('options')
-                );
-                break;
-        }
     }
 }

@@ -48,3 +48,12 @@ class Schema
         Database::dropTable($table);
     }
 }
+
+/*
+Schema::create('users', function (BluePrint $table) {
+    $table->increments('id');
+    $table->string('username');
+    $table->string('password');
+    $table->string('role');
+});
+*/

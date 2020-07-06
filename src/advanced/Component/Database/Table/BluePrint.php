@@ -58,6 +58,15 @@ class BluePrint
 
 
    /**
+     * @return bool|string
+   */
+   public function getPrimary()
+   {
+       return $this->primary;
+   }
+
+
+   /**
      * @param $name
      * @return Column
      * @throws \Exception
@@ -164,13 +173,38 @@ class BluePrint
    public function buildColumnSql()
    {
       // (name type(length) default, ...., PRIMARY KEY name)
-      $sql = '';
+      $sql = [];
+      $space = ' ';
+      $nbrColumns = $this->getColumnSCount();
+      $i = 0;
+
       foreach ($this->columns as $column)
       {
-          $sql .= $column->name();
-          $sql .= $column->type();
+          $sql[] = $column->getName(). $space;
+          $sql[] = $column->getType(). $space;
+          $sql[] = $column->getDefault();
+          ++$i;
+
+          if($i < $nbrColumns)
+          {
+              $sql[] = ', ';
+          }
       }
 
-      return  $sql;
+      if($primaryKey = $this->getPrimary())
+      {
+           $sql[] = sprintf(', PRIMARY KEY(`%s`)', $primaryKey);
+      }
+
+      return  implode($sql);
+   }
+
+
+   /**
+     * @return int
+   */
+   public function getColumnSCount()
+   {
+       return count($this->columns);
    }
 }

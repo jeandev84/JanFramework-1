@@ -12,6 +12,7 @@ use Jan\Component\Templating\Exceptions\ViewException;
 class View
 {
 
+
       /** @var string */
       protected $basePath;
 
@@ -83,7 +84,8 @@ class View
       */
       public function render(string $template, array $data = [])
       {
-           return $this->setData($data)->renderTemplate($template);
+           $this->setData($data);
+           return $this->renderTemplate($template);
       }
 
 

@@ -87,11 +87,10 @@ class Column
        * @param $key
        * @return mixed|null
       */
-      public function getParam($key)
+      private function getParam($key)
       {
           return $this->params[$key] ?? null;
       }
-
 
 
 
@@ -138,7 +137,7 @@ class Column
      *
      * @return string
     */
-    public function name()
+    public function getName()
     {
         return $this->getParam('name');
     }
@@ -148,17 +147,46 @@ class Column
      * Get column type
      *
      * @return string
+     *
+     * TYPE(LENGTH)
     */
-    public function type()
+    public function getType()
     {
         $type = $this->getParam('type');
 
         if(in_array($type, self::TYPES))
         {
-             return $type .'()';
+             return sprintf('%s(%s)', $type, $this->getParam('length'));
+        }
+    }
+
+
+    /**
+     * @return string
+    */
+    public function getDefault()
+    {
+        $default = $this->getParam('default');
+
+        if($this->isNullable() && ! $default)
+        {
+            return 'DEFAULT NULL';
         }
 
-        // TYPE(LENGTH)
+        if($default)
+        {
+            return sprintf('DEFAULT "%s"', $default);
+        }
 
+        return 'NOT NULL';
+    }
+
+
+    /**
+     * @return bool
+    */
+    public function isNullable()
+    {
+        return $this->getParam('nullable') === true;
     }
 }

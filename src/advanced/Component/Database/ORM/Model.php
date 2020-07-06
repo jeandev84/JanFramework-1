@@ -204,7 +204,7 @@ class Model implements \ArrayAccess
 
         if(! $connection instanceof PDOConnection)
         {
-            throw new Exception('active records work only for pdo connection!');
+            throw new Exception('active records use pdo connection!');
         }
 
         return $connection->execute($sql, $params, static::class);
