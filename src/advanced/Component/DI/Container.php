@@ -378,24 +378,19 @@ class Container implements \ArrayAccess, ContainerInterface
      */
     public function get($abstract, $arguments = [])
     {
-           if(is_string($abstract) && ! $this->has($abstract))
+           if(! $this->has($abstract))
            {
                return $this->resolve($abstract, $arguments);
            }
 
 
-           if($abstract instanceof ReflectionMethod)
-           {
-               return $this->resolveMethodDependencies($abstract, $arguments);
-           }
-
-
-           /*
+           // TODO Refactoring
+           // Get instance
            if(isset($this->instances[$abstract]))
            {
                return $this->instances[$abstract];
            }
-           */
+
 
            if(isset($this->aliases[$abstract]))
            {

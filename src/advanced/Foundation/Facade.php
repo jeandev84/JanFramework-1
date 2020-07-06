@@ -20,6 +20,12 @@ abstract class Facade
     protected static $resolved;
 
 
+    public function __construct(ContainerInterface $container)
+    {
+        self::setContainer($container);
+    }
+
+
     /**
      * Set container
      * @param ContainerInterface $container

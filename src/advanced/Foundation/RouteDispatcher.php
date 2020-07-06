@@ -12,8 +12,7 @@ use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Http\Response;
 use Jan\Component\Routing\Exception\MethodNotAllowedException;
 use Jan\Component\Routing\Exception\RouterException;
-use Jan\Component\Routing\Route;
-use Jan\Component\Routing\Router;
+use Jan\Foundation\Routing\Route;
 use ReflectionException;
 use ReflectionMethod;
 

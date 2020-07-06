@@ -2,52 +2,204 @@
 namespace Jan\Component\Routing;
 
 
-use Closure;
-
-
 /**
  * Class Route
  * @package Jan\Component\Routing
- *
- * Route facade
 */
 class Route
 {
 
-     /**
-      * @var Router
-     */
-     private static $instance;
+     /** @var string */
+     private $path;
+
+
+     /** @var string */
+     private $name;
+
+
+     /** @var mixed */
+     private $target;
+
+
+     /** @var  */
+     private $pattern;
+
+
+     /** @var array  */
+     private $matches = [];
+
+
+     /** @var array  */
+     private $methods = [];
+
+
+     /** @var array  */
+     private $middleware = [];
 
 
      /**
-      * Get instance of router
-      *
-      * @return Router
+      * RouteParam constructor.
+      * @param array $params
      */
-     public static function instance()
+     public function __construct(array $params = [])
      {
-        if(! self::$instance)
-        {
-            self::$instance = new Router();
-        }
-
-        return static::$instance;
+         $this->setParams($params);
      }
 
 
      /**
-      * @param $method
-      * @param $arguments
-      * @return mixed
+      * @param array $params
      */
-     public static function __callStatic($method, $arguments)
+     public function setParams(array $params)
      {
-          $router = self::instance();
-
-          if(method_exists($router, $method))
-          {
-              return call_user_func_array([$router, $method], $arguments);
-          }
+         foreach ($params as $key => $value)
+         {
+             if(property_exists($this, $key))
+             {
+                 $this->{$key} = $value;
+             }
+         }
      }
+
+
+    /**
+     * @return string
+    */
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+
+    /**
+     * @param string $path
+     * @return Route
+    */
+    public function setPath(string $path): Route
+    {
+        $this->path = $path;
+        return $this;
+    }
+
+
+    /**
+     * @return string
+    */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+
+    /**
+     * @param string $name
+     * @return Route
+    */
+    public function setName(string $name): Route
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+
+    /**
+     * @return mixed
+    */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+
+    /**
+     * @param mixed $target
+     * @return Route
+    */
+    public function setTarget($target)
+    {
+        $this->target = $target;
+        return $this;
+    }
+
+
+    /**
+     * @return mixed
+    */
+    public function getPattern()
+    {
+        return $this->pattern;
+    }
+
+
+    /**
+     * @param mixed $pattern
+     * @return Route
+    */
+    public function setPattern($pattern)
+    {
+        $this->pattern = $pattern;
+        return $this;
+    }
+
+
+    /**
+     * @return array
+    */
+    public function getMatches(): array
+    {
+        return $this->matches;
+    }
+
+
+    /**
+     * @param array $matches
+     * @return Route
+    */
+    public function setMatches(array $matches): Route
+    {
+        $this->matches = $matches;
+        return $this;
+    }
+
+
+    /**
+     * @return array
+    */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+
+
+    /**
+     * @param array $methods
+     * @return Route
+    */
+    public function setMethods(array $methods): Route
+    {
+        $this->methods = $methods;
+        return $this;
+    }
+
+
+    /**
+     * @return array
+    */
+    public function getMiddleware(): array
+    {
+        return $this->middleware;
+    }
+
+
+
+    /**
+     * @param array $middleware
+     * @return Route
+    */
+    public function setMiddleware(array $middleware): Route
+    {
+        $this->middleware = $middleware;
+        return $this;
+    }
 }

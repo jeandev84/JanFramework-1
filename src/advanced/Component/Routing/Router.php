@@ -79,6 +79,10 @@ class Router implements RouterInterface
 
 
 
+      /** @var bool  */
+      private $isPrettyUrl = true;
+
+
       /**
        * Router constructor.
        * @param string $baseUrl
@@ -86,6 +90,15 @@ class Router implements RouterInterface
       public function __construct(string $baseUrl = '')
       {
            $this->setBaseUrl($baseUrl);
+      }
+
+
+      /**
+        * @param bool $status
+      */
+      public function isPrettyUrl(bool $status)
+      {
+          $this->isPrettyUrl = $status;
       }
 
 
@@ -130,7 +143,7 @@ class Router implements RouterInterface
       */
       public function getRoutes()
       {
-         return $this->routes;
+          return $this->routes;
       }
 
 
@@ -285,6 +298,16 @@ class Router implements RouterInterface
         $this->get($path.'/{id}/restore', $controller.'@restore', $name.'.restore');
     }
 
+
+    /**
+     * @param string $namespace
+     *
+     * Route::api()->resources($path, $controller);
+    */
+    public function api($namespace = '')
+    {
+
+    }
 
     /**
      * @param $methods

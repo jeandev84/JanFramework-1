@@ -175,7 +175,7 @@ class BluePrint
       // (name type(length) default, ...., PRIMARY KEY name)
       $sql = [];
       $space = ' ';
-      $nbrColumns = $this->getColumnSCount();
+      $nbrColumns = $this->getColumnsCount();
       $i = 0;
 
       foreach ($this->columns as $column)
@@ -203,7 +203,7 @@ class BluePrint
    /**
      * @return int
    */
-   public function getColumnSCount()
+   public function getColumnsCount()
    {
        return count($this->columns);
    }

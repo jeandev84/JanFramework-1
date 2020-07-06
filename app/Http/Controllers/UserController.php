@@ -7,6 +7,7 @@ use App\Http\Contracts\Controller;
 use Jan\Component\Database\Database;
 use Jan\Component\Database\Schema;
 use Jan\Component\Database\Table\BluePrint;
+use Jan\Component\FileSystem\FileSystem;
 
 
 /**
@@ -19,15 +20,8 @@ class UserController extends Controller
         /**
          * @return \Jan\Component\Http\Response
         */
-        public function index()
+        public function index(FileSystem $fileSystem)
         {
-            Schema::create('users', function (BluePrint $table) {
-                $table->increments('id');
-                $table->string('username');
-                $table->string('password');
-                $table->string('role');
-            });
-
             return $this->render('users/index');
         }
 
@@ -60,6 +54,13 @@ class UserController extends Controller
             $user->password = password_hash('yurev085', PASSWORD_BCRYPT);
             dd($user);
             */
+
+            Schema::create('users', function (BluePrint $table) {
+               $table->increments('id');
+               $table->string('username', 200);
+               $table->string('password');
+               $table->string('role');
+            });
      }
 
 }

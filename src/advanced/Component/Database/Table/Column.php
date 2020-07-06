@@ -32,8 +32,8 @@ class Column
           'comments'      => [],
           'nullable'      => false,
           'autoincrement' => false,
-          'index'         => 'primary',
-          'collation'     => 'utf8_general_ci'
+          //'index'         => 'primary',
+          //'collation'     => 'utf8_general_ci'
       ];
 
 

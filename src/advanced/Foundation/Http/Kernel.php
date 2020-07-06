@@ -2,7 +2,10 @@
 namespace Jan\Foundation\Http;
 
 
+use App\Entity\User;
+use Jan\Component\Http\Response;
 use Jan\Component\DI\Contracts\ContainerInterface;
+use Jan\Component\FileSystem\FileSystem;
 use Jan\Component\Http\Contracts\RequestInterface;
 use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Contracts\Http\Kernel as HttpKernelContract;
@@ -20,7 +23,7 @@ class Kernel implements HttpKernelContract
      * @var string[]
     */
     protected $classAliases = [
-        'Route' => 'Jan\\Component\\Routing\\Route'
+        'Route' => 'Jan\\Foundation\Routing\\Route'
     ];
 
 
@@ -28,6 +31,11 @@ class Kernel implements HttpKernelContract
      * @var array
     */
     protected $middlewares = [];
+
+
+
+    /** @var array  */
+    protected $routeMiddleware = [];
 
 
 
@@ -75,7 +83,7 @@ class Kernel implements HttpKernelContract
     /**
      * @param RequestInterface $request
      * @return mixed
-     */
+    */
     protected function dispatchRoute(RequestInterface $request)
     {
          $response = $this->container->get(ResponseInterface::class);
@@ -85,7 +93,10 @@ class Kernel implements HttpKernelContract
     }
 
 
-    protected function respond()
+    /**
+     * @param ResponseInterface $response
+    */
+    protected function respond(ResponseInterface $response)
     {
 
     }
@@ -114,11 +125,20 @@ class Kernel implements HttpKernelContract
     */
     public function loadRoutes()
     {
-        require_once $this->container->get('base.path') .'/routes/web.php';
+        $this->getFileSystem()->load('/routes/web.php');
 
         /* require_once $this->container->get('base.path') .'/routes/*.php'; */
+        /*  require_once $this->container->get('base.path') .'/routes/web.php'; */
     }
 
+
+    /**
+     * @return mixed
+    */
+    private function getFileSystem()
+    {
+        return $this->container->get(FileSystem::class);
+    }
 
     /**
      * Load classe aliases

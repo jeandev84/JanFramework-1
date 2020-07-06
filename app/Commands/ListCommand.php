@@ -1,12 +1,12 @@
 <?php
-namespace Jan\Component\Console\Command\Support;
+namespace App\Commands;
 
 use Jan\Component\Console\Command\Command;
 
 
 /**
  * Class ListCommand
- * @package Jan\Component\Console\Command\Support
+ * @package App\Commands
 */
 class ListCommand extends Command
 {

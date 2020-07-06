@@ -1,5 +1,5 @@
 <?php
-namespace Jan\Component\Console\Command\Support;
+namespace App\Commands;
 
 
 use Jan\Component\Console\Command\Command;
@@ -10,7 +10,7 @@ use Jan\Component\Console\Output\OutputInterface;
 
 /**
  * Class HelpCommand
- * @package Jan\Component\Console\Command\Support
+ * @package App\Commands
 */
 class HelpCommand extends Command
 {

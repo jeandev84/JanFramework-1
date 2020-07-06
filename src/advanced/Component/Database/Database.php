@@ -166,14 +166,16 @@ class Database
     */
     public static function createTable(string $table, string $columnSettings)
     {
-        $sql = sprintf('CREATE TABLE `%s` IF NOT EXISTS (%s) ENGINE=%s DEFAULT CHARSET=%s',
+        $sql = sprintf(
+    'CREATE TABLE `%s` IF NOT EXISTS (
+                 %s
+            ) ENGINE=%s DEFAULT CHARSET=%s',
             $table,
             $columnSettings,
             self::getEngine(),
             self::config('charset')
         );
 
-        dd($sql);
         self::exec($sql);
     }
 

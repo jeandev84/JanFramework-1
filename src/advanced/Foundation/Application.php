@@ -38,6 +38,12 @@ class Application extends Container
     protected $basePath;
 
 
+
+    /** @var array  */
+    protected $namespaces = [];
+
+
+
     /**
      * Create a new application instance.
      *
@@ -52,9 +58,10 @@ class Application extends Container
             $this->setBasePath($basePath);
         }
 
+        $this->loadCoreAliases();
         $this->registerBaseBindings();
         $this->registerBaseServiceProviders();
-        $this->registerCoreContainerAliases();
+        // $this->registerCoreContainerAliases();
     }
 
 
@@ -121,6 +128,7 @@ class Application extends Container
          // add only providers without runServiceProvider
          // get all providers and run them
          $this->addServiceProviders([
+             \Jan\Foundation\Providers\FileSystemServiceProvider::class,
              \Jan\Foundation\Providers\AppServiceProvider::class,
              \Jan\Foundation\Providers\RouteServiceProvider::class,
              \Jan\Foundation\Providers\ViewServiceProvider::class
@@ -144,6 +152,11 @@ class Application extends Container
         }
     }
 
+
+    public function loadCoreAliases()
+    {
+          // Autoloading
+    }
 
     /**
      * @return string[]

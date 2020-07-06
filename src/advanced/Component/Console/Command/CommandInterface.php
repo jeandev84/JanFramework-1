@@ -6,6 +6,7 @@ use Jan\Component\Console\Input\InputInterface;
 use Jan\Component\Console\Output\OutputInterface;
 
 
+
 /**
  * Interface CommandInterface
  * @package Jan\Component\Console\Command
