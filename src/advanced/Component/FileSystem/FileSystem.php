@@ -49,9 +49,27 @@ class FileSystem
       */
       public function resource(string $path)
       {
-          $path = str_replace('/', DIRECTORY_SEPARATOR, trim($path, '/'));
-          return rtrim($this->root, '/') . DIRECTORY_SEPARATOR. $path;
+          return implode([
+              rtrim($this->root, '/'),
+              DIRECTORY_SEPARATOR,
+              $this->preparePath($path)
+          ]);
+
+          /*
+          return rtrim($this->root, '/') . DIRECTORY_SEPARATOR. $this->preparePath($path);
+          */
       }
+
+
+     /**
+      * @param string $path
+      * @return string|string[]
+     */
+      private function preparePath(string $path)
+      {
+          return str_replace('/', DIRECTORY_SEPARATOR, trim($path, '/'));
+      }
+
 
 
      /**
