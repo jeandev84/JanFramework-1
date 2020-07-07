@@ -200,14 +200,7 @@ class Model implements \ArrayAccess
      */
     protected static function query($sql, $params = [])
     {
-        $connection = Database::getConnection();
-
-        if(! $connection instanceof PDOConnection)
-        {
-            throw new Exception('active records use pdo connection!');
-        }
-
-        return $connection->execute($sql, $params, static::class);
+        return Database::execute($sql, $params, static::class);
     }
 
 

@@ -84,6 +84,7 @@ class Statement
             $this->params = $params;
             $this->classMap = $classMap;
 
+            // TODO remove to method execute
             if($this->statement->execute($params))
             {
                 $this->records[] = compact('sql', 'params');

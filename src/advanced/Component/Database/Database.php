@@ -9,6 +9,7 @@ use Jan\Component\Database\Connection\PDO\Drivers\OracleConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\PgsqlConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\SqliteConnection;
 use Jan\Component\Database\Connection\PDO\PDOConnection;
+use Jan\Component\Database\Connection\PDO\Statement;
 use Jan\Component\Database\Exceptions\DatabaseException;
 
 
@@ -68,21 +69,7 @@ class Database
                self::$connection = self::pdo();
            }
       }
-
-
-      /**
-       * @return mixed
-       * @throws Exception
-      */
-      public static function instance()
-      {
-          if(! self::$instance)
-          {
-              self::$instance = self::getConnection();
-          }
-
-          return self::$instance;
-      }
+      
 
 
       /**
@@ -122,7 +109,7 @@ class Database
        * @return ConnectionInterface
        * @throws Exception
       */
-      public static function getConnection()
+      public static function getConnector()
       {
            if(! self::isConnected())
            {
@@ -135,15 +122,40 @@ class Database
 
       /**
        * @param $sql
+       * @param array $params
+       * @param string $classMap
        * @return mixed
+       * @throws Exception
+      */
+      public static function execute($sql, $params = [], $classMap = null)
+      {
+           return self::statement()->query($sql, $params, $classMap);
+      }
+
+
+      /**
+       * @param $sql
+       * @return mixed|void
        * @throws Exception
       */
       public static function exec($sql)
       {
-           return self::getConnection()->execute($sql);
+          return self::statement()->exec($sql);
       }
 
 
+      /**
+       * @return Statement
+       * @throws Exception
+      */
+      public static function statement()
+      {
+           return new Statement(
+               self::getConnector()->getConnection()
+           );
+      }
+      
+      
       /**
        * Create database if not exist
        * @throws Exception
@@ -154,30 +166,30 @@ class Database
             self::config('database')
          );
 
-         self::exec($sql);
+         self::execute($sql);
     }
 
 
     /**
      * @param string $table
-     * @param string $columnSettings
+     * @param string $columns
      * @return string
      * @throws Exception
     */
-    public static function createTable(string $table, string $columnSettings)
+    public static function createTable(string $table, string $columns)
     {
         $sql = sprintf('CREATE TABLE `%s` IF NOT EXISTS (
                  %s
             ) ENGINE=%s DEFAULT CHARSET=%s',
             $table,
-            $columnSettings,
+            $columns,
             self::getEngine(),
             self::config('charset')
         );
 
-        self::exec($sql);
+        self::execute($sql);
     }
-
+    
 
     /**
      * @param $table
@@ -185,7 +197,7 @@ class Database
     */
     public static function dropTableIfExists($table)
     {
-        self::exec(sprintf('DROP TABLE IF EXISTS `%s`', $table));
+        self::execute(sprintf('DROP TABLE IF EXISTS `%s`', $table));
     }
 
 
@@ -195,7 +207,7 @@ class Database
     */
     public static function dropTable($table)
     {
-        self::exec(sprintf('DROP TABLE `%s`', $table));
+        self::execute(sprintf('DROP TABLE `%s`', $table));
     }
 
 
@@ -206,7 +218,7 @@ class Database
     */
     public static function truncate($table)
     {
-        self::exec(sprintf('TRUNCATE TABLE %s', $table));
+        self::execute(sprintf('TRUNCATE TABLE %s', $table));
     }
 
 

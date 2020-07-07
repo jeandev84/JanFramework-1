@@ -83,13 +83,29 @@ class UploadedFile
      private $allowedExtensions = ['gif', 'jpg', 'jpeg', 'png', 'webp'];
 
 
-    /**
-     * @return string
+
+     private $errors = [];
+
+
+     /**
+      * @param $name
+      * @param $message
      */
-    public function getFilename()
-    {
+     public function addError($name, $message)
+     {
+           $this->errors[$name] = $message;
+     }
+
+
+     /**
+      * @return string
+     */
+     public function getFilename()
+     {
         return $this->filename;
     }
+
+
 
     /**
      * @param string $filename
@@ -244,6 +260,11 @@ class UploadedFile
     {
         if($this->error != UPLOAD_ERR_OK) {
 
+            return false;
+        }
+
+        if(! \in_array($this->extension, $this->allowedExtensions))
+        {
             return false;
         }
 

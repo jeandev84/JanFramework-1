@@ -378,22 +378,26 @@ class Request implements RequestInterface
     {
         $uploadedFiles = [];
 
-        foreach ($files as $file)
+        if(! empty($files))
         {
-            $uploadedFile = new UploadedFile();
-            $uploadedFile->setFilename($file['name']);
-            $fileInfo = pathinfo($file['name']);
-
-            $uploadedFile->setNameOnly($fileInfo['basename']);
-            $uploadedFile->setExtension($fileInfo['extension'] ?? '');
-            $uploadedFile->setMimeType($file['type']);
-            $uploadedFile->setTempFile($file['tmp_name']);
-            $uploadedFile->setError($file['error']);
-            $uploadedFile->setSize($file['size']);
-
-            if(! \in_array($uploadedFile, $uploadedFiles))
+            foreach ($files as $file)
             {
-                $uploadedFiles[] = $uploadedFile;
+                $uploadedFile = new UploadedFile();
+                $uploadedFile->setFilename($file['name']);
+                $fileInfo = pathinfo($file['name']);
+
+                $uploadedFile->setNameOnly($fileInfo['basename']);
+                $uploadedFile->setExtension($fileInfo['extension'] ?? '');
+                $uploadedFile->setMimeType($file['type']);
+                $uploadedFile->setTempFile($file['tmp_name']);
+                $uploadedFile->setError($file['error']);
+                $uploadedFile->setSize($file['size']);
+
+                // lazy loading
+                if(! \in_array($uploadedFile, $uploadedFiles))
+                {
+                    $uploadedFiles[] = $uploadedFile;
+                }
             }
         }
 
