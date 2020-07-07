@@ -166,11 +166,7 @@ class Container implements \ArrayAccess, ContainerInterface
                 $provider->boot();
             }
 
-            if($provides = $provider->getProvides())
-            {
-                $this->provides[] = $provides;
-            }
-
+            $this->provides[] = $provider->getProvides();
             $provider->register();
             $this->providers[] = $provider;
         }
