@@ -366,6 +366,16 @@ class Request implements RequestInterface
             }
         }
 
+        return $this->getUploadedFiles($files);
+    }
+
+
+    /**
+     * @param $files
+     * @return array
+    */
+    public function getUploadedFiles($files)
+    {
         $uploadedFiles = [];
 
         foreach ($files as $file)
@@ -380,62 +390,16 @@ class Request implements RequestInterface
             $uploadedFile->setTempFile($file['tmp_name']);
             $uploadedFile->setError($file['error']);
             $uploadedFile->setSize($file['size']);
-            $uploadedFiles[] = $uploadedFile;
-        }
 
-        return $uploadedFiles;
-    }
-
-
-    /**
-     * @param array $file
-     * @return array
-     *
-     *
-      [
-        new UploadedFile(),
-        new UploadedFile(),
-        new UploadedFile()
-      ]
-    */
-    public function getUploadedFiles(array $file)
-    {
-        $files = [];
-        foreach ($file as $index => $data)
-        {
-            $data = (array) $data;
-            $i = 0;
-            foreach ($data as $value)
+            if(! \in_array($uploadedFile, $uploadedFiles))
             {
-                $files[$i][$index] = $data[$i];
-                $i++;
+                $uploadedFiles[] = $uploadedFile;
             }
         }
 
-        $uploadedFiles = [];
-
-        foreach ($files as $file)
-        {
-             $uploadedFile = new UploadedFile();
-             $uploadedFile->setFilename($file['name']);
-             $uploadedFile->setMimeType($file['type']);
-             $uploadedFile->setTempFile($file['tmp_name']);
-             $uploadedFile->setError($file['error']);
-             $uploadedFile->setSize($file['size']);
-             $uploadedFiles[] = $uploadedFile;
-        }
-
         return $uploadedFiles;
     }
 
-
-    /**
-      * @param UploadedFile $uploadedFile
-    */
-    public function addUploadedFile(UploadedFile $uploadedFile)
-    {
-           //
-    }
 
 
     /**
