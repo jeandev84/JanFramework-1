@@ -350,7 +350,7 @@ class Router implements RouterInterface
          {
              list($methods, $path) = array_values($route);
 
-             if($this->isMathMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
+             if($this->isMatchMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
              {
                  return array_merge($route, $this->getNewParams($path));
              }
@@ -456,7 +456,7 @@ class Router implements RouterInterface
        * @param array $methods
        * @return bool
       */
-      private function isMathMethods(string $requestMethod, array $methods)
+      private function isMatchMethods(string $requestMethod, array $methods)
       {
            return \in_array($requestMethod, $methods);
       }
