@@ -90,8 +90,7 @@ class Database
       */
       public static function pdo(): PDOConnection
       {
-          $driver = trim(strtolower(self::config('driver')));
-          return self::getPDOConnectionByDriver($driver);
+          return self::getPDOConnectionByDriver(self::config('driver'));
       }
 
 
@@ -270,16 +269,19 @@ class Database
     */
     public static function getPDOConnectionByDriver($driver)
     {
+        $driver = trim(strtolower($driver));
+
         foreach (self::connectionStuff($driver) as $connection)
         {
-            $pattern = '#^'. $driver .'$#i';
-
-            if(preg_match($pattern, $connection->getDriverName()))
+            if(preg_match('#^'. $driver .'$#i', $connection->getDriverName()))
             {
                 return $connection;
             }
         }
+
+        throw new DatabaseException('Can not get connection for driver ('. $driver . ')');
     }
+
 
 
     /**
@@ -288,6 +290,11 @@ class Database
     */
     private static function getDsnByDriver($driver)
     {
+        if($driver === 'sqlite')
+        {
+            return sprintf('%s:%s', $driver, self::config('database'));
+        }
+
         return sprintf('%s:host=%s;port=%s;dbname=%s;charset=%s',
             $driver,
             self::config('host'),
@@ -310,12 +317,11 @@ class Database
 
         return [
             new MySqlConnection($dsn,
-                    self::config('username'),
-                    self::config('password'),
-                    self::config('options')
+                self::config('username'),
+                self::config('password'),
+                self::config('options')
             ),
-            new SqliteConnection(
-           $driver.':'. self::config('database'),
+            new SqliteConnection($dsn,
        null,
        null,
                 self::config('options')
@@ -326,9 +332,9 @@ class Database
                 self::config('options')
             ),
             new OracleConnection($dsn,
-                    self::config('username'),
-                    self::config('password'),
-                    self::config('options')
+                self::config('username'),
+                self::config('password'),
+                self::config('options')
              )
             ];
 

@@ -30,7 +30,17 @@ class Kernel implements HttpKernelContract
     /**
      * @var array
     */
-    protected $middlewares = [];
+    protected $middlewarePriority = [
+        /*
+        \Jan\Component\Session\Middleware\StartSession::class,
+        \Jan\Component\View\Middleware\ShareErrorsFromSession::class,
+        \Jan\Component\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+        \Jan\Component\Routing\Middleware\ThrottleRequests::class,
+        \Jan\Component\Session\Middleware\AuthenticateSession::class,
+        \Jan\Component\Routing\Middleware\SubstituteBindings::class,
+        \Jan\Component\Auth\Middleware\Authorize::class,
+        */
+    ];
 
 
 
@@ -98,7 +108,7 @@ class Kernel implements HttpKernelContract
     */
     protected function respond(ResponseInterface $response)
     {
-
+         //
     }
 
 
@@ -139,6 +149,8 @@ class Kernel implements HttpKernelContract
     {
         return $this->container->get(FileSystem::class);
     }
+
+
 
     /**
      * Load classe aliases

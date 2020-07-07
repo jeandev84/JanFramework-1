@@ -107,7 +107,7 @@ class RouteDispatcher
         $params = $route['matches'];
 
         $middleware = $this->container->get('middleware');
-        $middleware->addStack(array_merge($route['middleware'], $this->middleware));
+        $middleware->stack(array_merge($route['middleware'], $this->middleware));
         $response = $middleware->handle($request, $response);
 
         if(is_string($target) && strpos($target, '@') !== false)

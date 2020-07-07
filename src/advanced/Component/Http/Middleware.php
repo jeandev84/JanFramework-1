@@ -4,7 +4,6 @@ namespace Jan\Component\Http;
 
 use Jan\Component\Http\Contracts\MiddlewareInterface;
 use Jan\Component\Http\Contracts\RequestInterface;
-use Jan\Component\Http\Contracts\ResponseInterface;
 
 
 
@@ -15,7 +14,6 @@ use Jan\Component\Http\Contracts\ResponseInterface;
 class Middleware
 {
 
-
        /** @var  mixed */
        protected $start;
 
@@ -23,12 +21,11 @@ class Middleware
        /**
         * MiddlewareStack constructor.
        */
-      public function __construct()
-      {
-          $this->start = function (RequestInterface $request, ResponseInterface $response) {
-              return $response;
+       public function __construct()
+       {
+          $this->start = function (RequestInterface $request) {
+              return true; /* new Response(); */
           };
-
       }
 
 
@@ -40,9 +37,9 @@ class Middleware
       {
           $next = $this->start;
 
-          $this->start = function (RequestInterface $request, ResponseInterface $response) use ($middleware, $next) {
+          $this->start = function (RequestInterface $request) use ($middleware, $next) {
 
-                return $middleware->__invoke($request, $response, $next);
+                return $middleware->__invoke($request, $next);
           };
 
           return $this;
@@ -52,7 +49,7 @@ class Middleware
       /**
         * @param array $middlewares
       */
-      public function addStack(array $middlewares)
+      public function stack(array $middlewares)
       {
            foreach ($middlewares as $middleware)
            {
@@ -61,14 +58,14 @@ class Middleware
       }
 
 
-     /**
-      * Run all middlewares
-      * @param RequestInterface $request
-      * @param ResponseInterface $response
-      * @return mixed
+      /**
+       * Middleware handle
+       *
+       * @param RequestInterface $request
+       * @return mixed
       */
-      public function handle(RequestInterface $request, ResponseInterface $response)
+      public function handle(RequestInterface $request)
       {
-          return call_user_func_array($this->start, [$request, $response]);
+          return call_user_func($this->start, $request);
       }
 }

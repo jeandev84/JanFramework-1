@@ -54,16 +54,30 @@ class Application extends Container
     */
     public function __construct(string $basePath = null)
     {
+        $this->controlPhpVersion();
+
         if ($basePath) {
             $this->setBasePath($basePath);
         }
 
-        $this->loadCoreAliases();
+        // $this->loadCoreAliases();
+        $this->registerCoreAliases();
         $this->registerBaseBindings();
         $this->registerBaseServiceProviders();
-        // $this->registerCoreContainerAliases();
     }
 
+
+    // TODO Refactoring
+    private function controlPhpVersion()
+    {
+        if(! version_compare(PHP_VERSION, '7.1.0', '>='))
+        {
+            exit(
+                "This Application use version more or equals to <b>7.1.0</b> or your PHP version is <strong>"
+                . PHP_VERSION ."</strong>! Please change your version.."
+            );
+        }
+    }
 
 
     /**
@@ -141,7 +155,7 @@ class Application extends Container
      *
      * @return void
     */
-    protected function registerCoreContainerAliases()
+    protected function registerCoreAliases()
     {
         if($aliases = $this->coreAliases())
         {

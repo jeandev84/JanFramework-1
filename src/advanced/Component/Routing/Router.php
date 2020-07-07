@@ -333,6 +333,7 @@ class Router implements RouterInterface
           ];
 
           $this->setRouteName($name, $path);
+          $this->setGroupPathMiddleware($path);
           return $this;
     }
 
@@ -388,6 +389,18 @@ class Router implements RouterInterface
         return $path;
     }
 
+
+    /**
+     * mapMiddleware
+     * @param string $path
+    */
+    private function setGroupPathMiddleware(string $path)
+    {
+        if($middleware = $this->getOption('middleware'))
+        {
+            $this->addMiddleware($path, $middleware);
+        }
+    }
 
     /**
      * @param $target
@@ -491,12 +504,21 @@ class Router implements RouterInterface
      */
      public function middleware(array $middleware = [])
      {
-        $this->middleware[$this->route['path']] = $middleware;
-
+        $this->addMiddleware($this->route['path'], $middleware);
         return $this;
      }
 
 
+     /**
+      * @param string $path
+      * @param array $middleware
+     */
+     private function addMiddleware(string $path, array $middleware)
+     {
+          $this->middleware[$path] = $middleware;
+     }
+     
+     
 
     /**
      * @param string $name
