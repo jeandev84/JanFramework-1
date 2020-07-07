@@ -346,14 +346,13 @@ class Router implements RouterInterface
     */
     public function match(string $requestMethod, string $requestUri)
     {
-        $this->isPrettyUrl = false;
          foreach ($this->routes as $route)
          {
              list($methods, $path) = array_values($route);
 
              if($this->isMathMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
              {
-                 dd(array_merge($route, $this->getNewParams($path)));
+                 return array_merge($route, $this->getNewParams($path));
              }
          }
 
