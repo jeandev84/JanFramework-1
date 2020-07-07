@@ -17,9 +17,6 @@ class Env
     protected $basePath;
 
 
-    /** @var bool  */
-    protected $debug = false;
-
 
     /**
      * Env constructor.
@@ -27,20 +24,7 @@ class Env
     */
     public function __construct(string $basePath)
     {
-        $this->basePath = rtrim($basePath, '\/');
-    }
-
-
-    /**
-     * Set status debug for mode development (DEBUG)
-     *
-     * @param bool $status
-     * @return Env
-    */
-    public function debug($status = false)
-    {
-        $this->debug = $status;
-        return $this;
+         $this->basePath = rtrim($basePath, '\/');
     }
 
 
@@ -50,22 +34,19 @@ class Env
     */
     public function load()
     {
-        foreach ($this->getEnvironements() as $environment)
+        foreach ($this->getEnvironements() as $env)
         {
-            /* $environment = trim(str_replace("\r\n", '', $environment)); */
-            $environment = trim(str_replace("\n", '', $environment));
+            $env = trim(str_replace("\n", '', $env)); // "\r\n"
 
-            if($this->isAvailableEnvironment($environment))
+            if($this->isAvailableEnvironment($env))
             {
-                 putenv($environment);
-                 list($key, $value) = explode('=', $environment);
-                 if($this->debug === true) {
-                     $_ENV[$key] = $value;
-                 }
+                 putenv($env);
+                 list($key, $value) = explode('=', $env);
+                 $_ENV[$key] = $value;
             }
         }
 
-        return $_ENV ?? [];
+        return $_ENV;
     }
 
 
@@ -83,6 +64,7 @@ class Env
         {
             throw new InvalidPathException(sprintf('Can not find file .env'));
         }
+
         return file($filename);
     }
 

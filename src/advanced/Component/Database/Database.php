@@ -32,12 +32,12 @@ class Database
      */
      private static $config = [
         'driver'     => 'mysql',
-        'database'   => 'janframework',
+        'database'   => 'homestand',
         'host'       => '127.0.0.1',
         'port'       => '3306',
         'charset'    => 'utf8',
         'username'   => 'root',
-        'password'   => '',
+        'password'   => 'secret',
         'collation'  => 'utf8_unicode_ci',
         'options'    => [],
         'prefix'     => '',

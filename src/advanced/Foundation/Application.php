@@ -11,6 +11,7 @@ use Jan\Component\Http\Contracts\ResponseInterface;
 use Jan\Component\Routing\Exception\RouterException;
 use Jan\Component\Routing\Route;
 use Jan\Foundation\Exceptions\NotFoundHttpException;
+use Jan\Foundation\Providers\ConfigServiceProvider;
 use ReflectionException;
 
 
@@ -139,14 +140,7 @@ class Application extends Container
     */
     protected function registerBaseServiceProviders()
     {
-         // add only providers without runServiceProvider
-         // get all providers and run them
-         $this->addServiceProviders([
-             \Jan\Foundation\Providers\FileSystemServiceProvider::class,
-             \Jan\Foundation\Providers\AppServiceProvider::class,
-             \Jan\Foundation\Providers\RouteServiceProvider::class,
-             \Jan\Foundation\Providers\ViewServiceProvider::class
-         ]);
+         $this->addServiceProviders($this->getBaseProviders());
     }
 
 
@@ -157,6 +151,7 @@ class Application extends Container
     */
     protected function registerCoreAliases()
     {
+        /*
         if($aliases = $this->coreAliases())
         {
             foreach ($aliases as $alias => $original)
@@ -164,25 +159,36 @@ class Application extends Container
                 $this->setAlias($alias, $original);
             }
         }
+        */
     }
 
 
-    public function loadCoreAliases()
-    {
-          // Autoloading
-    }
 
     /**
-     * @return string[]
+     * @return array
+     */
+    private function getBaseProviders()
+    {
+        return [
+            'Jan\Foundation\Providers\AppServiceProvider',
+            'Jan\Foundation\Providers\FileSystemServiceProvider',
+            'Jan\Foundation\Providers\ConfigServiceProvider',
+            //'Jan\Foundation\Providers\LoaderServiceProvider',
+            'Jan\Foundation\Providers\RouteServiceProvider',
+            'Jan\Foundation\Providers\DatabaseServiceProvider',
+            //'Jan\Foundation\Providers\MiddlewareServiceProvider',
+            //'Jan\Foundation\Providers\ConsoleServiceProvider',
+            'Jan\Foundation\Providers\ViewServiceProvider'
+        ];
+    }
+
+
+
+    /**
+     * @return array
     */
     private function coreAliases()
     {
-        /*
-        return [
-          'Jan\Component\DI\Container' => 'Jan\Component\DI\Contracts\ContainerInterface',
-          'Jan\Component\Http\Request' => 'Jan\Component\Http\Contracts\RequestInterface',
-          'Jan\Component\Http\Response' => 'Jan\Component\Http\Contracts\ResponseInterface',
-        ];
-        */
+        //
     }
 }

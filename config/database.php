@@ -13,22 +13,21 @@ return [
     'sqlite' => [
         'driver'   => 'sqlite',
         'database' => '../example.sqlite',
-        'options'  => [],
-        'prefix'   => ''
+        'options'  => []
     ],
     'mysql' => [
-        'driver'    => 'mysql',
-        'database'  => 'jframework',
-        'host'      => '127.0.0.1',
-        'port'      => '3306',
-        'charset'   => 'utf8',
-        'username'  => 'root',
-        'password'  => '',
-        'collation' => 'utf8_unicode_ci',
-        'options'   => [],
-        'prefix'    => '',
-        'engine'    => 'innoDB',
-        'somekey'   => 'ddd'
+        'driver'     => 'mysql',
+        'database'   => 'janframework',
+        'host'       => '127.0.0.1',
+        'port'       => '3306',
+        'charset'    => 'utf8',
+        'username'   => 'root',
+        'password'   => '',
+        'collation'  => 'utf8_unicode_ci',
+        'options'    => [],
+        'prefix'     => '',
+        'engine'     => 'innodb', // InnoDB, MyISAM
+        'migration_path' => ''
     ]
 ];
 
@@ -45,6 +44,6 @@ return [
     'collation' => 'utf8_unicode_ci',
     'options'   => [],
     'prefix'    => '',
-    'engine'    => 'innoDB'
+    'engine'    => 'innodb'
 ]
 */
