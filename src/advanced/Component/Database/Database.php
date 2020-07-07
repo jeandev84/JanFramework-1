@@ -166,8 +166,7 @@ class Database
     */
     public static function createTable(string $table, string $columnSettings)
     {
-        $sql = sprintf(
-    'CREATE TABLE `%s` IF NOT EXISTS (
+        $sql = sprintf('CREATE TABLE `%s` IF NOT EXISTS (
                  %s
             ) ENGINE=%s DEFAULT CHARSET=%s',
             $table,
