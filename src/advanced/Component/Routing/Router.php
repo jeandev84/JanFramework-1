@@ -366,7 +366,12 @@ class Router implements RouterInterface
      */
      private function mapMethods($methods)
      {
-         return is_array($methods) ? $methods : explode('|', $methods);
+         if(is_string($methods))
+         {
+             return explode('|', $methods);
+         }
+
+         return (array) $methods;
      }
 
 
