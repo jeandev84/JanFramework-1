@@ -2,6 +2,7 @@
 namespace Jan\Foundation\Providers;
 
 
+use App\Demo\Foo;
 use Jan\Component\DI\Container;
 use Jan\Component\DI\Contracts\BootableServiceProvider;
 use Jan\Component\DI\Contracts\ContainerInterface;
@@ -35,9 +36,7 @@ class AppServiceProvider extends ServiceProvider implements BootableServiceProvi
     */
     public function register()
     {
-        dd($this->container);
         # A ameliorer avec implements interfaces
-        /*
         $this->container->singleton(ContainerInterface::class, function () {
             return $this->container;
         });
@@ -59,7 +58,6 @@ class AppServiceProvider extends ServiceProvider implements BootableServiceProvi
         $this->container->singleton(ResponseInterface::class, function () {
             return $this->container->get(Response::class);
         });
-        */
     }
 
 

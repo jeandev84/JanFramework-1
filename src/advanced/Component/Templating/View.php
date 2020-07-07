@@ -44,6 +44,15 @@ class View
       }
 
 
+      /**
+        * @param $name
+        * @param $value
+      */
+      public function setVariable($name, $value)
+      {
+          $this->data[$name] = $value;
+      }
+
 
       /**
        * Set data

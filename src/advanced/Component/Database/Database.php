@@ -180,7 +180,7 @@ class Database
         $sql = sprintf('CREATE TABLE `%s` IF NOT EXISTS (
                  %s
             ) ENGINE=%s DEFAULT CHARSET=%s',
-            $table,
+       self::config('prefix'). $table,
             $columns,
             self::getEngine(),
             self::config('charset')
