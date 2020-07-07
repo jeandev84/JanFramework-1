@@ -51,36 +51,28 @@ class Router implements RouterInterface
       /**
        * @var array
       */
-      private $patterns = [
-          'id'   => '[0-9]+',
-          'slug' => '[a-z\-0-9]+'
-      ];
+      private $patterns = ['id'   => '[0-9]+', 'slug' => '[a-z\-0-9]+'];
 
 
-      /**
-       * @var array
-      */
-      private $formatParams = [
-          '{([\w]+)}',
-          ':([\w]+)'
-      ];
+      /** @var string[]  */
+      private $formatParams = ['{([\w]+)}', ':([\w]+)'];
 
 
-      /**
-       * @var array
-      */
+      /** @var array  */
       private $middleware = [];
 
 
-      /**
-       * @var string
-      */
+      /** @var string */
       private $baseUrl;
 
 
 
       /** @var bool  */
       private $isPrettyUrl = true;
+
+
+      /** @var string  */
+      private $urlExtension = 'php';
 
 
       /**
@@ -94,11 +86,23 @@ class Router implements RouterInterface
 
 
       /**
-        * @param bool $status
+       * @param bool $status
+       * @return Router
       */
       public function isPrettyUrl(bool $status)
       {
           $this->isPrettyUrl = $status;
+
+          return $this;
+      }
+
+
+      /**
+       * @param string $urlExtension
+      */
+      public function setUrlExtension(string $urlExtension)
+      {
+           $this->urlExtension = $urlExtension;
       }
 
 
@@ -284,7 +288,7 @@ class Router implements RouterInterface
      * @throws RouterException
      *
      * Example (path => 'api/', 'controller' => 'PostController')
-     */
+    */
     public function resource(string $path, string $controller)
     {
         $name = str_replace('/', '.', trim($path, '/'));
@@ -306,8 +310,10 @@ class Router implements RouterInterface
     */
     public function api($namespace = '')
     {
-
+        //
     }
+
+
 
     /**
      * @param $methods
@@ -340,13 +346,14 @@ class Router implements RouterInterface
     */
     public function match(string $requestMethod, string $requestUri)
     {
+        $this->isPrettyUrl = false;
          foreach ($this->routes as $route)
          {
              list($methods, $path) = array_values($route);
 
              if($this->isMathMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
              {
-                 return array_merge($route, $this->getNewParams($path));
+                 dd(array_merge($route, $this->getNewParams($path)));
              }
          }
 
@@ -360,14 +367,7 @@ class Router implements RouterInterface
      */
      private function mapMethods($methods)
      {
-         if(is_array($methods))
-         {
-             return $methods;
-         }
-
-         return explode('|', $methods);
-
-         /* return is_array($methods) ? $methods : explode('|', $methods); */
+         return is_array($methods) ? $methods : explode('|', $methods);
      }
 
 
@@ -406,12 +406,19 @@ class Router implements RouterInterface
     */
     private function getNewParams($path)
     {
-         return [
-             'pattern' => $this->generatePattern($path),
-             'matches' => $this->getFilteredMatchParams(),
-             'name' => $this->getPathName($path),
-             'middleware' => $this->getMiddleware($path)
-         ];
+         $pattern = $this->generatePattern($path);
+         $matches = $this->getFilteredMatchParams();
+         $name = $this->getPathName($path);
+         $middleware = $this->getMiddleware($path);
+
+         /*
+         if(! $this->isPrettyUrl)
+         {
+              return compact('name', 'middleware');
+         }
+         */
+
+         return compact('pattern', 'matches', 'name', 'middleware');
      }
 
 
@@ -422,6 +429,14 @@ class Router implements RouterInterface
      */
      private function isMatchPaths(string $path, string $requestUri)
      {
+         /*
+         if(! $this->isPrettyUrl)
+         {
+             $path = (string) sprintf('%s.%s', $path, $this->urlExtension);
+             return  $path === $this->getPathUrl($requestUri);
+         }
+         */
+
          $pattern = $this->generatePattern($path);
          $uri = $this->getPathUrl($requestUri);
          $matches = [];
@@ -574,7 +589,11 @@ class Router implements RouterInterface
     {
         $qs = http_build_query($params);
 
-        return $this->baseUrl . '/' . trim($path, '/') . ($qs ? '?'. $qs : '');
+        return implode([
+            $this->baseUrl . '/' . trim($path, '/'),
+            $this->urlExtension,
+            ($qs ? '?'. $qs : '')
+        ]);
     }
 
 

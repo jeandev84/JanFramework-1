@@ -3,6 +3,7 @@ namespace Jan\Component\DI;
 
 
 use Closure;
+use Exception;
 use Jan\Component\DI\Contracts\BootableServiceProvider;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\DI\Exceptions\ContainerException;
@@ -45,6 +46,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
 
 
+
     /**
      * @return Container
      *
@@ -60,6 +62,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
         return static::$instance;
     }
+
 
 
     /**
@@ -135,7 +138,10 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function addServiceProviders(array $providers)
     {
-           if(! $providers) return;
+           if(! $providers) {
+
+               throw new ContainerException('Empty services providers!');
+           }
 
            foreach ($providers as $provider)
            {
@@ -161,11 +167,10 @@ class Container implements \ArrayAccess, ContainerInterface
 
             if($provides = $provider->getProvides())
             {
-                $this->provides[get_class($provider)] = $provides;
+                $this->provides[] = $provides;
             }
 
             $provider->register();
-
             $this->providers[] = $provider;
         }
     }
@@ -184,7 +189,7 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * @param string $providerClass
      * @return array
-     */
+    */
     public function getProvides($providerClass = '')
     {
         return $this->provides[$providerClass] ?? $this->provides;
@@ -375,7 +380,7 @@ class Container implements \ArrayAccess, ContainerInterface
      * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
-     */
+    */
     public function get($abstract, $arguments = [])
     {
            if(! $this->has($abstract))
@@ -383,37 +388,7 @@ class Container implements \ArrayAccess, ContainerInterface
                return $this->resolve($abstract, $arguments);
            }
 
-
-           // TODO Refactoring
-           // Get instance
-           if(isset($this->instances[$abstract]))
-           {
-               return $this->instances[$abstract];
-           }
-
-
-           if(isset($this->aliases[$abstract]))
-           {
-               $abstract = $this->aliases[$abstract];
-
-               if(isset($this->instances[$abstract]))
-               {
-                   return $this->instances[$abstract];
-               }
-
-               return $abstract;
-           }
-
-
-           // Get concrete
-           $concrete = $this->getConcrete($abstract);
-
-           if($this->isSingleton($abstract))
-           {
-               return $this->getSingleton($abstract, $concrete);
-           }
-
-           return $concrete;
+           return $this->getConcrete($abstract);
     }
 
 
@@ -426,16 +401,54 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function getConcrete($abstract)
     {
+        $concrete = $this->resolvedConcrete($abstract);
+
+        // Get instances
+        if(isset($this->instances[$abstract]))
+        {
+            return $this->instances[$abstract];
+        }
+
+        // Get aliases
+        if(isset($this->aliases[$abstract]))
+        {
+            $abstract = $this->aliases[$abstract];
+
+            if(isset($this->instances[$abstract]))
+            {
+                return $this->instances[$abstract];
+            }
+
+            return $abstract;
+        }
+
+
+        if(is_string($concrete) && class_exists($concrete)) // isResolvable()
+        {
+            return $this->resolve($concrete);
+        }
+
+
+        if($this->isSingleton($abstract))
+        {
+            return $this->getSingleton($abstract, $concrete);
+        }
+
+        return $concrete;
+    }
+
+
+    /**
+     * @param $abstract
+     * @return mixed
+    */
+    private function resolvedConcrete($abstract)
+    {
         $concrete = $this->bindings[$abstract]['concrete'] ?? null;
 
         if($concrete instanceof Closure)
         {
             return $concrete($this);
-        }
-
-        if(class_exists($concrete))
-        {
-            return $this->resolve($concrete);
         }
 
         return $concrete;
@@ -467,7 +480,10 @@ class Container implements \ArrayAccess, ContainerInterface
           }
 
           $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
-          return $this->instances[$abstract] = $reflectedClass->newInstanceArgs($dependencies);
+          $instance = $reflectedClass->newInstanceArgs($dependencies);
+
+          // Get all methods class and resolve them
+          return $this->instances[$abstract] = $instance;
     }
 
 

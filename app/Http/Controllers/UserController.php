@@ -36,8 +36,11 @@ class UserController extends Controller
         }
 
 
-       public function demo()
-       {
+        /**
+         * @throws \Exception
+        */
+        public function demo()
+        {
             // Database::connect([]);
             // dump(Database::pdo()->execute('SELECT * FROM users', [], User::class)->get());
             // Database::disconnect();
@@ -60,7 +63,8 @@ class UserController extends Controller
                $table->string('username', 200);
                $table->string('password');
                $table->string('role');
+               $table->timestamps();
             });
-     }
+       }
 
 }
