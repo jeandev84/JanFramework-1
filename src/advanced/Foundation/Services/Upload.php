@@ -12,55 +12,39 @@ use Jan\Component\Http\UploadedFile;
 class Upload
 {
 
-      /**
-       * @var array
-      */
-      private $uploadedFiles = [];
+     /** @var string */
+     private $uploadDir;
 
 
       /**
        * Upload constructor.
-       * @param array $uploadedFiles
+       * @param $uploadDir
       */
-      public function __construct(array $uploadedFiles = [])
+      public function __construct(string $uploadDir='')
       {
-            if($uploadedFiles)
-            {
-                $this->setUploadedFiles($uploadedFiles);
-            }
+          $this->uploadDir = $uploadDir;
+      }
+
+
+      /**
+       * @param UploadedFile $uploadedFile
+       * @return void
+      */
+      public function move(UploadedFile $uploadedFile)
+      {
+          $filename = md5($uploadedFile->getFilename()) . '.'. $uploadedFile->getExtension();
+          $uploadedFile->move($this->uploadDir, $filename);
       }
 
 
       /**
        * @param array $uploadedFiles
       */
-      public function setUploadedFiles($uploadedFiles)
+      public function moves($uploadedFiles = [])
       {
-          $this->uploadedFiles = $uploadedFiles;
-      }
-
-
-      /**
-       * @param string $target
-       * @param string $filename
-       * @return array
-      */
-      public function move($target, $filename = null)
-      {
-          $uploaded = [];
-          foreach ($this->uploadedFiles as $uploadedFile)
+          foreach ($uploadedFiles as $uploadedFile)
           {
-              if(! $uploadedFile instanceof UploadedFile)
-              {
-                   exit('File is not uploadeable');
-              }
-
-              if($uploadedFile->move($target, $filename))
-              {
-                  $uploaded[] = $filename;
-              }
+              $this->move($uploadedFile);
           }
-
-          return $uploaded;
       }
 }
