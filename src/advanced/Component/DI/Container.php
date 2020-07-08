@@ -3,13 +3,11 @@ namespace Jan\Component\DI;
 
 
 use Closure;
-use Exception;
 use Jan\Component\DI\Contracts\BootableServiceProvider;
 use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\DI\Exceptions\ContainerException;
 use Jan\Component\DI\Exceptions\ResolverDependencyException;
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
-use phpDocumentor\Reflection\Types\Object_;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -502,10 +500,30 @@ class Container implements \ArrayAccess, ContainerInterface
     }
 
 
+
+    /**
+     * @param ReflectionClass $reflectedClass
+     * @return object
+    */
+    private function resolveInstance(ReflectionClass $reflectedClass, $arguments = [])
+    {
+       if($reflectedClass->isInstantiable())
+       {
+           if(! $constructor = $reflectedClass->getConstructor())
+           {
+               return $reflectedClass->newInstance();
+           }
+
+           $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
+           return $reflectedClass->newInstanceArgs($dependencies);
+       }
+    }
+
+
     /**
      * @param $abstract
      * @return array
-    */
+     */
     public function getImplementedClasses($abstract)
     {
         $implements = [];
@@ -527,27 +545,6 @@ class Container implements \ArrayAccess, ContainerInterface
             }
         }
     }
-
-
-
-    /**
-     * @param ReflectionClass $reflectedClass
-     * @return object
-    */
-    private function resolveInstance(ReflectionClass $reflectedClass, $arguments = [])
-    {
-       if($reflectedClass->isInstantiable())
-       {
-           if(! $constructor = $reflectedClass->getConstructor())
-           {
-               return $reflectedClass->newInstance();
-           }
-
-           $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
-           return $reflectedClass->newInstanceArgs($dependencies);
-       }
-    }
-
 
 
     /**

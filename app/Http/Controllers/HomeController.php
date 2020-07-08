@@ -43,8 +43,13 @@ class HomeController extends Controller
       public function contact(Request $request, Upload $uploader)
       {
           echo $request->getMethod() . ' ' . $request->getPath();
+
           // dump($_POST, $_FILES);
-          dump($uploadedFiles = $request->file('contact'));
+          // dump($uploadedFiles = $request->file('contact'));
+
+          $uploadedFiles = $request->file('contact');
+
+          dump($uploadedFiles);
 
           // Image uploader
           // $uploader->upload($uploadedFiles);

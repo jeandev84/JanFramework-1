@@ -22,7 +22,11 @@ class Upload
       */
       public function __construct(string $uploadDir='')
       {
-          // $this->uploadDir = $uploadDir;
+          if($uploadDir)
+          {
+              $this->uploadDir = $uploadDir;
+          }
+
           $this->uploadDir = str_replace('src/advanced/Foundation/Services', '', __DIR__);
           $this->uploadDir .= 'public/uploads/';
       }
