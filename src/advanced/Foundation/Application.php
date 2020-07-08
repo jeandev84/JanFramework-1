@@ -173,7 +173,7 @@ class Application extends Container
             'Jan\Foundation\Providers\AppServiceProvider',
             'Jan\Foundation\Providers\FileSystemServiceProvider',
             'Jan\Foundation\Providers\ConfigServiceProvider',
-            //'Jan\Foundation\Providers\LoaderServiceProvider',
+            'Jan\Foundation\Providers\LoaderServiceProvider',
             'Jan\Foundation\Providers\RouteServiceProvider',
             'Jan\Foundation\Providers\DatabaseServiceProvider',
             //'Jan\Foundation\Providers\MiddlewareServiceProvider',

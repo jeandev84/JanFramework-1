@@ -3,6 +3,7 @@ namespace Jan\Foundation\Providers;
 
 
 use Jan\Component\DI\ServiceProvider\ServiceProvider;
+use Jan\Foundation\Loader;
 
 
 /**
@@ -17,6 +18,8 @@ class LoaderServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // TODO: Implement register() method.
+        $this->container->singleton(Loader::class, function () {
+            return new Loader($this->container);
+        });
     }
 }

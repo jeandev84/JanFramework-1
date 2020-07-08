@@ -34,19 +34,21 @@ class HomeController extends Controller
 
     /**
      * @param Request $request
-     * @param Upload $upload
+     * @param Upload $uploader
      * @return Response
      * @throws ContainerException
      * @throws ResolverDependencyException
      * @throws \ReflectionException
      */
-      public function contact(Request $request, Upload $upload)
+      public function contact(Request $request, Upload $uploader)
       {
           echo $request->getMethod() . ' ' . $request->getPath();
           // dump($_POST, $_FILES);
           dump($uploadedFiles = $request->file('contact'));
-          // $upload->uploads($uploadedFiles);
-          dump($upload);
+
+          // Image uploader
+          // $uploader->upload($uploadedFiles);
+
           return $this->render('blog/home/contact');
       }
 

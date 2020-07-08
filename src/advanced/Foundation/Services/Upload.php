@@ -22,17 +22,19 @@ class Upload
       */
       public function __construct(string $uploadDir='')
       {
-          $this->uploadDir = $uploadDir;
+          // $this->uploadDir = $uploadDir;
+          $this->uploadDir = str_replace('src/advanced/Foundation/Services', '', __DIR__);
+          $this->uploadDir .= 'public/uploads/';
       }
 
 
       /**
-       * @param UploadedFile $uploadedFile
+       * @param $uploadedFile
        * @return void
       */
       public function move(UploadedFile $uploadedFile)
       {
-          $filename = md5($uploadedFile->getFilename()) . '.'. $uploadedFile->getExtension();
+          $filename = md5($uploadedFile->getFilename());
           $uploadedFile->move($this->uploadDir, $filename);
       }
 
@@ -40,11 +42,14 @@ class Upload
       /**
        * @param array $uploadedFiles
       */
-      public function moves($uploadedFiles = [])
+      public function upload($uploadedFiles)
       {
-          foreach ($uploadedFiles as $uploadedFile)
+          if($uploadedFiles)
           {
-              $this->move($uploadedFile);
+              foreach ($uploadedFiles as $uploadedFile)
+              {
+                  $this->move($uploadedFile);
+              }
           }
       }
 }
