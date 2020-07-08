@@ -53,37 +53,68 @@ class ArgvInput implements InputInterface
         $parses = $this->tokens;
         array_shift($parses);
 
-        $token = explode('=', $parses[0], 2);
-        switch (count($token))
+        if($parses)
         {
-            case 2:
+            $token = isset($parses[0]) ? explode('=', $parses[0], 2) : [];
+            $options = $parses[1] ?? [];
+
+            $tokenCount = count($token);
+            $optionCount = count($options);
+
+            if($tokenCount === 2 && ! $optionCount) {
+
                 # php console make:hello -model=User
                 $this->arguments[$token[0]] = $token[1]; // "-model=User"
-            break;
-            default:
+
+            } elseif ($tokenCount == 2 && $optionCount == 2) {
+
+                $this->arguments[$token[0]] = $token[1];
+                $this->options[$options[0]] = $options[1];
+
+            } else {
+
                 # php console make:hello HomeController
                 $this->arguments = (string) $token[0]; // "HomeController"
-            break;
+                $this->options   = $optionCount ? (string) $options[0] : '';
+            }
         }
-
     }
 
 
     /**
-     * @param null $input
-     * @return array
-    */
-    public function getArgument($input = null)
+     * @param string $input
+     * @return string
+     */
+    public function getArgument(string $input = '')
     {
-        if(! $input)
-        {
-            return $this->arguments;
-        }
-
-        return $this->arguments[$input] ?? null;
+        return $this->getParameter($this->arguments, $input);
     }
 
 
+    public function getOption(string $input = '')
+    {
+        return $this->getParameter($this->options, $input);
+    }
+
+    /**
+     * @param $parameters
+     * @param string $input
+     * @return string|null
+    */
+    private function getParameter($parameters, $input = '')
+    {
+        if(! $input)
+        {
+            if(is_string($parameters))
+            {
+                return $parameters;
+            }
+
+            return '';
+        }
+
+        return $parameters[$input] ?? null;
+    }
     /**
      * @return array
     */
