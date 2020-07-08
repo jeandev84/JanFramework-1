@@ -2,7 +2,9 @@
 namespace Jan\Component\Event;
 
 
+use Jan\Component\Event\Contract\Event;
 use Jan\Component\Event\Contract\Listener;
+
 
 
 /**
@@ -68,8 +70,10 @@ class Dispatcher
          return isset($this->listeners[$eventName]);
      }
 
+
      /**
       * @param Event $event
+      * @throws \ReflectionException
      */
      public function dispatch(Event $event)
      {
