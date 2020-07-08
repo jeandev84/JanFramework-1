@@ -35,6 +35,7 @@ class HelloCommand extends Command
      */
      public function execute(InputInterface $input, OutputInterface $output)
      {
+          echo $input->getArgument('-model') . "\n";
           $output->writeln('Привет! как дела ?');
      }
 }

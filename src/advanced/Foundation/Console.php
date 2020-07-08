@@ -33,6 +33,18 @@ class Console
      }
 
 
+    /**
+     * @param array $commands
+    */
+    public function loadCommands(array $commands)
+    {
+        foreach ($commands as $command)
+        {
+            $this->addCommand($command);
+        }
+    }
+
+
      /**
       * @param Command $command
      */
@@ -63,24 +75,13 @@ class Console
 
 
      /**
-      * @param array $commands
-     */
-     public function loadCommands(array $commands)
-     {
-         foreach ($commands as $command)
-         {
-              $this->addCommand($command);
-         }
-     }
-
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return string
+      * @param InputInterface $input
+      * @param OutputInterface $output
+      * @return string
+      * @throws \Exception
     */
-    public function run(InputInterface $input, OutputInterface $output)
-    {
+     public function run(InputInterface $input, OutputInterface $output)
+     {
           $name = $input->getFirstArgument();
 
           if($this->hasCommand($name))
@@ -90,5 +91,5 @@ class Console
           }
 
           return $output->send();
-    }
+     }
 }
