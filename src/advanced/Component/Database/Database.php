@@ -58,6 +58,7 @@ class Database
 
       /**
        * @param array $config
+       * @return \PDO
        * @throws DatabaseException
       */
       public static function connect(array $config = [])
@@ -68,6 +69,8 @@ class Database
            {
                self::$connection = self::pdo();
            }
+
+           return self::$connection->getConnection();
       }
       
 
