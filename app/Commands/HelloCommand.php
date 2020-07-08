@@ -14,12 +14,13 @@ use Jan\Component\Console\Output\OutputInterface;
 class HelloCommand extends Command
 {
 
-    /** @var string  */
-    protected $name = 'make:hello';
+
+     /** @var string  */
+     protected $name = 'make:hello';
 
 
-    /**
-     * Configure command
+     /**
+      * Configure command
      */
      public function configure()
      {

@@ -19,4 +19,12 @@ interface Kernel
        * @return mixed
       */
       public function handle(InputInterface $input, OutputInterface $output);
+
+
+      /**
+       * @param InputInterface $input
+       * @param $status
+       * @return mixed
+      */
+      public function terminate(InputInterface $input, $status);
 }

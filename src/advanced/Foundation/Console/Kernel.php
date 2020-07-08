@@ -50,6 +50,7 @@ class Kernel implements ConsoleKernelContract
     public function handle(InputInterface $input, OutputInterface $output)
     {
          $console = new Console();
+         $console->loadCommands($this->commands);
          return $console->run($input, $output);
     }
 

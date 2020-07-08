@@ -56,4 +56,13 @@ class Upload
               }
           }
       }
+
+
+      /**
+       * @param $uploadedFiles
+      */
+      public function remove($uploadedFiles)
+      {
+            //
+      }
 }

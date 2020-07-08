@@ -9,29 +9,14 @@ namespace Jan\Component\Console\Output;
 class ConsoleOutput implements OutputInterface
 {
 
-    /**
-     * @var array
-    */
-    protected $messages = [];
-
-
-    /**
-     * Output constructor.
-    */
-    public function __construct()
-    {
-    }
-
 
     /**
      * @param string $message
-     * @return ConsoleOutput
-     */
+     * @return OutputInterface
+    */
     public function write(string $message)
     {
-        $this->messages[] = $message;
-
-        return $this;
+        // TODO: Implement write() method.
     }
 
 
@@ -41,9 +26,7 @@ class ConsoleOutput implements OutputInterface
     */
     public function writeln(string $message)
     {
-        $this->write($message ."\n");
-
-        return $this;
+        // TODO: Implement writeln() method.
     }
 
 
@@ -52,15 +35,15 @@ class ConsoleOutput implements OutputInterface
     */
     public function getFormater()
     {
-          //
+        // TODO: Implement getFormater() method.
     }
+
 
     /**
      * @return mixed
     */
     public function send()
     {
-        return join("\n", $this->messages);
+        // TODO: Implement send() method.
     }
-
 }

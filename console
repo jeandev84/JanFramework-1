@@ -16,7 +16,6 @@ require(__DIR__ . '/vendor/autoload.php');
 $app = require(__DIR__ . '/bootstrap/app.php');
 
 
-// TO FIX
 $kernel = $app->get(Jan\Contracts\Console\Kernel::class);
 
 $status = $kernel->handle(
@@ -24,5 +23,5 @@ $status = $kernel->handle(
     new \Jan\Component\Console\Output\ConsoleOutput()
 );
 
-// $kernel->terminate($input, $status);
+$kernel->terminate($input, $status);
 exit($status);

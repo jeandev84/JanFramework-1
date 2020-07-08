@@ -16,11 +16,6 @@ class Console
 {
 
      /**
-      * @var string
-     */
-     private $defaultCommand = 'list';
-
-     /**
       * @var array
      */
      private $commands = [];
@@ -28,17 +23,9 @@ class Console
 
     /**
      * Console constructor.
-     * @param Request|null $request
      */
-     public function __construct(Request $request = null)
+     public function __construct()
      {
-         /*
-         if(! $request->isCli())
-         {
-              die('Access denied');
-         }
-         */
-
          if(php_sapi_name() != 'cli')
          {
              exit('Access denied!');
@@ -51,14 +38,14 @@ class Console
      */
      public function addCommand(Command $command)
      {
-         $this->commands[] = $command;
+         $this->commands[$command->getName()] = $command;
      }
 
 
     /**
      * @param array $commands
     */
-    public function addCommands(array $commands)
+    public function loadCommands(array $commands)
     {
          foreach ($commands as $command)
          {
@@ -70,6 +57,7 @@ class Console
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return string
     */
     public function run(InputInterface $input, OutputInterface $output)
     {

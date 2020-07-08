@@ -2,7 +2,7 @@
 namespace App\Console;
 
 
-use Jan\Foundation\Http\Kernel as ConsoleKernel;
+use Jan\Foundation\Console\Kernel as ConsoleKernel;
 
 
 /**

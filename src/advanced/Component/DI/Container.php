@@ -164,7 +164,11 @@ class Container implements \ArrayAccess, ContainerInterface
                 $provider->boot();
             }
 
-            $this->provides[] = $provider->getProvides();
+            if($provides = $provider->getProvides())
+            {
+                $this->provides[] = $provides;
+            }
+
             $provider->register();
             $this->providers[] = $provider;
         }
@@ -529,11 +533,11 @@ class Container implements \ArrayAccess, ContainerInterface
             }
         }
 
-        foreach ($implements as $class)
+        foreach ($implements as $classname)
         {
-            if(array_key_exists($class, $this->instances))
+            if(array_key_exists($classname, $this->instances))
             {
-                return $this->instances[$class];
+                return $this->instances[$classname];
             }
         }
     }

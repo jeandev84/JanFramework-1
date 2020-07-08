@@ -56,6 +56,10 @@ class Database
       protected static $instance;
 
 
+      private function __construct() {}
+      private function __wakeup() {}
+
+
       /**
        * @param array $config
        * @return \PDO
