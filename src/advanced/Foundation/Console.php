@@ -42,16 +42,36 @@ class Console
      }
 
 
-    /**
-     * @param array $commands
-    */
-    public function loadCommands(array $commands)
-    {
+     /**
+      * @param $name
+      * @return bool
+     */
+     public function hasCommand($name)
+     {
+         return array_key_exists($name, $this->commands);
+     }
+
+
+     /**
+      * @param $name
+      * @return Command
+     */
+     public function getCommand($name): Command
+     {
+         return $this->commands[$name];
+     }
+
+
+     /**
+      * @param array $commands
+     */
+     public function loadCommands(array $commands)
+     {
          foreach ($commands as $command)
          {
               $this->addCommand($command);
          }
-    }
+     }
 
 
     /**
@@ -61,6 +81,14 @@ class Console
     */
     public function run(InputInterface $input, OutputInterface $output)
     {
-          return 'Console::run';
+          $name = $input->getFirstArgument();
+
+          if($this->hasCommand($name))
+          {
+               $command = $this->getCommand($name);
+               $command->execute($input, $output);
+          }
+
+          return $output->send();
     }
 }

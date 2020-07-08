@@ -2,6 +2,8 @@
 namespace Jan\Foundation\Console;
 
 
+use Jan\App;
+use Jan\Component\Console\Command\Command;
 use Jan\Component\Console\Input\InputInterface;
 use Jan\Component\Console\Output\OutputInterface;
 use Jan\Component\DI\Contracts\ContainerInterface;
@@ -27,7 +29,9 @@ class Kernel implements ConsoleKernelContract
      *
      * @var array
     */
-    protected $commands = [];
+    protected $commands = [
+        'App\Commands\HelloCommand'
+    ];
 
 
 
@@ -50,7 +54,9 @@ class Kernel implements ConsoleKernelContract
     public function handle(InputInterface $input, OutputInterface $output)
     {
          $console = new Console();
-         $console->loadCommands($this->commands);
+         $console->loadCommands(
+             $this->getResolvedCommandStuff()
+         );
          return $console->run($input, $output);
     }
 
@@ -65,4 +71,46 @@ class Kernel implements ConsoleKernelContract
          //
     }
 
+
+
+    /**
+     * @return array
+     */
+    protected function getResolvedCommandStuff()
+    {
+        $resolved = [];
+
+        foreach ($this->getCommands() as $command)
+        {
+            if($this->isCommand($command))
+            {
+                $resolved[] = $command;
+            }else{
+                $resolved[] = $this->container->get($command);
+            }
+        }
+
+        return $resolved;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getCommands()
+    {
+        // $commands = $this->container->get(Loader::class)->loadCommands(); // config/command.php
+
+        $commands = [];
+        return array_merge($commands, $this->commands);
+    }
+
+    /**
+     * @param $command
+     * @return bool
+    */
+    private function isCommand($command)
+    {
+        return $command instanceof Command;
+    }
 }

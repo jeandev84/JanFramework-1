@@ -24,10 +24,6 @@ abstract class Command implements CommandInterface
 
 
        /** @var string */
-       // protected $command;
-
-
-       /** @var string */
        protected $description = '';
 
 
@@ -35,9 +31,12 @@ abstract class Command implements CommandInterface
        protected $help = '';
 
 
+       /** @var array  */
+       protected $arguments = [];
 
-       /** @var InputBag */
-       private $inputBag;
+
+       /** @var array  */
+       protected $options = [];
 
 
        /**
@@ -52,7 +51,6 @@ abstract class Command implements CommandInterface
        */
        public function __construct()
        {
-            $this->inputBag = new InputBag();
             $this->configure();
        }
 
@@ -63,7 +61,7 @@ abstract class Command implements CommandInterface
        */
        public function setName(string $name)
        {
-           $this->makeSureValidName($name);
+           // $this->makeSureValidName($name);
            $this->name = $name;
 
            return $this;
@@ -75,8 +73,7 @@ abstract class Command implements CommandInterface
       */
       public function getName()
       {
-           // get resolved name
-           return trim($this->name);
+           return $this->name;
       }
 
 
@@ -130,10 +127,7 @@ abstract class Command implements CommandInterface
     */
     public function addArgument(string $name, string $description = '', $default = null)
     {
-        $this->inputBag->addArgument(
-            new InputArgument($name, $description, $default)
-        );
-
+        $this->arguments = compact('name', 'description', 'default');
         return $this;
     }
 
@@ -147,24 +141,22 @@ abstract class Command implements CommandInterface
     */
     public function addOption(string $name, $shortcut = null, string $description = '', $default = null)
     {
-           $this->inputBag->addOption(
-               new InputOption($name, $shortcut, $description, $default)
-           );
-
+           $this->options = compact('name', 'shortcut', 'description', 'default');
            return $this;
-      }
+    }
 
 
-      /**
+     /**
        * Make sure has valid command name.
        *
        * It must be non-empty and parts can optionally be separated by ":".
        *
        * @param string $name
        * @throws InvalidArgumentException When the name is invalid
-      */
-      protected function makeSureValidName(string $name)
-      {
+    */
+     protected function makeSureValidName(string $name = null)
+     {
+         $name = trim($this->name);
          /*
           Reference to do more sure and advanced
           $params = [];

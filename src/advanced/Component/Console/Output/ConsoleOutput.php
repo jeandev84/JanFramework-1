@@ -10,40 +10,46 @@ class ConsoleOutput implements OutputInterface
 {
 
 
+    /** @var array  */
+    private $messages = [];
+
+
     /**
      * @param string $message
      * @return OutputInterface
     */
     public function write(string $message)
     {
-        // TODO: Implement write() method.
+         $this->messages[] = $message;
+
+         return $this;
     }
 
 
     /**
      * @param string $message
-     * @return mixed
+     * @return OutputInterface
     */
     public function writeln(string $message)
     {
-        // TODO: Implement writeln() method.
+        return $this->write("$message\n");
     }
 
 
     /**
-     * @return mixed
+     * @return string
     */
     public function getFormater()
     {
-        // TODO: Implement getFormater() method.
+        return '';
     }
 
 
     /**
-     * @return mixed
+     * @return string
     */
     public function send()
     {
-        // TODO: Implement send() method.
+        return join("\n", $this->messages) . "\n";
     }
 }

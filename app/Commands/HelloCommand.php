@@ -35,6 +35,6 @@ class HelloCommand extends Command
      */
      public function execute(InputInterface $input, OutputInterface $output)
      {
-          //
+          $output->writeln('Привет! как дела ?');
      }
 }
