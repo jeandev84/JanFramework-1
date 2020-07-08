@@ -37,16 +37,16 @@ class AppServiceProvider extends ServiceProvider implements BootableServiceProvi
     public function register()
     {
         # A ameliorer avec implements interfaces
-        $this->container->singleton(ContainerInterface::class, function () {
-            return $this->container;
+        $this->container->singleton(ContainerInterface::class, function ($app) {
+            return $app;
         });
 
         $this->container->singleton(Request::class, function () {
             return Request::fromGlobals();
         });
 
-        $this->container->singleton(RequestInterface::class, function () {
-            return $this->container->get(Request::class);
+        $this->container->singleton(RequestInterface::class, function ($app) {
+            return $app->get(Request::class);
         });
 
 
@@ -55,8 +55,8 @@ class AppServiceProvider extends ServiceProvider implements BootableServiceProvi
         });
 
 
-        $this->container->singleton(ResponseInterface::class, function () {
-            return $this->container->get(Response::class);
+        $this->container->singleton(ResponseInterface::class, function ($app) {
+            return $app->get(Response::class);
         });
     }
 
