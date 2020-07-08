@@ -414,8 +414,6 @@ class Container implements \ArrayAccess, ContainerInterface
             return $this->instances[$abstract];
         }
 
-        // Get aliases
-        /*
         if(isset($this->aliases[$abstract]))
         {
             $abstract = $this->aliases[$abstract];
@@ -427,12 +425,6 @@ class Container implements \ArrayAccess, ContainerInterface
 
             return $abstract;
         }
-
-        if(is_string($concrete) && class_exists($concrete)) // isResolvable()
-        {
-            return $this->resolve($concrete);
-        }
-        */
 
         if(is_string($concrete) && class_exists($concrete))
         {
@@ -523,7 +515,7 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * @param $abstract
      * @return array
-     */
+    */
     public function getImplementedClasses($abstract)
     {
         $implements = [];
@@ -546,61 +538,6 @@ class Container implements \ArrayAccess, ContainerInterface
         }
     }
 
-
-    /**
-     * @param ReflectionClass $reflectionClass
-     * @return array|mixed|object|null
-     * @throws ContainerException
-     * @throws ReflectionException
-     * @throws ResolverDependencyException
-    */
-    public function resolveClassDependencies(ReflectionClass $reflectionClass)
-    {
-         /*
-         $classname = $reflectionClass->getName();
-
-         if($this->has($classname))
-         {
-             return $this->get($classname);
-         }
-
-         $interfaces = $reflectionClass->getInterfaces();
-
-         foreach ($interfaces as $interface)
-         {
-             if($dependency = $this->resolveClassDependencies($interface))
-             {
-                  $dependencies[] = $dependency;
-                 // return $dependency;
-             }
-         }
-
-         if($parentClass = $reflectionClass->getParentClass())
-         {
-             $dependencies[] = $this->resolveClassDependencies($parentClass);
-             return $this->resolveClassDependencies($parentClass);
-         }
-         */
-         /* return $dependencies; */
-
-    }
-
-    /*
-      private function resolving(ReflectionClass $reflectionClass)
-    {
-        $interfaces = $reflectionClass->getInterfaces();
-
-        foreach ($interfaces as $interface)
-        {
-            $name = $interface->getName();
-            if(! $this->bounded($name))
-            {
-                dd($name);
-            }
-        }
-    }
-
-    */
 
     /**
      * Resolve method dependencies
