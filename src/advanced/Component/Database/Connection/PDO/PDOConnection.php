@@ -90,4 +90,17 @@ class PDOConnection implements ConnectionInterface
     {
          throw new Exception('You must to set driver name!');
     }
+
+
+    /**
+     * @param $sql
+     * @param array $params
+     * @param null $classMap
+     * @return Statement
+    */
+    public function execute($sql, $params = [], $classMap = null)
+    {
+         $statement = new Statement($this->pdo);
+         return $statement->query($sql, $params, $classMap);
+    }
 }
