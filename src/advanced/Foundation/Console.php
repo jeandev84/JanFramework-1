@@ -33,10 +33,11 @@ class Console
 
      /**
       * Console constructor.
+      * @param bool $condition
      */
-     public function __construct()
+     public function __construct(bool $condition = false)
      {
-         if(php_sapi_name() != 'cli')
+         if($condition === true)
          {
              exit('Access denied!');
          }

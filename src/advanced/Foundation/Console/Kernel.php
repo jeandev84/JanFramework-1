@@ -2,13 +2,13 @@
 namespace Jan\Foundation\Console;
 
 
-use Jan\App;
 use Jan\Component\Console\Command\Command;
 use Jan\Component\Console\Input\InputInterface;
 use Jan\Component\Console\Output\OutputInterface;
 use Jan\Component\DI\Contracts\ContainerInterface;
+use Jan\Component\FileSystem\FileSystem;
 use Jan\Contracts\Console\Kernel as ConsoleKernelContract;
-use Jan\Foundation\Console;
+use Jan\Foundation\Facades\Console;
 
 
 /**
@@ -49,6 +49,7 @@ class Kernel implements ConsoleKernelContract
     public function __construct(ContainerInterface $container)
     {
          $this->container = $container;
+         $this->loadRoutes();
     }
 
 
@@ -60,11 +61,16 @@ class Kernel implements ConsoleKernelContract
     */
     public function handle(InputInterface $input, OutputInterface $output)
     {
-         $console = new Console();
-         $console->loadCommands(
+         if(php_sapi_name() != 'cli')
+         {
+             exit('Access denied!');
+         }
+
+         Console::instance()->loadCommands(
              $this->bootCommandStuff()
          );
-         return $console->run($input, $output);
+
+         return Console::instance()->run($input, $output);
     }
 
 
@@ -116,5 +122,21 @@ class Kernel implements ConsoleKernelContract
     private function isCommand($command)
     {
         return $command instanceof Command;
+    }
+
+
+    private function loadRoutes()
+    {
+        $this->getFileSystem()->load('/routes/console.php');
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    private function getFileSystem()
+    {
+        return $this->container->get(FileSystem::class);
     }
 }
