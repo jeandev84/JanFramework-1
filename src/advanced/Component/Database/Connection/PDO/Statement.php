@@ -22,7 +22,6 @@ class Statement
     protected $pdo;
 
 
-
     /**
      * @var PDOStatement
     */
@@ -48,18 +47,6 @@ class Statement
 
 
     /**
-     * @var string
-     */
-    protected $sql;
-
-
-    /**
-     * @var array
-    */
-    protected $params = [];
-
-
-    /**
       * Statement constructor.
       * @param PDO $pdo
     */
@@ -80,22 +67,8 @@ class Statement
         try {
 
             $this->statement = $this->pdo->prepare($sql);
-            $this->sql = $sql;
-            $this->params = $params;
             $this->classMap = $classMap;
-
-            // TODO remove to method execute
-            if($this->statement->execute($params))
-            {
-                $this->records[] = compact('sql', 'params');
-            }
-
-            /*
-            if($params && $this->statement->execute($params))
-            {
-                $this->records[] = compact('sql', 'params');
-            }
-            */
+            $this->execute($params);
 
         } catch (PDOException $e) {
 
@@ -112,19 +85,24 @@ class Statement
      * @param int $type
      * @return $this
      */
-    public function bindValues(string $param, $value, int $type = 0)
+    public function bindValue(string $param, $value, int $type = 0)
     {
         $this->bindValues[] = [$param, $value, $type];
         return $this;
     }
 
 
-
     /**
+     * @param array $params
      * @return $this
-     */
-    public function execute()
+    */
+    public function execute($params = [])
     {
+        if($params)
+        {
+            $this->statement->execute($params);
+        }
+
         if($this->bindValues)
         {
             foreach ($this->bindValues as $bindValues)
@@ -132,9 +110,10 @@ class Statement
                 list($param, $value, $type) = $bindValues;
                 $this->statement->bindValue($param, $value, $type);
             }
+
+            $this->statement->execute();
         }
 
-        $this->statement->execute();
         return $this;
     }
 
