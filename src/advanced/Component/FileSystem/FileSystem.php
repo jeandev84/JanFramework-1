@@ -37,8 +37,21 @@ class FileSystem
                );
            }
 
-           $this->root = $root;
+           $this->root($root);
       }
+
+
+      /**
+       * @param string $root
+       * @return FileSystem
+      */
+      public function root(string $root)
+      {
+          $this->root = rtrim($root, '/');
+
+          return $this;
+      }
+
 
 
       /**
@@ -50,7 +63,7 @@ class FileSystem
       public function resource(string $path)
       {
           return implode([
-              rtrim($this->root, '/'),
+              $this->root,
               DIRECTORY_SEPARATOR,
               $this->preparePath($path)
           ]);

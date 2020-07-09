@@ -12,4 +12,11 @@ use Jan\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
 
+     /**
+      * @var string[]
+     */
+     protected $commands = [
+         'App\Commands\DemoCommand',
+         'App\Commands\HelloCommand'
+     ];
 }

@@ -3,11 +3,11 @@ namespace Jan\Component\Console\Command;
 
 
 use InvalidArgumentException;
-use Jan\Component\Console\Input\InputArgument;
-use Jan\Component\Console\Input\InputBag;
 use Jan\Component\Console\Input\InputInterface;
-use Jan\Component\Console\Input\InputOption;
 use Jan\Component\Console\Output\OutputInterface;
+// use Jan\Component\Console\Input\InputArgument;
+// use Jan\Component\Console\Input\InputBag;
+// use Jan\Component\Console\Input\InputOption;
 
 
 /**
@@ -191,9 +191,13 @@ abstract class Command implements CommandInterface
        * @return mixed|void
        * @throws \Exception
       */
+      abstract public function execute(InputInterface $input, OutputInterface $output);
+
+
+      /*
       public function execute(InputInterface $input, OutputInterface $output)
       {
            throw new \Exception('Command must be executed!');
       }
-
+      */
 }

@@ -66,7 +66,7 @@ class ArgvInput implements InputInterface
                 # php console make:hello -model=User
                 $this->arguments[$token[0]] = $token[1]; // "-model=User"
 
-            } elseif ($tokenCount == 2 && $optionCount == 2) {
+            } elseif ($tokenCount === 2 && $optionCount === 2) {
 
                 $this->arguments[$token[0]] = $token[1];
                 $this->options[$options[0]] = $options[1];

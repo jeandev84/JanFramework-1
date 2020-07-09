@@ -29,10 +29,16 @@ class Kernel implements ConsoleKernelContract
      *
      * @var array
     */
-    protected $commands = [
-        'App\Commands\HelloCommand'
-    ];
+    protected $commands = [];
 
+
+    /**
+     * @var string[]
+    */
+    protected $defaultCommands = [
+        'Jan\Foundation\Commands\Generators\MakeCommand',
+        'Jan\Foundation\Commands\Generators\MakeControllerCommand'
+    ];
 
 
     /**
@@ -55,7 +61,7 @@ class Kernel implements ConsoleKernelContract
     {
          $console = new Console();
          $console->loadCommands(
-             $this->getResolvedCommandStuff()
+             $this->bootCommandStuff()
          );
          return $console->run($input, $output);
     }
@@ -76,7 +82,7 @@ class Kernel implements ConsoleKernelContract
     /**
      * @return array
      */
-    protected function getResolvedCommandStuff()
+    protected function bootCommandStuff()
     {
         $resolved = [];
 
@@ -99,10 +105,7 @@ class Kernel implements ConsoleKernelContract
      */
     private function getCommands()
     {
-        // $commands = $this->container->get(Loader::class)->loadCommands(); // config/command.php
-
-        $commands = [];
-        return array_merge($commands, $this->commands);
+        return array_merge($this->defaultCommands, $this->commands);
     }
 
     /**
