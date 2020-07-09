@@ -5,6 +5,7 @@ namespace Jan\Component\FileSystem;
 use Exception;
 use Jan\Component\FileSystem\Exceptions\FileSystemException;
 
+
 /**
  * Class FileSystem
  * @package Jan\Component\FileSystem
@@ -62,23 +63,15 @@ class FileSystem
       */
       public function resource(string $path)
       {
-          return implode([
-              $this->root,
-              DIRECTORY_SEPARATOR,
-              $this->preparePath($path)
-          ]);
-
-          /*
-          return rtrim($this->root, '/') . DIRECTORY_SEPARATOR. $this->preparePath($path);
-          */
+          return $this->root . DIRECTORY_SEPARATOR. $this->resolvePath($path);
       }
 
 
-     /**
-      * @param string $path
-      * @return string|string[]
-     */
-      private function preparePath(string $path)
+      /**
+       * @param string $path
+       * @return string|string[]
+      */
+      private function resolvePath(string $path)
       {
           return str_replace('/', DIRECTORY_SEPARATOR, trim($path, '/'));
       }

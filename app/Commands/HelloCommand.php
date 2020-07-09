@@ -16,7 +16,7 @@ class HelloCommand extends Command
 
 
     /** @var string  */
-    protected $name = 'make:hello';
+    protected $name = 'hello';
 
 
     /**
