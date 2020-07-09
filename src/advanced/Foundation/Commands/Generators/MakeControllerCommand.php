@@ -15,6 +15,14 @@ use Jan\Component\Console\Output\OutputInterface;
 class MakeControllerCommand extends Command
 {
 
+    /** @var string  */
+    protected $name = 'make:controller';
+
+
+    /** @var string  */
+    protected $description = 'Command make:controller permit to generate a new controller';
+
+
     /**
      * @param InputInterface|null $input
      * @param OutputInterface|null $output
@@ -22,6 +30,6 @@ class MakeControllerCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-          //
+          $output->write('Make controller');
     }
 }

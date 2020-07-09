@@ -40,6 +40,7 @@ class HelpCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
           // Do something
-          dd($this->commands);
+          // dump($this->commands);
+          $output->write(__CLASS__);
      }
 }

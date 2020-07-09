@@ -14,6 +14,22 @@ use Jan\Component\Console\Output\OutputInterface;
 class ListCommand extends Command
 {
 
+    /** @var string  */
+    protected $command = 'list';
+
+
+    /** @var array  */
+    protected $commands = [];
+
+
+    /**
+     * @param array $commands
+     */
+    public function setCommands(array $commands)
+    {
+        $this->commands = $commands;
+    }
+
     /**
      * @param InputInterface|null $input
      * @param OutputInterface|null $output
@@ -21,6 +37,24 @@ class ListCommand extends Command
     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        // TODO: Implement execute() method.
+        $output->write($this->getCommandList());
+    }
+
+
+    /**
+     * @return string
+    */
+    private function getCommandList()
+    {
+        $str = "Available commands list : \n";
+        foreach ($this->commands as $name => $command)
+        {
+           if(! \in_array($name, ['-help', 'list']))
+           {
+               $str .= sprintf("%s \n- %s \n", $name, $command->getDescription());
+           }
+        }
+
+        return $str;
     }
 }

@@ -24,6 +24,10 @@ class MakeCommand extends Command
     protected $name = 'make:command';
 
 
+    /** @var string  */
+    protected $description = 'Command make:command permit to generate a new command';
+
+
     /** @var FileSystem */
     protected $fileSystem;
 

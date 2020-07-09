@@ -23,6 +23,12 @@ class Console
      private $commands = [];
 
 
+     /** @var string  */
+     private $defaultCommand = 'list';
+
+
+     /** @var string  */
+     private $helpCommand = '-help';
 
 
      /**
@@ -72,11 +78,11 @@ class Console
 
      /**
       * @param $name
-      * @return Command
+      * @return null|Command
      */
-     public function getCommand($name): Command
+     public function getCommand($name): ?Command
      {
-         return $this->commands[$name];
+         return $this->commands[$name] ?? null;
      }
 
 
@@ -89,20 +95,53 @@ class Console
      public function run(InputInterface $input, OutputInterface $output)
      {
           $name = $input->getFirstArgument();
+          $argument = $input->getArgument();
+          $command = null;
+
+          if(! $name)
+          {
+             $name = $this->defaultCommand;
+          }
+
+          if(\ in_array($name, ['-help', '-h']))
+          {
+              $name = $this->helpCommand;
+          }
 
           if($this->hasCommand($name))
           {
                $command = $this->getCommand($name);
 
-               if(\ in_array($name, ['-help', '-h']))
+               if(method_exists($command, 'setCommands'))
                {
-                    // $command->setCommands($this->commands);
+                   $command->setCommands($this->commands);
                }
 
-               $command->execute($input, $output);
+               if(in_array($argument, ['-help', '-h']))
+               {
+                    // get command help
+                    $help = $command->getHelp();
+
+                    if(! $help)
+                    {
+                        $output->write(sprintf('Can not find help for command %s', $name));
+                    }else{
+                        $output->write(sprintf('%s : %s', $name, $help));
+                    }
+
+                    return $output->send();
+               }
           }
 
-          return $output->send();
+          if(! $command instanceof Command)
+          {
+              $output->write(sprintf('%s is not a valid command!', $name));
+
+          } else {
+
+              $command->execute($input, $output);
+              return $output->send();
+          }
      }
 
 

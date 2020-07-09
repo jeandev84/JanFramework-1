@@ -18,6 +18,9 @@ class MigrateCommand extends Command
     protected $name = 'make:migrate';
 
 
+    /** @var string  */
+    protected $description = 'Command make:migrate permit to migrate all tables to the databases.';
+
     /**
      * @param InputInterface|null $input
      * @param OutputInterface|null $output

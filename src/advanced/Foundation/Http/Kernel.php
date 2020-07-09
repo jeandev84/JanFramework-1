@@ -105,10 +105,23 @@ class Kernel implements HttpKernelContract
 
     /**
      * @param ResponseInterface $response
+     * @return ResponseInterface
     */
-    protected function respond(ResponseInterface $response)
+    protected function respond($respond)
     {
-         //
+        if(! $respond instanceof ResponseInterface)
+        {
+            $response = new Response();
+
+            if(is_array($respond))
+            {
+                return $response->withJson($respond);
+            }
+
+            return $response->withBody($respond);
+        }
+
+        return $respond;
     }
 
 
