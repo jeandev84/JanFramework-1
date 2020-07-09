@@ -41,7 +41,7 @@ class Console
              exit('Access denied!');
          }
 
-         $this->loadCommands($this->getDefaultCommands());
+         $this->loadBaseCommands();
      }
 
 
@@ -59,10 +59,24 @@ class Console
 
      /**
       * @param Command $command
+      * @return Console
      */
      public function addCommand(Command $command)
      {
-         $this->commands[$command->getName()] = $command;
+         return $this->add($command->getName(), $command);
+     }
+
+
+     /**
+      * @param $name
+      * @param Command $command
+      * @return Console
+     */
+     public function add($name, Command $command)
+     {
+         $this->commands[$name] = $command;
+
+         return $this;
      }
 
 
@@ -91,7 +105,7 @@ class Console
       * @param OutputInterface $output
       * @return string
       * @throws \Exception
-    */
+     */
      public function run(InputInterface $input, OutputInterface $output)
      {
           $name = $input->getFirstArgument();
@@ -145,25 +159,25 @@ class Console
      }
 
 
-     public function head()
-     {
-         //
-     }
-
-     public function foot()
-     {
-          //
-     }
-
-
      /**
-      * @return array
+      * @return
      */
-     public function getDefaultCommands()
+     public function loadBaseCommands()
      {
-         return [
+         $this->loadCommands([
              new HelpCommand(),
              new ListCommand()
-         ];
+         ]);
      }
+
+
+    public function buildHeader()
+    {
+        //
+    }
+
+    public function buildFooter()
+    {
+        //
+    }
 }

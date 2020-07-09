@@ -16,7 +16,7 @@ use Jan\Component\Console\Output\OutputInterface;
  *
  * Command handle
 */
-abstract class Command implements CommandInterface
+class Command implements CommandInterface
 {
 
        /** @var string  */
@@ -200,13 +200,8 @@ abstract class Command implements CommandInterface
        * @return mixed|void
        * @throws \Exception
       */
-      abstract public function execute(InputInterface $input, OutputInterface $output);
-
-
-      /*
       public function execute(InputInterface $input, OutputInterface $output)
       {
            throw new \Exception('Command must be executed!');
       }
-      */
 }
