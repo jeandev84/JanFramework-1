@@ -150,8 +150,8 @@ class Command implements CommandInterface
     */
     public function addOption(string $name, $shortcut = null, string $description = '', $default = null)
     {
-           $this->options = compact('name', 'shortcut', 'description', 'default');
-           return $this;
+        $this->options = compact('name', 'shortcut', 'description', 'default');
+        return $this;
     }
 
 

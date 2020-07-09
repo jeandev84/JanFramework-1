@@ -60,13 +60,6 @@ class Serialiser
 /*
 Example:
 
-spl_autoload_register(function ($classname) {
-    $path =  __DIR__. str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $classname);
-    @require_once $path.'.php';
-});
-
-
-# Object
 $user = new \App\Entity\User();
 $user->setName('jean');
 $user->setEmail('jeanyao@ymail.com');

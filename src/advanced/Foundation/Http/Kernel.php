@@ -92,6 +92,17 @@ class Kernel implements HttpKernelContract
 
     /**
      * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return mixed|void
+    */
+    public function terminate(RequestInterface $request, ResponseInterface $response)
+    {
+        //
+    }
+
+
+    /**
+     * @param RequestInterface $request
      * @return mixed
     */
     protected function dispatchRoute(RequestInterface $request)
