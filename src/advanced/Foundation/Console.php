@@ -155,8 +155,9 @@ class Console
           } else {
 
               $command->execute($input, $output);
-              return $output->send();
           }
+
+         return $output->send();
      }
 
 
