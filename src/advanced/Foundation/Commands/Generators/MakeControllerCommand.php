@@ -20,7 +20,7 @@ class MakeControllerCommand extends Command
 
 
     /** @var string  */
-    protected $description = 'Command make:controller permit to generate a new controller';
+    protected $description = 'Generate a new controller';
 
 
     /**

@@ -17,6 +17,10 @@ use Jan\Foundation\Commands\ListCommand;
 class Console
 {
 
+     const MSG_NOT_HELP = 'Can not find help for command %s';
+     const MSG_NOT_VALID_CMD = '%s is not a valid command!';
+
+
      /**
       * @var array
      */
@@ -134,32 +138,32 @@ class Console
 
                if(in_array($argument, ['-help', '-h']))
                {
-                    // get command help
                     $help = $command->getHelp();
-
-                    if(! $help)
-                    {
-                        $output->write(sprintf('Can not find help for command %s', $name));
-                    }else{
-                        $output->write(sprintf('%s : %s', $name, $help));
-                    }
-
+                    $message = ! $help ? sprintf(self::MSG_NOT_HELP, $name) : sprintf('%s : %s', $name, $help);
+                    $output->write($message);
                     return $output->send();
                }
           }
 
-          if(! $command instanceof Command)
+          if(! $this->isSureCommand($command))
           {
-              $output->write(sprintf('%s is not a valid command!', $name));
-
+              $output->write(sprintf(self::MSG_NOT_VALID_CMD, $name));
           } else {
-
               $command->execute($input, $output);
           }
 
           return $output->send();
      }
 
+
+     /**
+      * @param $command
+      * @return bool
+     */
+     private function isSureCommand($command)
+     {
+         return $command instanceof Command;
+     }
 
      /**
       * @return

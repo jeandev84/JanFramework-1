@@ -19,6 +19,11 @@ class HelloCommand extends Command
     protected $name = 'hello';
 
 
+    /** @var string  */
+    protected $description = 'Say hello somebody!';
+
+
+
     /**
      * Configure command
      */

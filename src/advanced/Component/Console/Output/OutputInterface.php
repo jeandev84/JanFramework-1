@@ -13,14 +13,14 @@ interface OutputInterface
      * @param string $message
      * @return OutputInterface
     */
-    public function write(string $message);
+    public function write($message);
 
 
     /**
      * @param string $message
      * @return mixed
     */
-    public function writeln(string $message);
+    public function writeln($message);
 
 
 

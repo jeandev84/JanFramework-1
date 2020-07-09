@@ -19,7 +19,7 @@ class MigrateCommand extends Command
 
 
     /** @var string  */
-    protected $description = 'Command make:migrate permit to migrate all tables to the databases.';
+    protected $description = 'Permit to migrate all tables to the databases.';
 
     /**
      * @param InputInterface|null $input

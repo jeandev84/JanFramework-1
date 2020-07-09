@@ -19,6 +19,10 @@ class ServerCommand extends Command
     protected $name = 'server';
 
 
+    /** @var string  */
+    protected $description = 'Run server on the port 8080, http://localhost:8080/';
+
+
     /**
      * @param InputInterface|null $input
      * @param OutputInterface|null $output
@@ -26,7 +30,7 @@ class ServerCommand extends Command
     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-         $output->writeln('Server run!');
+         $output->writeln('Server run to address http://localhost:8000');
          $msg = shell_exec('php -S localhost:8000 -t public -d display_errors=1');
          $output->write($msg);
     }

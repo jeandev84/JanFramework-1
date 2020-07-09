@@ -210,7 +210,7 @@ class Response implements ResponseInterface
     {
         foreach ($this->headers as $key => $value)
         {
-             header($key .': '. $value);
+            is_numeric($key) ? header($value) : header($key . ': ' . $value);
         }
     }
 
@@ -231,8 +231,6 @@ class Response implements ResponseInterface
     {
         if(headers_sent())
         {
-            # look for may be return $this / $this->sendBody()
-            // return $this;
             return $this->sendBody();
         }
 
@@ -256,7 +254,7 @@ class Response implements ResponseInterface
 
         if($message)
         {
-            $this->withHeaders($this->protocolVersion .' '. $this->status .' ' . $message);
+            $this->withHeaders(sprintf('%s %s %s', $this->protocolVersion, $this->status, $message));
         }
 
         return $this;
@@ -269,6 +267,11 @@ class Response implements ResponseInterface
     */
     protected function parseHeaders($key, $value)
     {
+        if(is_string($key) && ! $value)
+        {
+            return (array) $key;
+        }
+
         return \is_array($key) ? $key : [$key => $value];
     }
 

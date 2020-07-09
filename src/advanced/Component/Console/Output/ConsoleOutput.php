@@ -18,7 +18,7 @@ class ConsoleOutput implements OutputInterface
      * @param string $message
      * @return OutputInterface
     */
-    public function write(string $message)
+    public function write($message)
     {
          $this->messages[] = $message;
 
@@ -30,7 +30,7 @@ class ConsoleOutput implements OutputInterface
      * @param string $message
      * @return OutputInterface
     */
-    public function writeln(string $message)
+    public function writeln($message)
     {
         return $this->write("$message\n");
     }

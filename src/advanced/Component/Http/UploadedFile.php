@@ -2,8 +2,6 @@
 namespace Jan\Component\Http;
 
 
-use Jan\Component\Http\Bag\ParameterBag;
-
 
 
 /**
