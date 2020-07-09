@@ -6,6 +6,8 @@ use Jan\Component\Console\Command\Command;
 use Jan\Component\Console\Input\InputInterface;
 use Jan\Component\Console\Output\OutputInterface;
 use Jan\Component\Http\Request;
+use Jan\Foundation\Commands\HelpCommand;
+use Jan\Foundation\Commands\ListCommand;
 
 
 /**
@@ -21,8 +23,10 @@ class Console
      private $commands = [];
 
 
-    /**
-     * Console constructor.
+
+
+     /**
+      * Console constructor.
      */
      public function __construct()
      {
@@ -30,6 +34,8 @@ class Console
          {
              exit('Access denied!');
          }
+
+         $this->loadCommands($this->getDefaultCommands());
      }
 
 
@@ -87,9 +93,38 @@ class Console
           if($this->hasCommand($name))
           {
                $command = $this->getCommand($name);
+
+               if(\ in_array($name, ['-help', '-h']))
+               {
+                    // $command->setCommands($this->commands);
+               }
+
                $command->execute($input, $output);
           }
 
           return $output->send();
+     }
+
+
+     public function head()
+     {
+         //
+     }
+
+     public function foot()
+     {
+          //
+     }
+
+
+     /**
+      * @return array
+     */
+     public function getDefaultCommands()
+     {
+         return [
+             new HelpCommand(),
+             new ListCommand()
+         ];
      }
 }

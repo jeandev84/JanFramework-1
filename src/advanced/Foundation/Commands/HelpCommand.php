@@ -15,22 +15,31 @@ use Jan\Component\Console\Output\OutputInterface;
 class HelpCommand extends Command
 {
 
-     /**
-      * Command configuration
-     */
-     protected function configure()
-     {
-          // Add some configuration
-     }
+    /** @var string  */
+    protected $command = '-help';
 
 
-     /**
+    /** @var array  */
+    protected $commands = [];
+
+
+    /**
+     * @param array $commands
+    */
+    public function setCommands(array $commands)
+    {
+        $this->commands = $commands;
+    }
+
+
+    /**
       * @param InputInterface $input
       * @param OutputInterface $output
       * @return mixed|void
-     */
-     public function execute(InputInterface $input, OutputInterface $output)
-     {
+    */
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
           // Do something
+          dd($this->commands);
      }
 }

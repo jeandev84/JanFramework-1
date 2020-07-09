@@ -19,6 +19,10 @@ use Jan\Component\Console\Output\OutputInterface;
 abstract class Command implements CommandInterface
 {
 
+       /** @var string  */
+       protected $command = 'default';
+
+
        /** @var string */
        protected $name;
 
@@ -73,6 +77,11 @@ abstract class Command implements CommandInterface
       */
       public function getName()
       {
+           if(! $this->name)
+           {
+               return $this->command;
+           }
+
            return $this->name;
       }
 

@@ -353,7 +353,7 @@ class Router implements RouterInterface
 
              if($this->isMatchMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
              {
-                 return array_merge($route, $this->getNewParams($path));
+                 return array_merge($route, $this->getComplementParams($path));
              }
          }
 
@@ -421,7 +421,7 @@ class Router implements RouterInterface
       * @param string $path
       * @return array
     */
-    private function getNewParams($path)
+    private function getComplementParams($path)
     {
          $pattern = $this->generatePattern($path);
          $matches = $this->getFilteredMatchParams();

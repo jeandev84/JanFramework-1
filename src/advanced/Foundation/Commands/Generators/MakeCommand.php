@@ -5,7 +5,6 @@ namespace Jan\Foundation\Commands\Generators;
 use Jan\Component\Console\Command\Command;
 use Jan\Component\Console\Input\InputInterface;
 use Jan\Component\Console\Output\OutputInterface;
-use Jan\Component\DI\Contracts\ContainerInterface;
 use Jan\Component\FileSystem\FileSystem;
 use Jan\Foundation\Commands\Traits\Generatable;
 
@@ -50,6 +49,12 @@ class MakeCommand extends Command
     {
         $commandClass = $input->getArgument();
 
+        if(! $commandClass)
+        {
+             $output->write('Empty argument');
+             return;
+        }
+
         $stub = $this->generateStub('command', [
             'CommandClass' => $commandClass,
             'CommandNamespace' => 'App\Commands'
@@ -63,8 +68,11 @@ class MakeCommand extends Command
             return;
         }
 
-        $this->fileSystem->write($target, $stub);
-
-        $output->write('Command generated successfully!');
+        if($this->fileSystem->write($target, $stub))
+        {
+            $output->write(
+                sprintf('Command %s generated successfully!', $target)
+            );
+        }
     }
 }

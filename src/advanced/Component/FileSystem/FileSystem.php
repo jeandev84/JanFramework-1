@@ -239,7 +239,7 @@ class FileSystem
         */
         public function write(string $path, $data)
         {
-            file_put_contents($this->resource($path), $data);
+            return file_put_contents($this->resource($path), $data);
         }
 
 
