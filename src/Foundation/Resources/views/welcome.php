@@ -18,7 +18,7 @@
 <!--    <div class="collapse navbar-collapse" id="navbarText">-->
 <!--        <ul class="navbar-nav mr-auto">-->
 <!--            <li class="nav-item active">-->
-<!--                <a href="https://github.com/jeandev84/JFramework" class="nav-link" target="_blank">-->
+<!--                <a href="https://github.com/jeandev84/JanFramework" class="nav-link" target="_blank">-->
 <!--                    Github <i class="fa fa-github"></i>-->
 <!--                </a>-->
 <!--            </li>-->
@@ -28,11 +28,11 @@
 <!-- end menu -->
 <div class="container mt-5 mb-auto text-center">
     <h1>
-        Welcome to <a href="https://github.com/jeandev84/JFramework" style="text-decoration: none;" target="_blank">
+        Welcome to <a href="https://github.com/jeandev84/JanFramework" style="text-decoration: none;" target="_blank">
             JanFramework :)
         </a>
     </h1>
-    <p>You are ready for bulding your <code>web site ...</code></p>
+    <p>You are ready for bulding your <code>web application ...</code></p>
 </div>
 
 <!-- scripts -->

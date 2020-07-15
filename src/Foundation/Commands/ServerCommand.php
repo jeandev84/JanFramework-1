@@ -20,7 +20,7 @@ class ServerCommand extends Command
 
 
     /** @var string  */
-    protected $description = 'Run server on the port 8080, http://localhost:8080/';
+    protected $description = 'Run server on the port 8000, http://localhost:8000/';
 
 
     /**
