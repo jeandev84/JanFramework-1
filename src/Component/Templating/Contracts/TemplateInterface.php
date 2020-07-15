@@ -3,11 +3,12 @@ namespace Jan\Component\Templating\Contracts;
 
 
 /**
- * Interface ViewInterface
+ * Interface TemplateInterface
  * @package Jan\Component\Templating\Contracts
 */
-interface ViewInterface
+interface TemplateInterface
 {
+
      /**
       * @param $name
       * @param $value
@@ -20,5 +21,5 @@ interface ViewInterface
       * @param $template
       * @return mixed
      */
-     public function getHtml($template);
+     public function renderHtml($template);
 }

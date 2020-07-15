@@ -2,14 +2,16 @@
 namespace Jan\Component\Templating;
 
 
+use Jan\Component\Templating\Contracts\TemplateInterface;
 use Jan\Component\Templating\Exceptions\ViewException;
+
 
 
 /**
  * Class View
  * @package Jan\Component\Templating
 */
-class View
+class View implements TemplateInterface
 {
 
 
@@ -60,7 +62,7 @@ class View
        * @param array $data
        * @return View
       */
-      public function setData(array $data)
+      public function setVariables(array $data)
       {
            $this->data = array_merge($this->data, $data);
 
@@ -74,7 +76,7 @@ class View
        * @return false|string
        * @throws ViewException
       */
-      public function renderTemplate(string $template)
+      public function renderHtml($template)
       {
            extract($this->data);
            ob_start();
@@ -93,8 +95,8 @@ class View
       */
       public function render(string $template, array $data = [])
       {
-           $this->setData($data);
-           return $this->renderTemplate($template);
+           $this->setVariables($data);
+           return $this->renderHtml($template);
       }
 
 

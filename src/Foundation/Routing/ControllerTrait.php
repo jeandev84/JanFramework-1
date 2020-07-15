@@ -97,8 +97,8 @@ trait ControllerTrait
         $template .= '.'. $templateInfo['extension'];
         */
         $view = $this->container->get('view');
-        $view->setData($data);
-        return $view->renderTemplate($template);
+        $view->setVariables($data);
+        return $view->renderHtml($template);
     }
 
 

@@ -16,15 +16,11 @@ use ReflectionMethod;
 /**
  * Class Container
  * @package Jan\Component\DI
+ *
+ * TODO Refactoring Container Dependency Injection
 */
 class Container implements \ArrayAccess, ContainerInterface
 {
-
-    /**
-     * @var bool
-    */
-    protected $autowire = true;
-
 
     /** @var Container */
     protected static $instance;
@@ -51,6 +47,7 @@ class Container implements \ArrayAccess, ContainerInterface
 
 
 
+
     /**
      * @return Container
      *
@@ -68,13 +65,14 @@ class Container implements \ArrayAccess, ContainerInterface
     }
 
 
+
     /**
      * @param $abstract
-     * @param $concrete
+     * @param mixed $concrete
      * @param bool $singleton
      * @return Container
     */
-    public function bind($abstract, $concrete, $singleton = false)
+    public function bind($abstract, $concrete = null, $singleton = false)
     {
          if(is_null($concrete))
          {
@@ -100,20 +98,6 @@ class Container implements \ArrayAccess, ContainerInterface
             list($abstract, $concrete, $singleton) = $config;
             $this->bind($abstract, $concrete, $singleton);
         }
-
-        return $this;
-    }
-
-
-    /**
-     * Set autowiring status
-     *
-     * @param bool $status
-     * @return $this
-    */
-    public function autowire(bool $status)
-    {
-        $this->autowire = $status;
 
         return $this;
     }
@@ -155,7 +139,10 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function addServiceProviders(array $providers)
     {
-           if(! $providers) return;
+           if(! $providers) {
+
+               throw new ContainerException('Empty services providers!');
+           }
 
            foreach ($providers as $provider)
            {
@@ -181,11 +168,10 @@ class Container implements \ArrayAccess, ContainerInterface
 
             if($provides = $provider->getProvides())
             {
-                $this->provides[get_class($provider)] = $provides;
+                $this->provides[] = $provides;
             }
 
             $provider->register();
-
             $this->providers[] = $provider;
         }
     }
@@ -204,7 +190,7 @@ class Container implements \ArrayAccess, ContainerInterface
     /**
      * @param string $providerClass
      * @return array
-     */
+    */
     public function getProvides($providerClass = '')
     {
         return $this->provides[$providerClass] ?? $this->provides;
@@ -221,6 +207,16 @@ class Container implements \ArrayAccess, ContainerInterface
     {
         $this->instances[$abstract] = $instance;
     }
+
+
+    /**
+     * @param object $abstract
+     */
+    public function setInstance($abstract)
+    {
+        $this->instances[get_class($abstract)] = $abstract;
+    }
+
 
 
     /**
@@ -359,13 +355,13 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function has($id)
     {
-        // is binded ?
+        // has binded ?
         if($this->bounded($id))
         {
             return true;
         }
 
-        // is alias ?
+        // has alias ?
         if($this->hasAlias($id))
         {
             return true;
@@ -395,55 +391,15 @@ class Container implements \ArrayAccess, ContainerInterface
      * @throws ContainerException
      * @throws ReflectionException
      * @throws ResolverDependencyException
-     */
+    */
     public function get($abstract, $arguments = [])
     {
-           if(is_string($abstract) && ! $this->has($abstract))
-           {
-               if(! $this->autowire)
-               {
-                    throw new ResolverDependencyException('Cannot resolve dependendies');
-               }
+        if(! $this->has($abstract))
+        {
+            return $this->resolve($abstract, $arguments);
+        }
 
-               return $this->resolve($abstract, $arguments);
-           }
-
-
-           if($abstract instanceof ReflectionMethod)
-           {
-               return $this->resolveMethodDependencies($abstract, $arguments);
-           }
-
-
-           /*
-           if(isset($this->instances[$abstract]))
-           {
-               return $this->instances[$abstract];
-           }
-           */
-
-           if(isset($this->aliases[$abstract]))
-           {
-               $abstract = $this->aliases[$abstract];
-
-               if(isset($this->instances[$abstract]))
-               {
-                   return $this->instances[$abstract];
-               }
-
-               return $abstract;
-           }
-
-
-           // Get concrete
-           $concrete = $this->getConcrete($abstract);
-
-           if($this->isSingleton($abstract))
-           {
-               return $this->getSingleton($abstract, $concrete);
-           }
-
-           return $concrete;
+        return $this->getConcrete($abstract);
     }
 
 
@@ -456,16 +412,51 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function getConcrete($abstract)
     {
+        $concrete = $this->resolvedConcrete($abstract);
+
+        // Get instances
+        if(isset($this->instances[$abstract]))
+        {
+            return $this->instances[$abstract];
+        }
+
+        if(isset($this->aliases[$abstract]))
+        {
+            $abstract = $this->aliases[$abstract];
+
+            if(isset($this->instances[$abstract]))
+            {
+                return $this->instances[$abstract];
+            }
+
+            return $abstract;
+        }
+
+        if(is_string($concrete) && class_exists($concrete))
+        {
+            return $this->resolve($concrete);
+        }
+
+        if($this->isSingleton($abstract))
+        {
+            return $this->getSingleton($abstract, $concrete);
+        }
+
+        return $concrete;
+    }
+
+
+    /**
+     * @param $abstract
+     * @return mixed
+    */
+    private function resolvedConcrete($abstract)
+    {
         $concrete = $this->bindings[$abstract]['concrete'] ?? null;
 
         if($concrete instanceof Closure)
         {
             return $concrete($this);
-        }
-
-        if(class_exists($concrete))
-        {
-            return $this->resolve($concrete);
         }
 
         return $concrete;
@@ -479,6 +470,13 @@ class Container implements \ArrayAccess, ContainerInterface
      * @param array $arguments
      * @return object|array
      * @throws ReflectionException|ContainerException|ResolverDependencyException
+     *
+     * $container = new \Jan\Component\DI\Container();
+     * $container->bind(App\Demo\Foo::class);
+     * $container->get(App\Demo\Foo::class);
+     * $container->get(App\Demo\FooInterface::class);
+     * dump($container->get(\App\Demo\Bar::class));
+     * dd($container);
      */
     public function resolve($abstract, array $arguments = [])
     {
@@ -486,56 +484,65 @@ class Container implements \ArrayAccess, ContainerInterface
 
           if(! $reflectedClass->isInstantiable())
           {
-              throw new ContainerException(sprintf('Class [%s] is not instantiable dependency.', $abstract));
+              if(! $this->bounded($abstract))
+              {
+                   return $this->getImplementedClasses($abstract);
+              }
+
+              throw new ContainerException(
+                  sprintf('Class [%s] is not instantiable dependency.', $abstract)
+              );
           }
 
-          if(! $constructor = $reflectedClass->getConstructor())
-          {
-                return $this->instances[$abstract] = $reflectedClass->newInstance();
-          }
+          return $this->instances[$abstract] = $this->resolveInstance($reflectedClass, $arguments);
+    }
 
-          $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
-          return $this->instances[$abstract] = $reflectedClass->newInstanceArgs($dependencies);
+
+
+    /**
+     * @param ReflectionClass $reflectedClass
+     * @return object
+    */
+    private function resolveInstance(ReflectionClass $reflectedClass, $arguments = [])
+    {
+       if($reflectedClass->isInstantiable())
+       {
+           if(! $constructor = $reflectedClass->getConstructor())
+           {
+               return $reflectedClass->newInstance();
+           }
+
+           $dependencies = $this->resolveMethodDependencies($constructor, $arguments);
+           return $reflectedClass->newInstanceArgs($dependencies);
+       }
     }
 
 
     /**
-     * @param ReflectionClass $reflectionClass
-     * @return array|mixed|object|null
-     * @throws ContainerException
-     * @throws ReflectionException
-     * @throws ResolverDependencyException
+     * @param $abstract
+     * @return array
     */
-    public function resolveClassDependencies(ReflectionClass $reflectionClass)
+    public function getImplementedClasses($abstract)
     {
-         $classname = $reflectionClass->getName();
-         /* $dependencies = []; */
+        $implements = [];
+        $classes = get_declared_classes();
 
-         if($this->has($classname))
-         {
-             return $this->get($classname);
-         }
+        foreach ($classes as $classname)
+        {
+            if(in_array($abstract, class_implements($classname)))
+            {
+                $implements[] = $classname;
+            }
+        }
 
-         $interfaces = $reflectionClass->getInterfaces();
-
-         foreach ($interfaces as $interface)
-         {
-             if($dependency = $this->resolveClassDependencies($interface))
-             {
-                 /* $dependencies[] = $dependency; */
-                 return $dependency;
-             }
-         }
-
-         if($parentClass = $reflectionClass->getParentClass())
-         {
-             /* $dependencies[] = $this->resolveClassDependencies($parentClass); */
-             return $this->resolveClassDependencies($parentClass);
-         }
-
-         /* return $dependencies; */
+        foreach ($implements as $classname)
+        {
+            if(array_key_exists($classname, $this->instances))
+            {
+                return $this->instances[$classname];
+            }
+        }
     }
-
 
 
     /**

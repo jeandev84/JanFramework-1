@@ -9,7 +9,7 @@
     ],
     "autoload": {
       "psr-4": {
-        "Jan\\": "src/advanced",
+        "Jan\\": "src/",
         "App\\": "app/"
       }
     },
