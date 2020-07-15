@@ -8,10 +8,10 @@ use Jan\Component\Console\Output\OutputInterface;
 
 
 /**
- * Class MigrateCommand
+ * Class MigrationMigrateCommand
  * @package Jan\Foundation\Commands\Generators
 */
-class MigrateCommand extends Command
+class MigrationMigrateCommand extends Command
 {
 
     /** @var string  */

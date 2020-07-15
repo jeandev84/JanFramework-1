@@ -51,11 +51,17 @@ class Router implements RouterInterface
       /**
        * @var array
       */
-      private $patterns = ['id'   => '[0-9]+', 'slug' => '[a-z\-0-9]+'];
+      private $patterns = [
+          'id'   => '[0-9]+',
+          'slug' => '[a-z\-0-9]+'
+      ];
 
 
       /** @var string[]  */
-      private $formatParams = ['{([\w]+)}', ':([\w]+)'];
+      private $formatParams = [
+          '{([\w]+)}',
+          ':([\w]+)'
+      ];
 
 
       /** @var array  */
@@ -67,14 +73,6 @@ class Router implements RouterInterface
 
 
 
-      /** @var bool  */
-      private $isPrettyUrl = true;
-
-
-      /** @var string  */
-      private $urlExtension = 'php';
-
-
       /**
        * Router constructor.
        * @param string $baseUrl
@@ -83,28 +81,6 @@ class Router implements RouterInterface
       {
            $this->setBaseUrl($baseUrl);
       }
-
-
-      /**
-       * @param bool $status
-       * @return Router
-      */
-      public function isPrettyUrl(bool $status)
-      {
-          $this->isPrettyUrl = $status;
-
-          return $this;
-      }
-
-
-      /**
-       * @param string $urlExtension
-      */
-      public function setUrlExtension(string $urlExtension)
-      {
-           $this->urlExtension = $urlExtension;
-      }
-
 
 
       /**
@@ -353,7 +329,12 @@ class Router implements RouterInterface
 
              if($this->isMatchMethods($requestMethod, $methods) && $this->isMatchPaths($path, $requestUri))
              {
-                 return array_merge($route, $this->getComplementParams($path));
+                 return array_merge($route, [
+                     'pattern'    => $this->generatePattern($path),
+                     'matches'    => $this->getFilteredMatchParams(),
+                     'name'       => $this->getPathName($path),
+                     'middleware' => $this->getMiddleware($path)
+                 ]);
              }
          }
 
@@ -416,29 +397,6 @@ class Router implements RouterInterface
     }
 
 
-
-    /**
-      * @param string $path
-      * @return array
-    */
-    private function getComplementParams($path)
-    {
-         $pattern = $this->generatePattern($path);
-         $matches = $this->getFilteredMatchParams();
-         $name = $this->getPathName($path);
-         $middleware = $this->getMiddleware($path);
-
-         /*
-         if(! $this->isPrettyUrl)
-         {
-              return compact('name', 'middleware');
-         }
-         */
-
-         return compact('pattern', 'matches', 'name', 'middleware');
-     }
-
-
      /**
       * @param string $path
       * @param string $requestUri
@@ -446,19 +404,9 @@ class Router implements RouterInterface
      */
      private function isMatchPaths(string $path, string $requestUri)
      {
-         /*
-         if(! $this->isPrettyUrl)
-         {
-             $path = (string) sprintf('%s.%s', $path, $this->urlExtension);
-             return  $path === $this->getPathUrl($requestUri);
-         }
-         */
-
-         $pattern = $this->generatePattern($path);
-         $uri = $this->getPathUrl($requestUri);
          $matches = [];
 
-         if(preg_match($pattern, $uri, $matches))
+         if(preg_match($this->generatePattern($path), $this->getPathUrl($requestUri), $matches))
          {
              $this->setMatches($matches);
 
@@ -617,7 +565,6 @@ class Router implements RouterInterface
 
         return implode([
             $this->baseUrl . '/' . trim($path, '/'),
-            $this->urlExtension,
             ($qs ? '?'. $qs : '')
         ]);
     }

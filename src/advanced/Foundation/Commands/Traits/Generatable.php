@@ -13,9 +13,6 @@ use Jan\Component\FileSystem\FileSystem;
 trait Generatable
 {
 
-   /** @var FileSystem  */
-   protected $fileSystem;
-
 
    /** @var string  */
    protected $stubDirectory = __DIR__ . '/../stubs';

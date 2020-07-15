@@ -55,7 +55,7 @@ class MakeCommand extends Command
 
         if(! $commandClass)
         {
-             $output->write('Empty argument');
+             $output->write('Empty argument command class');
              return;
         }
 
@@ -64,11 +64,11 @@ class MakeCommand extends Command
             'CommandNamespace' => 'App\Commands'
         ]);
 
-        $target = sprintf('app/Commands/%s.php', $input->getArgument());
+        $target = sprintf('app/Commands/%s.php', $commandClass);
 
         if($this->fileSystem->exists($target))
         {
-            $output->write('Command already exist!');
+            $output->write('Command  '. $commandClass . ' already exist!');
             return;
         }
 

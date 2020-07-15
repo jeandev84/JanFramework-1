@@ -37,3 +37,4 @@ Route::get('/user/{token}/edit', 'UserController@edit', 'user.edit')
 # Demo controllers
 Route::get('/demo', 'DemoController@index')->name('demo.index');
 Route::get('/send', 'DemoController@send')->name('demo.send');
+Route::get('/cart', 'CartController@index')->name('cart.index');

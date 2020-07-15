@@ -38,7 +38,7 @@ class Kernel implements ConsoleKernelContract
     protected $defaultCommands = [
         'Jan\Foundation\Commands\Generators\MakeCommand',
         'Jan\Foundation\Commands\Generators\MakeControllerCommand',
-        'Jan\Foundation\Commands\Generators\MigrateCommand',
+        'Jan\Foundation\Commands\Generators\MigrationMigrateCommand',
         'Jan\Foundation\Commands\ServerCommand'
     ];
 

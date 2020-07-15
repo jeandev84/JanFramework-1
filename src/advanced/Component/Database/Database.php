@@ -4,6 +4,7 @@ namespace Jan\Component\Database;
 
 use Exception;
 use Jan\Component\Database\Connection\ConnectionInterface;
+use Jan\Component\Database\Connection\MySqli\MySqliConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\MySqlConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\OracleConnection;
 use Jan\Component\Database\Connection\PDO\Drivers\PgsqlConnection;
@@ -31,6 +32,7 @@ class Database
       * @var array
      */
      private static $config = [
+        'type'       => 'pdo', // mysqli
         'driver'     => 'mysql',
         'database'   => 'homestand',
         'host'       => '127.0.0.1',
@@ -71,12 +73,28 @@ class Database
 
            if (! self::isConnected())
            {
-               self::$connection = self::pdo();
+               self::getCurrentConnector();
            }
 
            return self::$connection->getConnection();
       }
-      
+
+
+      /**
+        * @throws Exception
+      */
+      public static function getCurrentConnector()
+      {
+           switch (self::config('type'))
+           {
+               case 'pdo':
+                   self::$connection = self::pdo();
+               break;
+               case 'mysqli':
+                   //
+               break;
+           }
+      }
 
 
       /**
@@ -86,7 +104,15 @@ class Database
       {
            if(self::isConnected())
            {
-               self::$connection = null;
+               switch (self::config('type'))
+               {
+                   case 'pdo':
+                       self::$connection = null;
+                   break;
+                   case 'mysqli':
+                       //
+                   break;
+               }
            }
       }
 
@@ -101,6 +127,17 @@ class Database
       }
 
 
+      /**
+       * @return MySqliConnection
+      */
+      public static function mysqli(): MySqliConnection
+      {
+          return new MySqliConnection(
+              self::config('host'),
+              self::config('username'),
+              self::config('password')
+          );
+      }
 
       /**
        * @return bool
@@ -135,7 +172,15 @@ class Database
       */
       public static function execute($sql, $params = [], $classMap = null)
       {
-           return self::statement()->query($sql, $params, $classMap);
+           switch (self::config('type'))
+           {
+               case 'mysqli':
+                    return 'Mysqli execution';
+               break;
+               case 'pdo':
+                   return self::pdo()->execute($sql, $params, $classMap);
+               break;
+           }
       }
 
 

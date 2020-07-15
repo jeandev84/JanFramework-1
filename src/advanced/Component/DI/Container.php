@@ -353,13 +353,13 @@ class Container implements \ArrayAccess, ContainerInterface
     */
     public function has($id)
     {
-        // is binded ?
+        // has binded ?
         if($this->bounded($id))
         {
             return true;
         }
 
-        // is alias ?
+        // has alias ?
         if($this->hasAlias($id))
         {
             return true;

@@ -17,6 +17,7 @@
       "symfony/var-dumper": "^5.0",
       "ext-pdo": "*",
       "ext-json": "*",
-      "ext-curl": "*"
+      "ext-curl": "*",
+      "ext-mysqli": "*"
     }
 }
