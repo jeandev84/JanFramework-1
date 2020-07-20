@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
       * @var string[]
      */
      protected $commands = [
-         'App\Commands\HelloCommand'
+         'App\Commands\HelloCommand',
+         'App\Commands\MakeEntityCommand'
      ];
 }

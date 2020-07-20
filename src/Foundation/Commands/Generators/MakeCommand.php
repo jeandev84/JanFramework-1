@@ -51,17 +51,27 @@ class MakeCommand extends Command
     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $commandClass = $input->getArgument();
+        $commandName = $input->getArgument();
 
-        if(! $commandClass)
+        if(! $commandName)
         {
-             $output->write('Empty argument command class');
-             return;
+            $output->write('Empty argument command class');
+            return;
         }
+
+        if(strpos($commandName, ':') === false)
+        {
+               $output->write('Invalid command name!');
+               return;
+        }
+
+        $parts = explode(':', $commandName);
+        $commandClass = sprintf('%sCommand', ucfirst($parts[0]) . ucfirst($parts[1]));
 
         $stub = $this->generateStub('command', [
             'CommandClass' => $commandClass,
-            'CommandNamespace' => 'App\Commands'
+            'CommandNamespace' => 'App\Commands',
+            'commandName' => $commandName
         ]);
 
         $target = sprintf('app/Commands/%s.php', $commandClass);

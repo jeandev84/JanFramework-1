@@ -18,6 +18,7 @@
       "ext-pdo": "*",
       "ext-json": "*",
       "ext-curl": "*",
-      "ext-mysqli": "*"
+      "ext-mysqli": "*",
+        "twig/twig": "^3.0"
     }
 }

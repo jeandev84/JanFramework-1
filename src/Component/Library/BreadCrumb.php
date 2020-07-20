@@ -2,6 +2,14 @@
 namespace Jan\Component\Library;
 
 
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig_Error_Loader;
+use Twig_Error_Runtime;
+use Twig_Error_Syntax;
+
 /**
  * Class BreadCrumb
  * @package Jan\Component\Library
@@ -17,28 +25,41 @@ class BreadCrumb
 
     /**
      * @var string
-     */
+    */
     protected $separator = ' / ';
 
 
     /**
      * @var string
-     */
+    */
     protected $template;
 
 
     /**
      * @var string
-     */
+    */
     protected $domain = '';
+
+
+
+    /* @var Environment */
+    protected $environment;
+
+
 
 
     /**
      * BreadCrumb constructor.
+     * @param Environment|null $environment
      * @param array $items
      */
-    public function __construct(array $items = [])
+    public function __construct(Environment $environment = null, array $items = [])
     {
+        if($environment)
+        {
+            $this->setTwigEnvironment($environment);
+        }
+
         if($items)
         {
             $this->setItems($items);
@@ -71,6 +92,19 @@ class BreadCrumb
 
 
     /**
+     * @param Environment $environment
+     * @return BreadCrumb
+    */
+    public function setTwigEnvironment(Environment $environment)
+    {
+        $this->environment = $environment;
+
+        return $this;
+    }
+
+
+
+    /**
      * @param string $template
      * @return BreadCrumb
      */
@@ -96,10 +130,10 @@ class BreadCrumb
 
     /**
      * @param string $title
-     * @param string $link
+     * @param string|null $link
      * @return BreadCrumb
-     */
-    public function add(string $title, string $link): BreadCrumb
+    */
+    public function add(string $title, string $link = null): BreadCrumb
     {
         $this->items[$title] = $link;
 
@@ -109,7 +143,7 @@ class BreadCrumb
 
     /**
      * @return string
-     */
+    */
     public function build()
     {
         $count = 0;
@@ -135,9 +169,20 @@ class BreadCrumb
      * @param string $title
      * @param string $link
      * @return false|string
-     */
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws Twig_Error_Loader
+     * @throws Twig_Error_Runtime
+     * @throws Twig_Error_Syntax
+    */
     public function renderHtml(string $domain, string $title, string $link)
     {
+        if($this->environment instanceof Environment)
+        {
+            return $this->environment->render($this->template, compact('domain', 'title', 'link'));
+        }
+
         ob_start();
         @require $this->template;
         return ob_get_clean();
