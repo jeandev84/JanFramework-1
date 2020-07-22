@@ -177,7 +177,7 @@ class Router implements RouterInterface
      {
          $this->options = $options;
          $callback();
-         $this->options = $options;
+         $this->options = [];
      }
 
 
