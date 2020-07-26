@@ -4,47 +4,46 @@ namespace Jan\Component\Routing\Contracts;
 
 /**
  * Interface RouterInterface
- * @package Jan\Component\Routing\Contract
+ * @package Jan\Component\Routing\Contracts
 */
 interface RouterInterface
 {
 
+
     /**
-     * Set Routes
+     * Get current route
      *
-     * @param array $routes
      * @return mixed
-     */
-     public function setRoutes(array $routes);
+    */
+    public function getRoute();
+
+
+    /**
+     * Get all routes
+     *
+     * @return array
+    */
+    public function getRoutes();
 
 
 
-     /**
-      * Get all routes
-      *
-      * @return array
-     */
-     public function getRoutes();
+    /**
+     * Determine if current route path match URI
+     *
+     * @param string $requestMethod
+     * @param string $requestUri
+     * @return mixed
+    */
+    public function match(string $requestMethod, string $requestUri);
 
 
 
-     /**
-      * Determine if current route path match URI
-      *
-      * @param string $requestMethod
-      * @param string $requestUri
-      * @return mixed
-     */
-     public function match(string $requestMethod, string $requestUri);
-
-
-
-     /**
-      * Generate URI
-      *
-      * @param $name
-      * @param array $params
-      * @return mixed
-     */
-     public function generate(string $name, array $params = []);
+    /**
+     * Generate URL
+     *
+     * @param string $context
+     * @param array $params
+     * @return mixed
+    */
+    public function generate(string $context, array $params = []);
 }

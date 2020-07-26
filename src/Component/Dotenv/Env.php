@@ -29,12 +29,13 @@ class Env
 
 
     /**
-     * @return array
-     * @throws Exception
+     * @param string $filename
+     * @return Env
+     * @throws InvalidPathException
     */
-    public function load()
+    public function load(string $filename = '.env')
     {
-        foreach ($this->getEnvironements() as $env)
+        foreach ($this->getEnvironements($filename) as $env)
         {
             $env = trim(str_replace("\n", '', $env)); // "\r\n"
 
@@ -46,27 +47,46 @@ class Env
             }
         }
 
-        return $_ENV;
+        /* return $_ENV; */
+
+        return $this;
     }
 
 
     /**
-      * Get environment from .env file
-      *
-      * @return array|false
-      * @throws Exception
-    */
-    public function getEnvironements()
+     * Get environment from .env file
+     *
+     * @param string $filename
+     * @return array
+     */
+    public function getEnvironements(string $filename)
     {
-        $filename = $this->basePath . DIRECTORY_SEPARATOR.'.env';
+        if(strpos($filename, '.') !== false)
+        {
+            return file($this->getEnvironmentFilename($filename));
+        }
+
+    }
+
+
+
+    /**
+     * @param $filename
+     * @return string|bool
+    */
+    public function getEnvironmentFilename($filename)
+    {
+        $filename =  $this->basePath . DIRECTORY_SEPARATOR. $filename;
 
         if(! file_exists($filename))
         {
-            throw new InvalidPathException(sprintf('Can not find file .env'));
+            /* throw new InvalidPathException(sprintf('Can not find file %s', $filename)); */
+            return false;
         }
 
-        return file($filename);
+        return $filename;
     }
+
 
     /**
      * @param $environment

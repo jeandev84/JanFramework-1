@@ -3,7 +3,7 @@ namespace Jan\Component\Routing\Exception;
 
 
 /**
- * Class MethodNotAllowedException
+ * Class RouteException
  * @package Jan\Component\Routing\Exception
 */
-class MethodNotAllowedException extends RouterException {}
+class RouteException extends \Exception {}

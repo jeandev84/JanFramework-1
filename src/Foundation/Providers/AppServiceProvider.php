@@ -68,7 +68,10 @@ class AppServiceProvider extends ServiceProvider implements BootableServiceProvi
     {
         try {
 
-            $dotenv = (new Env($this->container->get('base.path')))->load();
+            $env = new Env($this->container->get('base.path'));
+            $local = $env->getEnvironmentFilename('.env.local');
+
+            $dotEnv = $local ? $env->load($local) : $env->load();
 
         } catch (\Exception $e) {
             exit($e->getMessage());
