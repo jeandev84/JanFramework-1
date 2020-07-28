@@ -145,7 +145,7 @@ class Route implements \ArrayAccess
     */
     public function getPattern()
     {
-        return '#^' . $this->compile(trim($this->getPath(), '/')) . '$#';
+        return '#^' . $this->compile(trim($this->getPath(), '/')) . '$#i';
     }
 
 
