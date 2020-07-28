@@ -317,7 +317,7 @@ class Router implements RouterInterface
            $route->setDefaultRegex(self::DEFAULT_REGEX_EXPRESSION);
 
            $route->setName(
-               $this->resolveName($name, $route)
+               $this->resolveName($name, $route->getPath())
            );
 
            $route->setMiddleware(
@@ -368,7 +368,7 @@ class Router implements RouterInterface
        public function name(string $name)
        {
            $this->route->setName(
-               $this->resolveName($name, $this->route)
+               $this->resolveName($name, $this->route->getPath())
            );
 
            return $this;
@@ -519,10 +519,10 @@ class Router implements RouterInterface
 
         /**
          * @param $name
-         * @param Route $route
+         * @param $path
          * @return mixed
         */
-        private function resolveName($name, Route $route)
+        private function resolveName($name, $path)
         {
             if($name)
             {
@@ -533,7 +533,7 @@ class Router implements RouterInterface
                     );
                 }
 
-                $this->namedRoutes[$name] = $route->getPath();
+                $this->namedRoutes[$name] = $path;
             }
 
             return (string) $name;
