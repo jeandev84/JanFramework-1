@@ -449,17 +449,6 @@ class Route implements \ArrayAccess
 
     /**
      * @param $name
-     * @return string|string[]
-    */
-//    private function resolveRegex($name)
-//    {
-//        $regex = array_merge(self::DEFAULT_REGEX_EXPRESSION, $this->regex);
-//        return str_replace( '(', '(?:', $regex[$name]);
-//    }
-
-
-    /**
-     * @param $name
      * @param $value
     */
     public function set($name, $value)
