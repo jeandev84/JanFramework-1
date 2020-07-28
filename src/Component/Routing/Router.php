@@ -451,7 +451,10 @@ class Router implements RouterInterface
 
             foreach ($items as $key => $value)
             {
-                $route[$key] = $value;
+                if(property_exists($route, $key))
+                {
+                    $route[$key] = $value;
+                }
             }
 
             $this->add($route);
