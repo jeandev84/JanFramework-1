@@ -143,7 +143,7 @@ class Router implements RouterInterface
      * @param Route $route
      * @return Router
     */
-    public function add(Route $route)
+    public function addRoute(Route $route)
     {
         $this->routes[] = $this->route = $route;
 
@@ -177,7 +177,7 @@ class Router implements RouterInterface
           {
               if($route instanceof Route)
               {
-                  $this->add($route);
+                  $this->addRoute($route);
               }
 
               $this->mapItems($route);
@@ -272,7 +272,7 @@ class Router implements RouterInterface
 
 
     /**
-     * Add new package or resources of routes
+     * add new package or resources of routes
      * Using for system CRUD or api
      *
      * @param string $path
@@ -324,7 +324,7 @@ class Router implements RouterInterface
                $this->getOption(self::OPTION_PARAM_MIDDLEWARE, [])
            );
 
-           return $this->add($route);
+           return $this->addRoute($route);
       }
 
 
@@ -457,7 +457,7 @@ class Router implements RouterInterface
                 }
             }
 
-            $this->add($route);
+            $this->addRoute($route);
         }
 
 
