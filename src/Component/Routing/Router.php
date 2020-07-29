@@ -33,7 +33,8 @@ class Router implements RouterInterface
 
      const DEFAULT_REGEX_EXPRESSION = [
         'id'   => '[0-9]+',
-        'slug' => '[a-z\-0-9]+'
+        'slug' => '[a-z\-0-9]+',
+        'any'  => '.*'
      ];
 
 
