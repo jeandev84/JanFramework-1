@@ -16,18 +16,25 @@ use RuntimeException;
 class Router implements RouterInterface
 {
 
-      const OPTION_PARAM_PREFIX     = 'prefix';
-      const OPTION_PARAM_NAMESPACE  = 'namespace';
-      const OPTION_PARAM_MIDDLEWARE = 'middleware';
-      const FORMAT_PARAMS = [
-          '{([\w]+)}',
-          ':([\w]+)'
-      ];
+     const OPTION_PARAM_PREFIX     = 'prefix';
+     const OPTION_PARAM_NAMESPACE  = 'namespace';
+     const OPTION_PARAM_MIDDLEWARE = 'middleware';
 
-      const DEFAULT_REGEX_EXPRESSION = [
+     const ALLOWED_OPTION_PARAMS = [
+        self::OPTION_PARAM_PREFIX,
+        self::OPTION_PARAM_NAMESPACE,
+        self::OPTION_PARAM_MIDDLEWARE
+     ];
+
+     const FORMAT_PARAMS = [
+        '{([\w]+)}',
+        ':([\w]+)'
+     ];
+
+     const DEFAULT_REGEX_EXPRESSION = [
         'id'   => '[0-9]+',
         'slug' => '[a-z\-0-9]+'
-      ];
+     ];
 
 
       /**
@@ -467,9 +474,20 @@ class Router implements RouterInterface
          * @param $key
          * @param null $default
          * @return mixed|null
+         * @throws RouterException
         */
         private function getOption($key, $default = null)
         {
+            foreach (array_keys($this->options) as $indexOption)
+            {
+                if(! \in_array($indexOption, self::ALLOWED_OPTION_PARAMS))
+                {
+                    throw new RouterException(
+                        sprintf('%s is not available option param', $indexOption)
+                    );
+                }
+            }
+
             return $this->options[$key] ?? $default;
         }
 
